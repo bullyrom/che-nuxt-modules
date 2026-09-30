@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { animate } from "animejs"
-import { computed, ref, useTemplateRef, watch } from "vue"
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue"
 
 import type { JSAnimation } from "animejs"
 
