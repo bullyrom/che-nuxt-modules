@@ -292,11 +292,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chapaev17/che-nuxt-modules@workspace:.":
+"@bullyrom/che-nuxt-modules@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@chapaev17/che-nuxt-modules@workspace:."
+  resolution: "@bullyrom/che-nuxt-modules@workspace:."
   dependencies:
-    "@chapaev17/eslint-config": "git+https://github.com/Chapaev17/eslint-config.git#583a9088093973b05585d881012174d7898b01b1"
+    "@bullyrom/eslint-config": "git+https://github.com/Chapaev17/eslint-config.git#583a9088093973b05585d881012174d7898b01b1"
     "@headlessui/vue": "npm:^1.7.23"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^25.2.1"
@@ -323,9 +323,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@chapaev17/eslint-config@git+https://github.com/Chapaev17/eslint-config.git#583a9088093973b05585d881012174d7898b01b1":
+"@bullyrom/eslint-config@git+https://github.com/Chapaev17/eslint-config.git#583a9088093973b05585d881012174d7898b01b1":
   version: 0.1.0
-  resolution: "@chapaev17/eslint-config@https://github.com/Chapaev17/eslint-config.git#commit=583a9088093973b05585d881012174d7898b01b1"
+  resolution: "@bullyrom/eslint-config@https://github.com/Chapaev17/eslint-config.git#commit=583a9088093973b05585d881012174d7898b01b1"
   dependencies:
     "@eslint/js": "npm:^9.39.2"
     eslint-config-prettier: "npm:^10.1.8"
@@ -353,7 +353,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.2.0"
   peerDependencies:
     eslint: ^9.39.2
-  checksum: 10c0/b35695a58114c77205ffbf1c17886f4071dcf384d6e26720d22526ba7dab20280b3bb46defe627c6f91e13831b9741bd8e0637291b80b35c2d59271434a2bb1c
+  checksum: 10c0/af866c719a333227f2a0b2941e57fd1801007f0e36c2cf9859ec0573c4f1c31f852817b3a938ad91da5c8fe38492f5f86e3d1d1babcab9a12c663c03bc456b89
   languageName: node
   linkType: hard
 
