@@ -1,4 +1,4 @@
-import { cheConfig } from "@chapev17/eslint-config"
+import { cheConfig } from "@chapaev17/eslint-config"
 import { defineConfig, globalIgnores } from "eslint/config"
 
 const config = defineConfig([
