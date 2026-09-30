@@ -11,8 +11,11 @@ import Modal from "../Modal.vue"
 import FieldValue from "./FieldValue.vue"
 import EntityCreateForm from "./EntityCreateForm.vue"
 
+import type { AdminPanelConfig } from "./fields/types"
+
 interface Properties {
   baseUrl: string
+  config?: AdminPanelConfig
   isMobile?: boolean
 }
 
@@ -126,10 +129,15 @@ async function doDelete() {
   const recordId = record.id ?? record.pk
   if (!entity?.fullBasePath || recordId === undefined) return
 
+  const { hooks } = properties.config ?? {}
+  const canDelete = await hooks?.beforeDelete?.(record)
+  if (canDelete === false) return
+
   try {
     await ofetch(`${properties.baseUrl}${entity.fullBasePath}${String(recordId)}/`, {
       method: "DELETE",
     })
+    await hooks?.afterDelete?.(record)
     deletingRecord.value = undefined
     lastFetchedUrl = undefined
     loadCurrentEntity()
@@ -277,6 +285,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
 
   <EntityCreateForm
     :base-url="properties.baseUrl"
+    :config="properties.config"
     :edit-record="editingRecord"
     :show="showCreateForm"
     @close="showCreateForm = false; editingRecord = undefined"

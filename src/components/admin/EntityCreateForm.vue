@@ -1,58 +1,64 @@
 <script setup lang="ts">
-import type { OpenAPIV3 } from "openapi-types"
-import { computed, ref, watch } from "vue"
 import { FetchError, ofetch } from "ofetch"
-import FormErrors from "./FormErrors.vue"
+import { computed, provide, ref, watch } from "vue"
+
+import { getSchemaNameFromRef as getSchemaNameFromReference } from "../../stores/adminPanel/apiTypes"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+
+import FieldRenderer from "./fields/FieldRenderer.vue"
+import {
+  buildBlankRecord,
+  buildFieldDescriptors,
+  FIELD_RENDER_CONTEXT,
+  isRecord,
+  serializeRecord,
+} from "./fields/registry"
+import FormErrors from "./FormErrors.vue"
+
 import type { RequestStatus } from "../../types"
+import type { AdminPanelConfig } from "./fields/types"
 
 const HTTP_STATUS_BAD_REQUEST = 400
 
 interface Properties {
   baseUrl: string
+  config?: AdminPanelConfig
   editRecord?: Record<string, unknown> | undefined
   show: boolean
 }
 
 const properties = defineProps<Properties>()
-const emit = defineEmits<{
-  (event: "close"): void
-  (event: "saved"): void
-}>()
+const emit = defineEmits<(event: "close" | "saved") => void>()
 
 const adminPanelStore = useAdminPanelStore()
 
-interface SchemaField {
-  description?: string
-  isReadOnly: boolean
-  key: string
-  type: "boolean" | "integer" | "number" | "object" | "string"
-}
-
 const isEditMode = computed(() => properties.editRecord !== undefined)
 
-const schemaFields = computed<SchemaField[]>(() => {
-  const schema = adminPanelStore.activeEntityCreateSchema
-  if (!schema || !("properties" in schema) || !schema.properties) return []
-  const { properties } = schema
+const schemaFields = computed(() =>
+  buildFieldDescriptors(
+    adminPanelStore.activeEntityCreateSchema,
+    adminPanelStore.schema?.components?.schemas,
+  ),
+)
 
-  return Object.entries(properties)
-    .filter(([, prop]) => {
-      if (!prop || typeof prop !== "object") return false
-      const p = prop as OpenAPIV3.SchemaObject
-      return p.readOnly !== true
-    })
-    .map(([key, prop]) => {
-      const p = prop as OpenAPIV3.SchemaObject
-      return {
-        description: p.description,
-        isReadOnly: p.readOnly === true,
-        key,
-        type: (["boolean", "integer", "number", "object"].includes(p.type ?? "")
-          ? p.type
-          : "string") as SchemaField["type"],
-      }
-    })
+const createSchemaName = computed(() => {
+  const { requestBody } = adminPanelStore.activeEntity?.createOperation ?? {}
+  if (requestBody && "$ref" in requestBody) {
+    return getSchemaNameFromReference(requestBody)
+  }
+  return undefined
+})
+
+const fieldOverrides = computed(() => {
+  const schemaName = createSchemaName.value
+  if (!schemaName) return undefined
+  return properties.config?.fields?.overrides?.[schemaName]
+})
+
+provide(FIELD_RENDER_CONTEXT, {
+  get components() {
+    return properties.config?.fields?.defaultComponents
+  },
 })
 
 const form = ref<Record<string, unknown>>({})
@@ -60,71 +66,19 @@ const sendStatus = ref<RequestStatus>("idle")
 const formErrors = ref<Record<string, string[] | undefined>>()
 const requestError = ref<string>()
 
-function buildBlankForm(): Record<string, unknown> {
-  const blank: Record<string, unknown> = {}
-  for (const field of schemaFields.value) {
-    switch (field.type) {
-      case "boolean": {
-        blank[field.key] = false
-        break
-      }
-      case "integer":
-      case "number": {
-        blank[field.key] = undefined
-        break
-      }
-      default: {
-        blank[field.key] = ""
-        break
-      }
-    }
-  }
-  return blank
-}
-
-function serializeRecordToForm(
-  record: Record<string, unknown>,
-): Record<string, unknown> {
-  const result = buildBlankForm()
-  for (const field of schemaFields.value) {
-    const value = record[field.key]
-    if (value === undefined || value === null) continue
-
-    switch (field.type) {
-      case "integer":
-      case "number": {
-        if (typeof value === "number") result[field.key] = value
-        break
-      }
-      case "boolean": {
-        result[field.key] = Boolean(value)
-        break
-      }
-      case "string": {
-        if (typeof value === "string") result[field.key] = value
-        break
-      }
-      default: {
-        break
-      }
-    }
-  }
-  return result
+function resetForm() {
+  form.value = properties.editRecord
+    ? serializeRecord(properties.editRecord, schemaFields.value)
+    : buildBlankRecord(schemaFields.value)
+  sendStatus.value = "idle"
+  formErrors.value = undefined
+  requestError.value = undefined
 }
 
 watch(
   () => properties.show,
   (isShown) => {
-    if (isShown) {
-      if (properties.editRecord) {
-        form.value = serializeRecordToForm(properties.editRecord)
-      } else {
-        form.value = buildBlankForm()
-      }
-      sendStatus.value = "idle"
-      formErrors.value = undefined
-      requestError.value = undefined
-    }
+    if (isShown) resetForm()
   },
 )
 
@@ -144,6 +98,20 @@ const submitUrl = computed(() => {
 
 const submitMethod = computed(() => (isEditMode.value ? "patch" : "post"))
 
+async function applyBeforeHook(payload: Record<string, unknown>) {
+  const { hooks } = properties.config ?? {}
+  const hook = isEditMode.value ? hooks?.beforeUpdate : hooks?.beforeCreate
+  const result = await hook?.(payload)
+  return isRecord(result) ? result : payload
+}
+
+async function applyAfterHook(record: unknown) {
+  const { hooks } = properties.config ?? {}
+  await (isEditMode.value
+    ? hooks?.afterUpdate?.(record)
+    : hooks?.afterCreate?.(record))
+}
+
 async function handleSubmit(submitEvent: SubmitEvent) {
   submitEvent.preventDefault()
   sendStatus.value = "pending"
@@ -151,10 +119,12 @@ async function handleSubmit(submitEvent: SubmitEvent) {
   requestError.value = undefined
 
   try {
-    await ofetch(submitUrl.value, {
-      body: form.value,
+    const body = await applyBeforeHook(form.value)
+    const record = await ofetch<unknown>(submitUrl.value, {
+      body,
       method: submitMethod.value,
     })
+    await applyAfterHook(record)
     sendStatus.value = "success"
     emit("saved")
   } catch (catchError) {
@@ -202,65 +172,22 @@ function handleClose() {
 
       <form class="px-6 py-4" @submit="handleSubmit">
         <div class="space-y-4">
-          <div
+          <FieldRenderer
             v-for="field in schemaFields"
             :key="field.key"
-          >
-            <label
-              class="mb-1 block text-xs font-medium uppercase tracking-wider text-gray-500"
-            >
-              {{ field.key }}
-            </label>
-
-            <input
-              v-if="field.type === 'boolean'"
-              v-model="form[field.key]"
-              class="h-4 w-4"
-              type="checkbox"
-            />
-
-            <input
-              v-else-if="field.type === 'integer' || field.type === 'number'"
-              v-model.number="form[field.key]"
-              class="w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-400"
-              type="number"
-            />
-
-            <textarea
-              v-else-if="field.key === 'description'"
-              v-model="form[field.key]"
-              class="w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-400"
-              rows="3"
-            />
-
-            <input
-              v-else
-              v-model="form[field.key]"
-              class="w-full rounded border border-gray-300 px-3 py-2 text-sm outline-none transition-colors focus:border-blue-400"
-              type="text"
-            />
-
-            <p
-              v-if="field.description"
-              class="mt-1 text-xs text-gray-400"
-            >
-              {{ field.description }}
-            </p>
-          </div>
+            v-model="form[field.key]"
+            :field="field"
+            :override="fieldOverrides?.[field.key]"
+          />
         </div>
 
         <FormErrors :errors="formErrors" class="mt-4" />
 
-        <div
-          v-if="requestError"
-          class="mt-2 text-sm text-red-500"
-        >
+        <div v-if="requestError" class="mt-2 text-sm text-red-500">
           {{ requestError }}
         </div>
 
-        <div
-          class="mt-6 flex justify-end gap-3 border-t border-gray-100 pt-4"
-        >
+        <div class="mt-6 flex justify-end gap-3 border-t border-gray-100 pt-4">
           <button
             class="rounded border border-gray-300 px-5 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
             type="button"
@@ -273,7 +200,13 @@ function handleClose() {
             :disabled="sendStatus === 'pending'"
             type="submit"
           >
-            {{ sendStatus === "pending" ? "Saving..." : isEditMode ? "Save" : "Create" }}
+            {{
+              sendStatus === "pending"
+                ? "Saving..."
+                : isEditMode
+                  ? "Save"
+                  : "Create"
+            }}
           </button>
         </div>
       </form>

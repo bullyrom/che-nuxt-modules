@@ -8,6 +8,31 @@ export { default as Crud } from "@/components/admin/Crud.vue"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"
 export { default as FileInput } from "@/components/FileInput.vue"
 export { default as FormErrors } from "@/components/admin/FormErrors.vue"
+export { default as FieldRenderer } from "@/components/admin/fields/FieldRenderer.vue"
+export { DEFAULT_FIELD_COMPONENTS } from "@/components/admin/fields/defaults"
+export {
+  buildBlankRecord,
+  buildFieldDescriptors,
+  FIELD_RENDER_CONTEXT,
+  isFieldOverride,
+  resolveFieldComponent,
+  serializeRecord,
+} from "@/components/admin/fields/registry"
+export type {
+  AdminPanelConfig,
+  AdminPanelFieldConfig,
+  AdminPanelHooks,
+  FieldComponent,
+  FieldComponentProperties,
+  FieldComponentRegistry,
+  FieldDescriptor,
+  FieldKind,
+  FieldKindValueMap,
+  FieldOverride,
+  FieldOverrideNode,
+  FieldValueOfKind,
+  PartialFieldComponentRegistry,
+} from "@/components/admin/fields/types"
 export { default as useRender } from "@/composables/useRender"
 export {
   useApiDelete,
