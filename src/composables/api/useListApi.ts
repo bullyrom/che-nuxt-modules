@@ -1,6 +1,8 @@
 import { ofetch } from "ofetch"
 import { ref } from "vue"
 
+import { FETCH_DATA_ERROR_MESSAGE } from "./messages"
+
 import type { RequestStatus } from "@/types"
 
 const HTTP_STATUS_OK = 200
@@ -46,7 +48,7 @@ function useListApi<ResponseData = unknown[], Query = unknown>(parameters: {
         query: commonQuery,
       })
     } catch {
-      fetchDataErrors.value = "Fetch data error"
+      fetchDataErrors.value = FETCH_DATA_ERROR_MESSAGE
       fetchDataStatus.value = "error"
       console.error(`Error fetch api detail for url: ${parameters.url}`)
     }

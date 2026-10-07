@@ -2,6 +2,8 @@ import { cloneDeep } from "lodash-es"
 import { FetchError, ofetch } from "ofetch"
 import { computed, ref } from "vue"
 
+import { FETCH_DATA_ERROR_MESSAGE } from "./messages"
+
 import type { RequestStatus } from "@/types"
 
 const HTTP_STATUS_BAD_REQUEST = 400
@@ -78,19 +80,30 @@ function useFormApi<
       formErrors.value[formErrorsKey] = undefined
   }
 
+  /** Resolves the submit URL: explicit override, `url` + `id`, or `url`. */
+  function resolveSubmitUrl(fetchParameters?: {
+    id?: string
+    url?: string
+  }): string {
+    if (fetchParameters?.url) return fetchParameters.url
+    if (fetchParameters?.id) return `${parameters.url}/${fetchParameters.id}/`
+    return parameters.url as string
+  }
+
   async function sendForm(fetchParameters?: {
     form: FrontendForm
     id?: string
+    method?: "patch" | "post" | "put"
     onResponse?: (response: Response) => void
+    /** Explicit submit URL override (otherwise `url` + optional `id`). */
+    url?: string
   }) {
     try {
       sendFormStatus.value = "pending"
       sendFormRequestErrors.value = undefined
       formErrors.value = undefined
 
-      const url = fetchParameters?.id
-        ? `${parameters.url}/${fetchParameters.id}/`
-        : parameters.url
+      const url = resolveSubmitUrl(fetchParameters)
 
       const transform =
         (
@@ -106,10 +119,10 @@ function useFormApi<
       if (!body) throw new Error("serializeForm returned empty body")
       const fetchForm = ofetch.create({
         body,
-        method: parameters.method || "post",
+        method: fetchParameters?.method || parameters.method || "post",
       })
 
-      const response = await fetchForm<Response>(url as string)
+      const response = await fetchForm<Response>(url)
       sendFormStatus.value = "success"
 
       if (fetchParameters?.onResponse) {
@@ -122,7 +135,7 @@ function useFormApi<
         if (error.statusCode === HTTP_STATUS_BAD_REQUEST) {
           formErrors.value = error.data as FormErrors
         }
-        sendFormRequestErrors.value = `Fetch data error`
+        sendFormRequestErrors.value = FETCH_DATA_ERROR_MESSAGE
         sendFormStatus.value = "error"
       }
       return undefined
