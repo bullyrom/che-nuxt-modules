@@ -1,5 +1,6 @@
 # Release notes
 
+- fix: `usePaginatedListApi` rewrites `next`/`previous` to the list request origin, so a backend behind a TLS proxy (DRF emits `http://`) no longer causes mixed-content failures on pagination
 - fix: `usePaginatedListApi` now also accepts a plain array response (non-paginated endpoints), so the admin list no longer renders empty
 - fix: `useCallBeforeLeaveFromPage(s)` called `isString` without importing it (runtime `ReferenceError`)
 - refactor: `useApiUpdate`/`useApiDelete` now share one keyed-mutation helper; both (and `useFormApi.sendForm`) accept a per-call `url`/`method` override
