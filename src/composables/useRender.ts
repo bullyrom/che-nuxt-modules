@@ -1,7 +1,7 @@
-import { getCurrentInstance } from "vue"
 import noop from "lodash-es/noop"
+import { getCurrentInstance } from "vue"
 
-export default function useRender(render: () => JSX.Element): void {
+export default function useRender(render: () => unknown): void {
   const vm = getCurrentInstance()
 
   if (!vm) {
