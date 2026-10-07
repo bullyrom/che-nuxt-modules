@@ -1,6 +1,16 @@
 import { useDetailApi } from "../composables/api"
 
-import type { PageSeoData } from "@/types/base"
+/** Breadcrumb item returned by the static-page SEO endpoint. */
+interface PageBreadcrumb {
+  slug: string
+  title?: string
+}
+
+/** Static-page SEO payload returned by the backend. */
+interface ApiStaticPage {
+  [key: string]: unknown
+  breadcrumbs?: PageBreadcrumb[]
+}
 
 export const usePagesStore = defineStore("pages", () => {
   const {
@@ -13,14 +23,19 @@ export const usePagesStore = defineStore("pages", () => {
   } = useDetailApi<ApiStaticPage>()
 
   const pageSeoData = computed(() => {
-    if (!apiPageSeoData.value) { return }
-    const { breadcrumbs, ...otherFields } = apiPageSeoData.value
+    if (!apiPageSeoData.value) {
+      return undefined
+    }
+    const otherFields = { ...apiPageSeoData.value }
+    delete otherFields.breadcrumbs
     return otherFields
   })
 
   const breadcrumbs = computed(() => {
     const breadcrumbsFromApi = apiPageSeoData.value?.breadcrumbs
-    if (breadcrumbsFromApi === undefined) { return }
+    if (breadcrumbsFromApi === undefined) {
+      return undefined
+    }
     const mainPage = {
       path: "/",
       slug: "index",
@@ -40,7 +55,7 @@ export const usePagesStore = defineStore("pages", () => {
     return [mainPage, ...breadcrumbsFromApiWithPath]
   })
 
-  async function fetchPageSeoData(path: PageSeoData["path"]): Promise<void> {
+  async function fetchPageSeoData(path: string): Promise<void> {
     const arrayPath = path.split("/")
     const slug = arrayPath.at(-1)
     const slugOrMain = slug || "index"

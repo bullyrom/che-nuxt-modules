@@ -1,6 +1,5 @@
-import type { MetaObject } from "nuxt/schema"
-
 import type { Seo } from "../types/pages"
+import type { MetaObject } from "nuxt/schema"
 
 export default function useSeo(seo: Ref<Seo | undefined>) {
   const route = useRoute()
@@ -17,36 +16,35 @@ export default function useSeo(seo: Ref<Seo | undefined>) {
   })
 
   function getCanonical() {
-    const formatPath = route.path.toLowerCase().replace(/\/$/u, "")
+    const formatPath = route.path.toLowerCase().replace(/\/$/v, "")
     return `${backendUrl}${formatPath}`
   }
 
   function createMetaInfo(canonical: string): MetaObject {
     return {
-      title: seo.value ? seo.value.seoTitle || seo.value.title : undefined,
       htmlAttrs: {
         lang: "ru",
       },
+      link: [{ href: canonical, rel: "canonical" }],
       meta: [],
-      link: [{ rel: "canonical", href: canonical }],
+      title: seo.value ? seo.value.seoTitle || seo.value.title : undefined,
     }
   }
 
   function setMetaProperties(metaInfo: MetaObject) {
     if (seo.value?.seoDescription) {
       const seoDescriptionMetaProperty: NonNullable<MetaObject["meta"]>["0"] =
-      {
-        hid: "description",
-        name: "description",
-        content: seo.value.seoDescription,
-      }
+        {
+          content: seo.value.seoDescription,
+          name: "description",
+        }
       metaInfo.meta?.push(seoDescriptionMetaProperty)
     }
 
     if (seo.value?.seoKeywords) {
       const seoKeywordsMetaProperty: NonNullable<MetaObject["meta"]>["0"] = {
-        name: "keywords",
         content: seo.value.seoKeywords,
+        name: "keywords",
       }
       metaInfo.meta?.push(seoKeywordsMetaProperty)
     }
