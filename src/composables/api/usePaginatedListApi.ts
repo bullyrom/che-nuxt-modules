@@ -67,20 +67,39 @@ export function usePaginatedListApi<
 
   function setDataFromResponse(add = false) {
     if (
-      fetchDataStatus.value === "success" &&
-      paginatedData.value !== undefined
-    ) {
-      if (add) {
-        if (isArray(data.value) && isArray(paginatedData.value.results))
-          data.value?.push(...paginatedData.value.results)
-        else console.error(`Response from ${parameters.url} url is not Array`)
-      } else {
-        data.value = paginatedData.value?.results
-      }
-      count.value = paginatedData.value.count
-      nextPageUrl.value = paginatedData.value.next
-      previousPageUrl.value = paginatedData.value.previous
+      fetchDataStatus.value !== "success" ||
+      paginatedData.value === undefined
+    )
+      return
+
+    const response: unknown = paginatedData.value
+
+    // Non-paginated endpoint: the response body is the results array itself.
+    if (isArray(response)) {
+      if (add && isArray(data.value)) data.value.push(...response)
+      else data.value = response as ResponseData
+      count.value = response.length
+      nextPageUrl.value = undefined
+      previousPageUrl.value = undefined
+      return
     }
+
+    const {
+      count: responseCount,
+      next,
+      previous,
+      results,
+    } = response as PaginatedResponse<ResponseData>
+
+    if (add) {
+      if (isArray(data.value) && isArray(results)) data.value.push(...results)
+      else console.error(`Response from ${parameters.url} url is not Array`)
+    } else {
+      data.value = results
+    }
+    count.value = responseCount
+    nextPageUrl.value = next
+    previousPageUrl.value = previous
   }
 
   function reset() {
