@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { FetchError, ofetch } from "ofetch"
-import { computed, provide, ref, watch } from "vue"
+import { computed, provide, watch } from "vue"
 
+import { useFormApi } from "../../composables/api"
 import { getSchemaNameFromRef as getSchemaNameFromReference } from "../../stores/adminPanel/apiTypes"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
@@ -15,10 +15,7 @@ import {
 } from "./fields/registry"
 import FormErrors from "./FormErrors.vue"
 
-import type { RequestStatus } from "../../types"
 import type { AdminPanelConfig } from "./fields/types"
-
-const HTTP_STATUS_BAD_REQUEST = 400
 
 interface Properties {
   baseUrl: string
@@ -61,18 +58,22 @@ provide(FIELD_RENDER_CONTEXT, {
   },
 })
 
-const form = ref<Record<string, unknown>>({})
-const sendStatus = ref<RequestStatus>("idle")
-const formErrors = ref<Record<string, string[] | undefined>>()
-const requestError = ref<string>()
+const { form, formErrors, sendForm, sendFormRequestErrors, sendFormStatus } =
+  useFormApi<Record<string, unknown>>({
+    blankForm: {},
+    method: "post",
+    url: "",
+  })
+
+const REQUEST_ERROR_MESSAGE = "Failed to save record"
 
 function resetForm() {
   form.value = properties.editRecord
     ? serializeRecord(properties.editRecord, schemaFields.value)
     : buildBlankRecord(schemaFields.value)
-  sendStatus.value = "idle"
+  sendFormStatus.value = "idle"
   formErrors.value = undefined
-  requestError.value = undefined
+  sendFormRequestErrors.value = undefined
 }
 
 watch(
@@ -96,8 +97,6 @@ const submitUrl = computed(() => {
   return `${properties.baseUrl}${entity.fullBasePath}`
 })
 
-const submitMethod = computed(() => (isEditMode.value ? "patch" : "post"))
-
 async function applyBeforeHook(payload: Record<string, unknown>) {
   const { hooks } = properties.config ?? {}
   const hook = isEditMode.value ? hooks?.beforeUpdate : hooks?.beforeCreate
@@ -114,32 +113,27 @@ async function applyAfterHook(record: unknown) {
 
 async function handleSubmit(submitEvent: SubmitEvent) {
   submitEvent.preventDefault()
-  sendStatus.value = "pending"
-  formErrors.value = undefined
-  requestError.value = undefined
 
   try {
     const body = await applyBeforeHook(form.value)
-    const record = await ofetch<unknown>(submitUrl.value, {
-      body,
-      method: submitMethod.value,
+    const record = await sendForm({
+      form: body,
+      method: isEditMode.value ? "patch" : "post",
+      url: submitUrl.value,
     })
-    await applyAfterHook(record)
-    sendStatus.value = "success"
-    emit("saved")
-  } catch (catchError) {
-    if (
-      catchError instanceof FetchError &&
-      catchError.statusCode === HTTP_STATUS_BAD_REQUEST
-    ) {
-      formErrors.value = catchError.data as Record<
-        string,
-        string[] | undefined
-      >
-    } else {
-      requestError.value = "Failed to save record"
+
+    if (sendFormStatus.value === "success") {
+      await applyAfterHook(record)
+      emit("saved")
+      return
     }
-    sendStatus.value = "error"
+
+    if (sendFormStatus.value === "error" && formErrors.value === undefined) {
+      sendFormRequestErrors.value = REQUEST_ERROR_MESSAGE
+    }
+  } catch {
+    sendFormRequestErrors.value = REQUEST_ERROR_MESSAGE
+    sendFormStatus.value = "error"
   }
 }
 
@@ -183,8 +177,8 @@ function handleClose() {
 
         <FormErrors :errors="formErrors" class="mt-4" />
 
-        <div v-if="requestError" class="mt-2 text-sm text-red-500">
-          {{ requestError }}
+        <div v-if="sendFormRequestErrors" class="mt-2 text-sm text-red-500">
+          {{ sendFormRequestErrors }}
         </div>
 
         <div class="mt-6 flex justify-end gap-3 border-t border-gray-100 pt-4">
@@ -197,11 +191,11 @@ function handleClose() {
           </button>
           <button
             class="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-            :disabled="sendStatus === 'pending'"
+            :disabled="sendFormStatus === 'pending'"
             type="submit"
           >
             {{
-              sendStatus === "pending"
+              sendFormStatus === "pending"
                 ? "Saving..."
                 : isEditMode
                   ? "Save"

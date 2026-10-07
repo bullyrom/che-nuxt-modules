@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue"
-import { ofetch } from "ofetch"
+import { useDebounceFn } from "@vueuse/core"
+import { ref, watch } from "vue"
 
-import { useListApi } from "../../composables/api"
+import { useApiDelete, usePaginatedListApi } from "../../composables/api"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import LazyLoadList from "../LazyLoadList.vue"
 import MainLoader from "../MainLoader.vue"
 import Modal from "../Modal.vue"
 
-import FieldValue from "./FieldValue.vue"
 import EntityCreateForm from "./EntityCreateForm.vue"
+import FieldValue from "./FieldValue.vue"
 
 import type { AdminPanelConfig } from "./fields/types"
 
@@ -23,50 +23,28 @@ const properties = defineProps<Properties>()
 const adminPanelStore = useAdminPanelStore()
 
 const {
-  data: rawData,
-  fetchData: fetchRawData,
+  data: entityRecords,
+  fetchData: fetchEntityRecords,
   fetchDataStatus,
-} = useListApi<unknown>({ url: "" })
+  fetchNextPage,
+  showNextPageLoader,
+} = usePaginatedListApi<Record<string, unknown>>({ url: "" })
 
-const entityRecords = ref<Record<string, unknown>[]>()
-const nextPageUrl = ref<string | undefined>(undefined)
-const isFetchingNext = ref(false)
+const { destroy: destroyRecord } = useApiDelete({ url: "" })
+
 const showCreateForm = ref(false)
 const editingRecord = ref<Record<string, unknown> | undefined>(undefined)
 const deletingRecord = ref<Record<string, unknown> | undefined>(undefined)
 const searchQuery = ref("")
 
-let searchDebounce: ReturnType<typeof setTimeout> | undefined
+const SEARCH_DEBOUNCE_MS = 300
 
-watch(searchQuery, () => {
-  if (searchDebounce) clearTimeout(searchDebounce)
-  searchDebounce = setTimeout(() => {
-    loadCurrentEntity(true)
-  }, 300)
-})
+const loadDebounced = useDebounceFn(
+  () => loadCurrentEntity(true),
+  SEARCH_DEBOUNCE_MS,
+)
 
-// eslint-disable-next-line no-useless-assignment
-const showLoader = computed(() => {
-  if (fetchDataStatus.value === "pending") return true
-  return isFetchingNext.value
-})
-
-function extractRecords(data: unknown): Record<string, unknown>[] {
-  if (Array.isArray(data)) return data as Record<string, unknown>[]
-  if (typeof data === "object" && data !== null && "results" in data) {
-    const { results } = data as Record<string, unknown>
-    if (Array.isArray(results)) return results as Record<string, unknown>[]
-  }
-  return []
-}
-
-function extractNextPage(data: unknown): string | undefined {
-  if (typeof data === "object" && data !== null && "next" in data) {
-    const nextValue = (data as Record<string, unknown>).next
-    if (typeof nextValue === "string") return nextValue
-  }
-  return undefined
-}
+watch(searchQuery, loadDebounced)
 
 // eslint-disable-next-line init-declarations
 let lastFetchedUrl: string | undefined
@@ -74,53 +52,28 @@ let lastFetchedUrl: string | undefined
 async function loadCurrentEntity(force = false) {
   const entity = adminPanelStore.activeEntity
   if (!entity?.fullBasePath) {
-    entityRecords.value = undefined
-    nextPageUrl.value = undefined
     lastFetchedUrl = undefined
     return
   }
 
   const url = `${properties.baseUrl}${entity.fullBasePath}`
-  if (!force && url === lastFetchedUrl && entityRecords.value !== undefined) return
+  if (!force && url === lastFetchedUrl && entityRecords.value !== undefined)
+    return
   lastFetchedUrl = url
 
-  entityRecords.value = undefined
-  nextPageUrl.value = undefined
-
-  const queryParams = searchQuery.value ? { search: searchQuery.value } : undefined
-  await fetchRawData({ query: queryParams, url })
-  if (fetchDataStatus.value === "success" && rawData.value) {
-    entityRecords.value = extractRecords(rawData.value)
-    nextPageUrl.value = extractNextPage(rawData.value)
-  }
+  const queryParameters = searchQuery.value
+    ? { search: searchQuery.value }
+    : undefined
+  await fetchEntityRecords({ query: queryParameters, url })
 }
 
-watch(() => adminPanelStore.activeEntity, () => {
-  if (searchDebounce) clearTimeout(searchDebounce)
-  searchQuery.value = ""
-  loadCurrentEntity()
-})
-
-async function fetchNextPage() {
-  const nextUrl = nextPageUrl.value
-  if (!nextUrl || isFetchingNext.value) return
-
-  isFetchingNext.value = true
-  try {
-    await fetchRawData({ url: nextUrl })
-    if (fetchDataStatus.value === "success" && rawData.value) {
-      const records = extractRecords(rawData.value)
-      if (entityRecords.value) {
-        entityRecords.value.push(...records)
-      }
-      // eslint-disable-next-line require-atomic-updates
-      nextPageUrl.value = extractNextPage(rawData.value)
-    }
-  } finally {
-    // eslint-disable-next-line require-atomic-updates
-    isFetchingNext.value = false
-  }
-}
+watch(
+  () => adminPanelStore.activeEntity,
+  () => {
+    searchQuery.value = ""
+    loadCurrentEntity()
+  },
+)
 
 async function doDelete() {
   const record = deletingRecord.value
@@ -133,17 +86,33 @@ async function doDelete() {
   const canDelete = await hooks?.beforeDelete?.(record)
   if (canDelete === false) return
 
-  try {
-    await ofetch(`${properties.baseUrl}${entity.fullBasePath}${String(recordId)}/`, {
-      method: "DELETE",
-    })
+  const response = await destroyRecord({
+    id: String(recordId),
+    url: `${properties.baseUrl}${entity.fullBasePath}`,
+  })
+  if (response !== undefined) {
     await hooks?.afterDelete?.(record)
-    deletingRecord.value = undefined
-    lastFetchedUrl = undefined
-    loadCurrentEntity()
-  } catch {
-    // silently fail
   }
+  // eslint-disable-next-line require-atomic-updates
+  deletingRecord.value = undefined
+  lastFetchedUrl = undefined
+  loadCurrentEntity(true)
+}
+
+function startEdit(record: Record<string, unknown>) {
+  editingRecord.value = record
+  showCreateForm.value = true
+}
+
+function closeCreateForm() {
+  showCreateForm.value = false
+  editingRecord.value = undefined
+}
+
+function handleSaved() {
+  closeCreateForm()
+  lastFetchedUrl = undefined
+  loadCurrentEntity(true)
 }
 
 function getObjectKeys(object: Record<string, unknown>): string[] {
@@ -189,7 +158,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
       <div class="mb-4">
         <input
           v-model="searchQuery"
-          class="w-full rounded border border-gray-300 px-3 py-1.5 text-sm outline-none transition-colors focus:border-blue-400"
+          class="w-full rounded border border-gray-300 px-3 py-1.5 text-sm transition-colors outline-none focus:border-blue-400"
           placeholder="Search..."
           type="text"
         />
@@ -221,7 +190,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
           v-else
           v-slot="{ item, index }"
           :items="entityRecords"
-          :show-loader="showLoader"
+          :show-loader="showNextPageLoader"
           :fetch-visible-item-number="4"
           list-class="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3"
           @fetch-next-page="fetchNextPage()"
@@ -237,7 +206,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
                 <button
                   class="rounded px-2 py-0.5 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                   title="Edit"
-                  @click="editingRecord = item; showCreateForm = true"
+                  @click="startEdit(item)"
                 >
                   ✎
                 </button>
@@ -288,8 +257,8 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
     :config="properties.config"
     :edit-record="editingRecord"
     :show="showCreateForm"
-    @close="showCreateForm = false; editingRecord = undefined"
-    @saved="showCreateForm = false; editingRecord = undefined; lastFetchedUrl = undefined; loadCurrentEntity()"
+    @close="closeCreateForm()"
+    @saved="handleSaved()"
   />
 
   <Modal
