@@ -1,5 +1,9 @@
 # Release notes
 
+- feat: add `useCalendar` reactive month/day calendar state (from psite's `useCheCalendar`) and `useCurrentTimeZone`
+- feat: add `getCurrentTimeZoneOffsetHours`, `getIsoDateWithFirstDayInMonth` and `getIsoDateWithLastDayInMonth` date utils
+- feat: add social-share link builders `odnoklassnikiShareLink`, `vkontakteShareLink`, `telegramShareLink`
+- feat: add form option utils `choicesToRadioOptions` and `baseCheckboxInfo` (with `RadioOption`/`BaseCheckboxParameters` types)
 - feat: add universal `chunkArray` array util
 - fix: correct the `distance` prop default typo (`defautl`) in `Dropdown`, `DroppingBody`, `DroppingBase` and `Tooltip`
 - fix: `Slidebar` background animation was assigned to the body animation ref, so it was never paused/tracked
