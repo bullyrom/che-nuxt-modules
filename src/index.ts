@@ -35,14 +35,17 @@ export { default as DroppingBase } from "@/components/DroppingBase.vue"
 export { default as DroppingBody } from "@/components/DroppingBody.vue"
 export { default as ErrorsList } from "@/components/ErrorsList.vue"
 export { default as FileInput } from "@/components/FileInput.vue"
+export { default as InputWithUnits } from "@/components/InputWithUnits.vue"
 export { default as LazyLoadList } from "@/components/LazyLoadList.vue"
 export { default as MainLoader } from "@/components/MainLoader.vue"
 export { default as Modal } from "@/components/Modal.vue"
 export { default as OverflowContainer } from "@/components/OverflowContainer.vue"
+export { default as PasswordInput } from "@/components/PasswordInput.vue"
 export { default as RollDown } from "@/components/RollDown.vue"
 export { default as Slidebar } from "@/components/Slidebar.vue"
 export { default as Tabs } from "@/components/Tabs.vue"
 export { default as Tooltip } from "@/components/Tooltip.vue"
+export { default as TypingIndicator } from "@/components/TypingIndicator.vue"
 export {
   useApiDelete,
   useApiUpdate,
