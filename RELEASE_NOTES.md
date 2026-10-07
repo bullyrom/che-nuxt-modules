@@ -1,5 +1,9 @@
 # Release notes
 
+- feat: add universal `chunkArray` array util
+- fix: correct the `distance` prop default typo (`defautl`) in `Dropdown`, `DroppingBody`, `DroppingBase` and `Tooltip`
+- fix: `Slidebar` background animation was assigned to the body animation ref, so it was never paused/tracked
+- refactor: split `DroppingBody` position helpers to satisfy complexity rules; drop magic numbers in `RollDown`
 - feat: add universal `dateRussianFormatString`, `monthName`, `previousMonth`, `nextMonth`, `daysInDatesAreTheSame`, `getWeeksInMonth` (and the `Week` type), `getCurrentTimeZoneCityName` date utils
 - feat: add universal `filterObjectByKeys`, `clearObjectFields`, `objectValuesToString` object utils
 - feat: add universal `useGetI18nListValues` (numbered i18n families) and `useScrollToTop` composables
