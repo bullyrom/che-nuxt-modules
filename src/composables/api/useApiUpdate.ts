@@ -1,9 +1,5 @@
-import { FetchError, ofetch } from "ofetch"
-import { reactive } from "vue"
-
-import type { FormErrors, RequestStatus } from "@/types"
-
-const HTTP_STATUS_BAD_REQUEST = 400
+import { useKeyedMutation } from "./keyedMutation"
+import { UPDATE_REQUEST_FAILED_MESSAGE } from "./messages"
 
 type UseFirstCheApiUpdateParameters = Parameters<typeof useApiUpdate>[0]
 type UseCheApiUpdateBaseParameters<
@@ -19,13 +15,10 @@ interface UseUpdateParameters {
   url: string
 }
 
-interface FormState {
-  id: string
-  updateErrors?: FormErrors
-  updateRequestErrors?: string
-  updateStatus: RequestStatus
-}
-
+/**
+ * Per-id patch/put helper: exposes keyed-by-id `updateStatus(id)`,
+ * `updateErrors(id)`, `updateRequestErrors(id)` and `reset(id)`.
+ */
 export function useApiUpdate<
   UpdateData extends Record<string, unknown> | unknown = Record<
     string,
@@ -33,100 +26,39 @@ export function useApiUpdate<
   >,
   Response extends Record<string, unknown> | unknown = Record<string, unknown>,
 >(parameters: UseUpdateParameters) {
-  const forms = reactive<FormState[]>([])
+  const { errors, request, requestErrors, reset, status } = useKeyedMutation({
+    errorMessage: UPDATE_REQUEST_FAILED_MESSAGE,
+    method: parameters.method,
+    url: parameters.url,
+  })
 
-  function getOrCreateFormState(id: string): FormState {
-    let formState = forms.find((state) => state.id === id)
-    if (!formState) {
-      formState = {
-        id,
-        updateErrors: undefined,
-        updateRequestErrors: undefined,
-        updateStatus: "idle",
-      }
-      forms.push(formState)
-    }
-    return formState
-  }
-
-  async function update(fetchParameters: {
+  function update(fetchParameters: {
     data: Partial<UpdateData>
     id: string
     onResponse?: (response: Response) => void
+    /** Base URL override (must end with `/`); defaults to the composable URL. */
+    url?: string
   }): Promise<Response | undefined> {
     if (!fetchParameters?.data) {
       console.error("Update data is required")
-      return undefined
+      return Promise.resolve(undefined)
     }
 
-    const formState = getOrCreateFormState(fetchParameters.id)
-
-    try {
-      formState.updateStatus = "pending"
-      formState.updateRequestErrors = undefined
-      formState.updateErrors = undefined
-
-      const url = `${parameters.url}${fetchParameters.id}/`
-
-      const fetchUpdate = ofetch.create({
-        body: fetchParameters.data,
-        method: parameters.method || "patch",
-      })
-
-      const response = await fetchUpdate<Response>(url)
-      formState.updateStatus = "success"
-
-      // Remove successful request from forms array
-      const index = forms.findIndex((state) => state.id === fetchParameters.id)
-      if (index !== -1) {
-        forms.splice(index, 1)
-      }
-
-      if (fetchParameters.onResponse) {
-        fetchParameters.onResponse(response)
-      }
-
-      return response
-    } catch (error) {
-      if (error instanceof FetchError) {
-        if (error.status === HTTP_STATUS_BAD_REQUEST) {
-          formState.updateErrors = error.data as FormErrors
-        }
-        formState.updateRequestErrors = `Update request failed`
-        formState.updateStatus = "error"
-      }
-      return undefined
-    }
-  }
-
-  function reset(id: string) {
-    const formState = getOrCreateFormState(id)
-    formState.updateStatus = "idle"
-    formState.updateRequestErrors = undefined
-    formState.updateErrors = undefined
-  }
-
-  function updateStatus(id: string) {
-    const formState = getOrCreateFormState(id)
-    return formState.updateStatus
-  }
-
-  function updateRequestErrors(id: string) {
-    const formState = getOrCreateFormState(id)
-    return formState.updateRequestErrors
-  }
-
-  function updateErrors(id: string) {
-    const formState = getOrCreateFormState(id)
-    return formState.updateErrors
+    return request<Response>({
+      body: fetchParameters.data,
+      id: fetchParameters.id,
+      method: parameters.method ?? "patch",
+      onResponse: fetchParameters.onResponse,
+      url: fetchParameters.url,
+    })
   }
 
   return {
     reset,
     update,
-    updateErrors,
-    updateRequestErrors,
-    updateStatus,
+    updateErrors: errors,
+    updateRequestErrors: requestErrors,
+    updateStatus: status,
   }
 }
 

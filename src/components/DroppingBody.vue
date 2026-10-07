@@ -24,10 +24,33 @@ import { computed, nextTick, ref, watch } from "vue"
 import type { JSAnimation } from "animejs"
 import type { PropType } from "vue"
 
+/** Scale the element shrinks to while closed. */
+const closedScale = 0.95
+
+/** Axis dimensions used to position the dropping element. */
+interface PositionDimensions {
+  height: number
+  triggerHeight: number
+  triggerWidth: number
+  width: number
+}
+
+/** Resolved inline styles of the dropping element. */
+interface PositionStyles {
+  bottom?: number
+  left?: number
+  paddingBottom?: number
+  paddingLeft?: number
+  paddingRight?: number
+  paddingTop?: number
+  right?: number
+  top?: number
+}
+
 // as PropType<"bottom-start" | "bottom-end">
 const properties = defineProps({
   distance: {
-    defautl: 0,
+    default: 0,
     required: false,
     type: Number,
   },
@@ -63,6 +86,122 @@ const show = ref<boolean>(false)
 
 const positionParameters = computed(() => properties.position.split("-"))
 
+/**
+ * Fixes a cross-axis position so the element stays inside the viewport.
+ */
+function fixedOutsidePosition(
+  oldPosition: number,
+  toStart: number,
+  toEnd: number,
+) {
+  // Indentations taking into account the old position.
+  const currentToStart = toStart + oldPosition
+  const currentToEnd = toEnd - oldPosition
+
+  if (currentToStart < 0) {
+    return toStart * -1
+  }
+  if (currentToEnd > 0) {
+    return oldPosition
+  }
+
+  // Need fix outsite end.
+  const needFixPostionValue = oldPosition - currentToEnd * -1
+  return currentToStart - oldPosition < needFixPostionValue * -1
+    ? currentToStart * -1 + oldPosition
+    : needFixPostionValue
+}
+
+/** Positions a `top`/`bottom` element on the horizontal cross axis. */
+function applyBottomOrTopPosition(
+  styles: PositionStyles,
+  parameters: string[],
+  dimensions: PositionDimensions,
+) {
+  const { triggerWidth, width } = dimensions
+
+  if (parameters.includes("start")) styles.left = 0
+  if (parameters.includes("center")) {
+    styles.left = (width / 2) * -1 + triggerWidth / 2
+  }
+  if (parameters.includes("end")) styles.left = (width - triggerWidth) * -1
+}
+
+/** Positions a `left`/`right` element on the vertical cross axis. */
+function applyLeftOrRightPosition(
+  styles: PositionStyles,
+  parameters: string[],
+  dimensions: PositionDimensions,
+) {
+  const { height, triggerHeight } = dimensions
+
+  if (parameters.includes("start")) styles.top = triggerHeight * -1
+  if (parameters.includes("center")) styles.bottom = (height / 2) * -1
+  if (parameters.includes("end")) styles.bottom = triggerHeight
+}
+
+/**
+ * Positions the element on the cross axis (start/center/end) for the given
+ * vertical (`top`/`bottom`) or horizontal (`left`/`right`) placement.
+ */
+function applyCrossAxisPosition(
+  styles: PositionStyles,
+  parameters: string[],
+  dimensions: PositionDimensions,
+) {
+  const isVertical =
+    parameters.includes("top") || parameters.includes("bottom")
+
+  if (isVertical) applyBottomOrTopPosition(styles, parameters, dimensions)
+  else applyLeftOrRightPosition(styles, parameters, dimensions)
+
+  if (parameters.includes("left")) styles.left = dimensions.width * -1
+  if (parameters.includes("right")) styles.left = dimensions.triggerWidth
+}
+
+/**
+ * Flips the element to the opposite side when there is no room on the
+ * requested top/bottom side.
+ */
+function applyMainAxisFallback(
+  styles: PositionStyles,
+  parameters: string[],
+  context: {
+    bottomSpace: number
+    distance: number
+    height: number
+    toTop: number
+    triggerHeight: number
+  },
+) {
+  const { bottomSpace, distance, height, toTop, triggerHeight } = context
+
+  function bodyToBottom() {
+    styles.paddingTop = distance
+  }
+
+  function bodyToTop() {
+    styles.bottom = triggerHeight
+    styles.paddingBottom = distance
+  }
+
+  if (parameters.includes("bottom")) {
+    const noSpaceInBottom = bottomSpace < height
+    if (noSpaceInBottom && toTop > bottomSpace) {
+      bodyToTop()
+    } else {
+      bodyToBottom()
+    }
+  }
+  if (parameters.includes("top")) {
+    if (toTop < height + triggerHeight && toTop < bottomSpace) {
+      bodyToBottom()
+    } else {
+      bodyToTop()
+    }
+  }
+}
+
 function getPositionStyles(
   toLeft: number,
   toTop: number,
@@ -73,105 +212,31 @@ function getPositionStyles(
   const rightPosition = toLeft + width
 
   const toRight = windowWidth.value - rightPosition
-  // const toBottom = windowHeight.value - toTop + height
 
   const parameters = positionParameters.value
-  const styles = {} as {
-    bottom?: number
-    left?: number
-    paddingBottom?: number
-    paddingLeft: number
-    paddingRight?: number
-    paddingTop?: number
-    right?: number
-    top?: number
-  }
+  const styles: PositionStyles = {}
 
-  if (parameters.includes("top") || parameters.includes("bottom")) {
-    if (parameters.includes("start")) {
-      styles.left = 0
-    }
-    if (parameters.includes("center")) {
-      styles.left = (width / 2) * -1 + triggerWidth / 2
-    }
-    if (parameters.includes("end")) {
-      styles.left = (width - triggerWidth) * -1
-    }
-  }
-
-  if (parameters.includes("left") || parameters.includes("right")) {
-    if (parameters.includes("start")) {
-      styles.top = properties.triggerHeight * -1
-    }
-    if (parameters.includes("center")) {
-      styles.bottom = (height / 2) * -1
-    }
-    if (parameters.includes("end")) {
-      styles.bottom = properties.triggerHeight
-    }
-  }
-
-  if (parameters.includes("left")) {
-    styles.left = width * -1
-  }
-  if (parameters.includes("right")) {
-    styles.left = triggerWidth
-  }
-
-  function fixedOutsidePosition(
-    oldPosition: number,
-    toStart: number,
-    toEnd: number,
-  ) {
-    // Indentations taking into account the old position.
-    const currentToStart = toStart + oldPosition
-    const currentToEnd = toEnd - oldPosition
-
-    if (currentToStart < 0) {
-      return toStart * -1
-    }
-    if (currentToEnd > 0) {
-      return oldPosition
-    }
-
-    // Need fix outsite end.
-    const needFixPostionValue = oldPosition - currentToEnd * -1
-    return currentToStart - oldPosition < needFixPostionValue * -1
-      ? currentToStart * -1 + oldPosition
-      : needFixPostionValue
-  }
+  applyCrossAxisPosition(styles, parameters, {
+    height,
+    triggerHeight: properties.triggerHeight,
+    triggerWidth,
+    width,
+  })
 
   // Fix start or end is outside.
   if (styles.left !== undefined) {
     styles.left = fixedOutsidePosition(styles.left, toLeft, toRight)
   }
 
-  function bodyToBottom() {
-    styles.paddingTop = properties.distance
-  }
-
-  function bodyToTop() {
-    styles.bottom = properties.triggerHeight
-    styles.paddingBottom = properties.distance
-  }
-
   const bottomSpace =
     toTop > 0 ? windowHeight.value - toTop : windowHeight.value
-  if (parameters.includes("bottom")) {
-    const noSpaceInBottom = bottomSpace < height
-    if (noSpaceInBottom && toTop > bottomSpace) {
-      bodyToTop()
-    } else {
-      bodyToBottom()
-    }
-  }
-  if (parameters.includes("top")) {
-    if (toTop < height + properties.triggerHeight && toTop < bottomSpace) {
-      bodyToBottom()
-    } else {
-      bodyToTop()
-    }
-  }
+  applyMainAxisFallback(styles, parameters, {
+    bottomSpace,
+    distance: properties.distance,
+    height,
+    toTop,
+    triggerHeight: properties.triggerHeight,
+  })
 
   return {
     bottom: styles.bottom && `${styles.bottom}px`,
@@ -193,6 +258,7 @@ async function runAnimate(open: boolean | undefined) {
   animation.value?.pause()
   show.value = true
   await nextTick()
+  // eslint-disable-next-line require-atomic-updates
   animation.value = animate(openElement.value, {
     duration: 100,
     ease: "outQuad",
@@ -202,7 +268,7 @@ async function runAnimate(open: boolean | undefined) {
       }
     },
     opacity: open === true ? 1 : 0,
-    scale: open === true ? 1 : 0.95,
+    scale: open === true ? 1 : closedScale,
   })
 }
 

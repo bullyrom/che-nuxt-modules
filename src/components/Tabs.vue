@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ChContainerMarginRight
+    <ContainerMarginRight
       :active="valideContainerMarginRightActive === true"
       class="overflow-x-auto"
     >
@@ -55,7 +55,7 @@
           </div>
         </div>
       </div>
-    </ChContainerMarginRight>
+    </ContainerMarginRight>
 
     <div class="overflow-hidden">
       <div
@@ -71,12 +71,14 @@
 </template>
 
 <script setup lang="ts" generic="T extends { title: string }">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core"
 import { animate } from "animejs"
-import { computed,  ref } from "vue"
+import { computed, ref } from "vue"
+
+import ContainerMarginRight from "./ContainerMarginRight.vue"
 
 import type { JSAnimation } from "animejs"
-import type {PropType} from "vue";
-
+import type { PropType } from "vue"
 
 const properties = defineProps({
   containerMarginRightActive: {
@@ -92,16 +94,15 @@ const properties = defineProps({
 
 const emit = defineEmits<(event: "button-click", tab: T) => void>()
 
-const viewport = useViewport()
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const isSmallScreen = breakpoints.smaller("sm")
 
 const selectedCardIndex = defineModel<number>("active-index")
 
 const card = ref<Element>()
 const cardAnimation = ref<JSAnimation>()
 
-const defaultContainerMarginRightActive = computed(() =>
-  viewport.isLessThan("sm"),
-)
+const defaultContainerMarginRightActive = computed(() => isSmallScreen.value)
 
 const valideContainerMarginRightActive = computed(() =>
   properties.containerMarginRightActive === undefined

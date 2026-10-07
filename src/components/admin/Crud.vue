@@ -9,11 +9,13 @@ import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
 import SidebarEndpointsMenu from "./SidebarEndpointsMenu.vue"
 
+import type { AdminPanelConfig } from "./fields/types"
 import type { MyOpenAPIDocument } from "../../stores/adminPanel/types"
 
 interface Properties {
   apiSchema: MyOpenAPIDocument
   baseUrl: string
+  config?: AdminPanelConfig
   isMobile?: boolean
 }
 
@@ -39,6 +41,7 @@ useRender(() =>
 
       <ListElementByCurrentDevice
         baseUrl={properties.baseUrl}
+        config={properties.config}
         isMobile={properties.isMobile}
       />
     </div>

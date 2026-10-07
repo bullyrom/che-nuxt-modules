@@ -1,4 +1,4 @@
-import { cheConfig } from "@chapev17/eslint-config"
+import { cheConfig } from "@bullyrom/eslint-config"
 import { defineConfig, globalIgnores } from "eslint/config"
 
 const config = defineConfig([

@@ -1,6 +1,8 @@
 import { ofetch } from "ofetch"
 import { ref } from "vue"
 
+import { FETCH_DATA_ERROR_MESSAGE } from "./messages"
+
 import type { RequestStatus } from "@/types"
 
 const HTTP_STATUS_OK = 200
@@ -63,7 +65,7 @@ function useDetailApi<ResponseData = unknown>(parameters?: {
         },
       })
     } catch {
-      fetchDataErrors.value = "Fetch data error"
+      fetchDataErrors.value = FETCH_DATA_ERROR_MESSAGE
       fetchDataStatus.value = "error"
       if (fetchParameters?.onResponseError) fetchParameters.onResponseError()
       console.error(`Error fetch api detail for url: ${valideUrl}`)
