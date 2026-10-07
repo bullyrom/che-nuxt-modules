@@ -72,7 +72,9 @@ export {
   useCallBeforeLeaveFromPages,
 } from "@/composables/stores"
 export { useAdminPanel } from "@/composables/useAdminPanel"
+export { useCalendar } from "@/composables/useCalendar"
 export { useCaptcha } from "@/composables/useCaptcha"
+export { useCurrentTimeZone } from "@/composables/useCurrentTimeZone"
 export { useFirstUrlParameterOr404Error } from "@/composables/useFirstUrlParameterOr404Error"
 export { useGetI18nListValues } from "@/composables/useGetI18nListValues"
 export { useMenuStore } from "@/composables/useMenuStore"
@@ -101,6 +103,9 @@ export {
   dateRussianFormatString,
   daysInDatesAreTheSame,
   getCurrentTimeZoneCityName,
+  getCurrentTimeZoneOffsetHours,
+  getIsoDateWithFirstDayInMonth,
+  getIsoDateWithLastDayInMonth,
   getWeeksInMonth,
   monthName,
   nextMonth,
@@ -109,9 +114,17 @@ export {
 export type { Week } from "@/utils/date"
 export { createDefault404Error } from "@/utils/errors"
 export { divideNumber } from "@/utils/formatting"
+export { baseCheckboxInfo, choicesToRadioOptions } from "@/utils/forms"
+export type { BaseCheckboxParameters, RadioOption } from "@/utils/forms"
 export {
   clearObjectFields,
   filterObjectByKeys,
   objectValuesToString,
 } from "@/utils/objects"
+export {
+  odnoklassnikiShareLink,
+  telegramShareLink,
+  vkontakteShareLink,
+} from "@/utils/socialNetworks"
+export type { SocialNetworkShareLink } from "@/utils/socialNetworks"
 export { valideSlug } from "@/utils/validation"

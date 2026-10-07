@@ -7,6 +7,14 @@ const DAYS_IN_WEEK = 7
 /** First day-of-month and first month index. */
 const FIRST_DAY = 1
 
+/** Last hour/minute/second of a day. */
+const LAST_HOUR_OF_DAY = 23
+const LAST_MINUTE = 59
+const LAST_SECOND = 59
+
+/** Minutes in one hour. */
+const MINUTES_PER_HOUR = 60
+
 /** A week inside a month: all day numbers plus its first/last day numbers. */
 interface Week {
   dates: (number | undefined)[]
@@ -112,10 +120,44 @@ function getCurrentTimeZoneCityName() {
   return new Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
+/** Returns the current time zone offset in hours (e.g. `3` for MSK). */
+function getCurrentTimeZoneOffsetHours() {
+  return (new Date().getTimezoneOffset() * -1) / MINUTES_PER_HOUR
+}
+
+/** Returns the ISO string of the first day of the given month (local midnight). */
+function getIsoDateWithFirstDayInMonth(monthDate: Date) {
+  const resultDate = new Date(
+    monthDate.getFullYear(),
+    monthDate.getMonth(),
+    FIRST_DAY,
+  )
+  return resultDate.toISOString()
+}
+
+/**
+ * Returns the ISO string of the last day of the given month
+ * (local end of day), ready for range queries.
+ */
+function getIsoDateWithLastDayInMonth(monthDate: Date) {
+  const resultDate = new Date(
+    monthDate.getFullYear(),
+    monthDate.getMonth() + 1,
+    0,
+    LAST_HOUR_OF_DAY,
+    LAST_MINUTE,
+    LAST_SECOND,
+  )
+  return resultDate.toISOString()
+}
+
 export {
   dateRussianFormatString,
   daysInDatesAreTheSame,
   getCurrentTimeZoneCityName,
+  getCurrentTimeZoneOffsetHours,
+  getIsoDateWithFirstDayInMonth,
+  getIsoDateWithLastDayInMonth,
   getWeeksInMonth,
   monthName,
   nextMonth,
