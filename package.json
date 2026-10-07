@@ -1,7 +1,7 @@
 {
   "name": "@bullyrom/che-nuxt-modules",
   "description": "Vue composables and JSX components library",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "keywords": [
     "vue"
