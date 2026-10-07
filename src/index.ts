@@ -33,6 +33,7 @@ export {
 } from "@/components/Dropdown.vue"
 export { default as DroppingBase } from "@/components/DroppingBase.vue"
 export { default as DroppingBody } from "@/components/DroppingBody.vue"
+export { default as ErrorsList } from "@/components/ErrorsList.vue"
 export { default as FileInput } from "@/components/FileInput.vue"
 export { default as LazyLoadList } from "@/components/LazyLoadList.vue"
 export { default as MainLoader } from "@/components/MainLoader.vue"
@@ -73,8 +74,10 @@ export {
 export { useAdminPanel } from "@/composables/useAdminPanel"
 export { useCaptcha } from "@/composables/useCaptcha"
 export { useFirstUrlParameterOr404Error } from "@/composables/useFirstUrlParameterOr404Error"
+export { useGetI18nListValues } from "@/composables/useGetI18nListValues"
 export { useMenuStore } from "@/composables/useMenuStore"
 export { default as useRender } from "@/composables/useRender"
+export { useScrollToTop } from "@/composables/useScrollToTop"
 export { useShowLoader } from "@/composables/useShowLoader"
 export { useVoidAsyncData } from "@/composables/useVoidAsyncData"
 export { useAdminPanelStore } from "@/stores/adminPanel/index"
@@ -93,6 +96,21 @@ export type { Seo } from "@/types/pages"
 export type { Writable } from "@/types/utilities"
 export { sleep } from "@/utils"
 export { scrollToFirstElementWithClass } from "@/utils/actions"
+export {
+  dateRussianFormatString,
+  daysInDatesAreTheSame,
+  getCurrentTimeZoneCityName,
+  getWeeksInMonth,
+  monthName,
+  nextMonth,
+  previousMonth,
+} from "@/utils/date"
+export type { Week } from "@/utils/date"
 export { createDefault404Error } from "@/utils/errors"
 export { divideNumber } from "@/utils/formatting"
+export {
+  clearObjectFields,
+  filterObjectByKeys,
+  objectValuesToString,
+} from "@/utils/objects"
 export { valideSlug } from "@/utils/validation"
