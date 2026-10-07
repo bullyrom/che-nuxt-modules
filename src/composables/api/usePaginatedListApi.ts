@@ -20,6 +20,29 @@ interface PaginatedResponse<ResponseData> {
   results: ResponseData
 }
 
+/**
+ * Rewrites a DRF `next`/`previous` URL to the same origin as the list request.
+ * A backend behind a TLS-terminating proxy may build absolute `http://` URLs
+ * (it never learns the original scheme), which the browser then blocks as mixed
+ * content when the app runs over https.
+ */
+function resolveSameOriginPageUrl(
+  pageUrl: null | string | undefined,
+  requestUrl: string | undefined,
+): null | string | undefined {
+  if (!pageUrl || !requestUrl) return pageUrl
+
+  try {
+    const base = new URL(requestUrl)
+    const target = new URL(pageUrl, base)
+    target.protocol = base.protocol
+    target.host = base.host
+    return target.toString()
+  } catch {
+    return pageUrl
+  }
+}
+
 export function usePaginatedListApi<
   ResponseData = unknown,
   Query = unknown,
@@ -36,6 +59,7 @@ export function usePaginatedListApi<
   const count = ref<number>()
   const nextPageUrl = ref<null | string>()
   const previousPageUrl = ref<null | string>()
+  const requestUrl = ref<string>()
 
   const showNextPageLoader = computed(
     () => fetchDataStatus.value !== "success" || isString(nextPageUrl.value),
@@ -51,6 +75,7 @@ export function usePaginatedListApi<
   async function fetchData(
     fetchParameters: Parameters<typeof fetchDataBase>[0],
   ) {
+    requestUrl.value = fetchParameters?.url ?? parameters.url
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -60,6 +85,7 @@ export function usePaginatedListApi<
 
   async function fetchNextPage() {
     if (nextPageUrl.value && fetchDataStatus.value !== "pending") {
+      requestUrl.value = nextPageUrl.value
       await fetchDataBase({ url: nextPageUrl.value })
       setDataFromResponse(true)
     }
@@ -98,8 +124,11 @@ export function usePaginatedListApi<
       data.value = results
     }
     count.value = responseCount
-    nextPageUrl.value = next
-    previousPageUrl.value = previous
+    nextPageUrl.value = resolveSameOriginPageUrl(next, requestUrl.value)
+    previousPageUrl.value = resolveSameOriginPageUrl(
+      previous,
+      requestUrl.value,
+    )
   }
 
   function reset() {
