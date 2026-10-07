@@ -96,6 +96,7 @@ export type { Seo } from "@/types/pages"
 export type { Writable } from "@/types/utilities"
 export { sleep } from "@/utils"
 export { scrollToFirstElementWithClass } from "@/utils/actions"
+export { chunkArray } from "@/utils/array"
 export {
   dateRussianFormatString,
   daysInDatesAreTheSame,
