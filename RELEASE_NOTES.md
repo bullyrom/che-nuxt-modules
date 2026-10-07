@@ -1,5 +1,7 @@
 # Release notes
 
+- feat: add the field components `InputWithUnits` (numeric input + unit suffix) and `PasswordInput` (labeled input with show/hide toggle)
+- feat: add the dependency-free `TypingIndicator` chat "typing…" component
 - feat: add `useCalendar` reactive month/day calendar state (from psite's `useCheCalendar`) and `useCurrentTimeZone`
 - feat: add `getCurrentTimeZoneOffsetHours`, `getIsoDateWithFirstDayInMonth` and `getIsoDateWithLastDayInMonth` date utils
 - feat: add social-share link builders `odnoklassnikiShareLink`, `vkontakteShareLink`, `telegramShareLink`
