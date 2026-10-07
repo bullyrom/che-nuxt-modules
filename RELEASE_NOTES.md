@@ -1,5 +1,6 @@
 # Release notes
 
+- fix: `usePaginatedListApi` now also accepts a plain array response (non-paginated endpoints), so the admin list no longer renders empty
 - fix: `useCallBeforeLeaveFromPage(s)` called `isString` without importing it (runtime `ReferenceError`)
 - refactor: `useApiUpdate`/`useApiDelete` now share one keyed-mutation helper; both (and `useFormApi.sendForm`) accept a per-call `url`/`method` override
 - refactor: `DroppingBase` wraps `Dropdown`; `Tabs` uses the local `ContainerMarginRight` and VueUse breakpoints instead of the hidden `nuxt-viewport` dependency
