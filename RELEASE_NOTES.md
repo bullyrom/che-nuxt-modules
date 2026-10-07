@@ -1,5 +1,11 @@
 # Release notes
 
+- fix: `useCallBeforeLeaveFromPage(s)` called `isString` without importing it (runtime `ReferenceError`)
+- refactor: `useApiUpdate`/`useApiDelete` now share one keyed-mutation helper; both (and `useFormApi.sendForm`) accept a per-call `url`/`method` override
+- refactor: `DroppingBase` wraps `Dropdown`; `Tabs` uses the local `ContainerMarginRight` and VueUse breakpoints instead of the hidden `nuxt-viewport` dependency
+- refactor: admin panel reuses library pieces — `usePaginatedListApi` (list), `useApiDelete` (delete), `useFormApi` (create/edit form), `CheCheckbox` (boolean fields); remove dead `EntityOperationsList.vue` and `stores/adminPanel/pathHandlers.ts`
+- fix: `stores/pages.ts` no longer imports the project-only `@/types/base` / `ApiStaticPage` types
+- chore: drop the deprecated `hid` meta key in `useSeo`
 - feat: add the field components `InputWithUnits` (numeric input + unit suffix) and `PasswordInput` (labeled input with show/hide toggle)
 - feat: add the dependency-free `TypingIndicator` chat "typing…" component
 - feat: add `useCalendar` reactive month/day calendar state (from psite's `useCheCalendar`) and `useCurrentTimeZone`
