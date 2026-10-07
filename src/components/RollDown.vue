@@ -33,6 +33,9 @@ import { ref } from "vue"
 import type { JSAnimation } from "animejs"
 
 const minDuration = 250
+const fallbackDuration = 200
+/** Length of the `"px"` unit suffix. */
+const cssPixelSuffixLength = 2
 
 defineProps({
   buttonClasses: { required: false, type: String },
@@ -61,8 +64,11 @@ function getFilledContendElementHeight() {
 }
 
 function parseHeight(height: string) {
-  if (height.length > 2 && height.slice(-2) === "px") {
-    const clearHeight = height.slice(0, -2)
+  if (
+    height.length > cssPixelSuffixLength &&
+    height.slice(-cssPixelSuffixLength) === "px"
+  ) {
+    const clearHeight = height.slice(0, -cssPixelSuffixLength)
     const parsedNumber = Number.parseInt(clearHeight, 10)
     return Number.isNaN(parsedNumber) ? undefined : parsedNumber
   }
@@ -77,8 +83,23 @@ function animationDuration(height: string | undefined) {
   if (numberHeight === undefined) {
     return undefined
   }
-  const rounded = Math.floor(numberHeight / 1)
-  return Math.max(rounded, minDuration)
+  return Math.max(numberHeight, minDuration)
+}
+
+/** Resolves the anime.js `height` target for opening or closing. */
+function resolveAnimationHeight(open: boolean, height: string | undefined) {
+  if (open === true) {
+    return height
+  }
+
+  const currentContentHeight = contentElement.value?.style.height
+  if (!currentContentHeight) {
+    return undefined
+  }
+
+  const startHeight =
+    currentContentHeight === "auto" ? height : currentContentHeight
+  return startHeight ? [startHeight, "0px"] : "0px"
 }
 
 function setShowBody(open: boolean) {
@@ -92,19 +113,8 @@ function setShowBody(open: boolean) {
     contentElement.value.style.overflowY = "hidden"
   }
 
-  const duration = animationDuration(height) || 200
-
-  let animationHeight
-  if (open === true) {
-    animationHeight = height
-  } else {
-    const currentContentHeight = contentElement.value?.style.height
-    if (currentContentHeight) {
-      const startHeight =
-        currentContentHeight === "auto" ? height : currentContentHeight
-      animationHeight = startHeight ? [startHeight, "0px"] : "0px"
-    }
-  }
+  const duration = animationDuration(height) || fallbackDuration
+  const animationHeight = resolveAnimationHeight(open, height)
 
   if (contentElement.value && animationHeight) {
     animation.value = animate(contentElement.value, {

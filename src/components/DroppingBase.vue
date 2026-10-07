@@ -26,7 +26,7 @@ import type { PropType } from "vue"
 
 defineProps({
   distance: {
-    defautl: 0,
+    default: 0,
     required: false,
     type: Number,
   },

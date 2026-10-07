@@ -73,6 +73,7 @@ async function runAnimate(open: boolean | undefined) {
   await nextTick()
 
   if (body.value) {
+    // eslint-disable-next-line require-atomic-updates
     bodyAnimation.value = animate(body.value, {
       duration: 500,
       ease: "inOutQuad",
@@ -86,7 +87,8 @@ async function runAnimate(open: boolean | undefined) {
   }
 
   if (background.value) {
-    bodyAnimation.value = animate(background.value, {
+    // eslint-disable-next-line require-atomic-updates
+    backgroundAnimation.value = animate(background.value, {
       duration: 500,
       ease: "inOutQuad",
       onComplete() {
