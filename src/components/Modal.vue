@@ -11,7 +11,7 @@
         leave-to="opacity-0"
       >
         <div
-          class="bg-opacity-75 fixed inset-0 bg-gray-500 transition-opacity"
+          class="fixed inset-0 bg-[var(--ch-admin-overlay,rgba(0,0,0,0.5))] transition-opacity"
         />
       </TransitionChild>
 
@@ -27,7 +27,7 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative w-full transform overflow-hidden rounded-lg bg-white shadow-xl transition-all"
+              class="relative w-full transform overflow-hidden rounded-lg bg-[var(--ch-admin-surface,#fff)] text-[var(--ch-admin-text,inherit)] shadow-xl transition-all"
               :style="`max-width: ${maxWidth}`"
             >
               <slot />

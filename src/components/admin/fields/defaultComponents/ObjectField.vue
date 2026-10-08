@@ -20,7 +20,9 @@ function updateChild(key: string, value: unknown) {
 </script>
 
 <template>
-  <div class="space-y-3 rounded border border-gray-100 bg-gray-50 p-3">
+  <div
+    class="space-y-3 rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] p-3"
+  >
     <FieldRenderer
       v-for="child in properties.field.children"
       :key="child.key"

@@ -1,28 +1,29 @@
 <script setup lang="tsx">
-import type { ParsedEntity } from "../../stores/adminPanel/types"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+
+import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 const adminPanelStore = useAdminPanelStore()
 
-interface Props {
-  filteredEntitiesByNamespace: Array<{
-    namespace: string
+interface Properties {
+  filteredEntitiesByNamespace: {
     entities: ParsedEntity[]
-  }>
+    namespace: string
+  }[]
   isMobile?: boolean
 }
 
-const props = defineProps<Props>()
+const properties = defineProps<Properties>()
 </script>
 
 <template>
   <div
-    class="flex h-full flex-col border-r border-gray-200 bg-gray-50"
-    :class="props.isMobile ? 'w-full' : 'w-64'"
+    class="flex h-full flex-col border-r border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
+    :class="properties.isMobile ? 'w-full' : 'w-64'"
   >
-    <div class="border-b border-gray-200 px-4 py-3">
+    <div class="border-b border-[var(--ch-admin-border)] px-4 py-3">
       <h2
-        class="text-sm font-semibold uppercase tracking-wider text-gray-500"
+        class="text-sm font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
       >
         Endpoints
       </h2>
@@ -30,11 +31,11 @@ const props = defineProps<Props>()
 
     <div class="flex-1 overflow-y-auto">
       <div
-        v-for="(group, groupIndex) in props.filteredEntitiesByNamespace"
+        v-for="group in properties.filteredEntitiesByNamespace"
         :key="group.namespace"
       >
         <div
-          class="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400"
+          class="px-4 py-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
         >
           {{ group.namespace || "No namespace" }}
         </div>
@@ -43,20 +44,19 @@ const props = defineProps<Props>()
           <button
             v-for="entity in group.entities"
             :key="entity.entityName"
-            class="block w-full border-b border-gray-100 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100"
+            class="block w-full border-b border-[var(--ch-admin-border)] px-4 py-2.5 text-left text-sm text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
             :class="{
-              'border-l-2 border-l-blue-600 bg-blue-50 font-medium text-blue-700':
+              'border-l-2 border-l-[var(--ch-admin-accent)] bg-[var(--ch-admin-info-bg)] font-medium text-[var(--ch-admin-accent)]':
                 adminPanelStore.activeEntity?.entityName ===
                   entity.entityName &&
-                adminPanelStore.activeEntity?.namespace ===
-                  entity.namespace,
+                adminPanelStore.activeEntity?.namespace === entity.namespace,
             }"
             @click="adminPanelStore.activeEntity = entity"
           >
             <div class="flex items-center gap-2">
               <span
                 v-if="entity.listOperation"
-                class="rounded bg-green-100 px-1.5 py-0.5 font-mono text-xs font-medium text-green-700"
+                class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-success-bg)] px-1.5 py-0.5 font-mono text-xs font-medium text-[var(--ch-admin-success-text)]"
               >
                 {{ entity.listOperation ? "GET" : "" }}
               </span>

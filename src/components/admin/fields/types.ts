@@ -1,7 +1,8 @@
+import type { AdminPanelTheme } from "../theme"
 import type { OpenAPIV3 } from "openapi-types"
-import type { Component } from "vue"
+import type { Component, MaybeRef } from "vue"
 
-export type FieldKind =
+type FieldKind =
   | "array"
   | "boolean"
   | "integer"
@@ -9,7 +10,7 @@ export type FieldKind =
   | "object"
   | "string"
 
-export interface FieldKindValueMap {
+interface FieldKindValueMap {
   array: unknown[]
   boolean: boolean
   integer: number | undefined
@@ -18,9 +19,9 @@ export interface FieldKindValueMap {
   string: string
 }
 
-export type FieldValueOfKind<Kind extends FieldKind> = FieldKindValueMap[Kind]
+type FieldValueOfKind<Kind extends FieldKind> = FieldKindValueMap[Kind]
 
-export interface FieldDescriptor {
+interface FieldDescriptor {
   children?: FieldDescriptor[]
   description?: string
   format?: string
@@ -32,17 +33,17 @@ export interface FieldDescriptor {
   schema?: OpenAPIV3.SchemaObject
 }
 
-export interface FieldComponentProperties<Value = unknown> {
+interface FieldComponentProperties<Value = unknown> {
   field?: FieldDescriptor
   modelValue: Value
   "onUpdate:modelValue"?: (value: Value) => void
 }
 
-export type FieldComponent<Value = unknown> = Component<
+type FieldComponent<Value = unknown> = Component<
   FieldComponentProperties<Value>
 >
 
-export interface FieldComponentRegistry {
+interface FieldComponentRegistry {
   array: FieldComponent<unknown[]>
   boolean: FieldComponent<boolean>
   integer: FieldComponent<number | undefined>
@@ -51,9 +52,9 @@ export interface FieldComponentRegistry {
   string: FieldComponent<string>
 }
 
-export type PartialFieldComponentRegistry = Partial<FieldComponentRegistry>
+type PartialFieldComponentRegistry = Partial<FieldComponentRegistry>
 
-export type FieldOverride =
+type FieldOverride =
   | { component: FieldComponent<boolean>; kind: "boolean" }
   | { component: FieldComponent<number | undefined>; kind: "integer" }
   | { component: FieldComponent<number | undefined>; kind: "number" }
@@ -61,16 +62,16 @@ export type FieldOverride =
   | { component: FieldComponent<string>; kind: "string" }
   | { component: FieldComponent<unknown[]>; kind: "array" }
 
-export type FieldOverrideNode =
+type FieldOverrideNode =
   | FieldOverride
   | { [nestedKey: string]: FieldOverrideNode }
 
-export interface AdminPanelFieldConfig {
+interface AdminPanelFieldConfig {
   defaultComponents?: PartialFieldComponentRegistry
   overrides?: Record<string, Record<string, FieldOverrideNode>>
 }
 
-export interface AdminPanelHooks {
+interface AdminPanelHooks {
   afterCreate?: (record: unknown) => unknown
   afterDelete?: (record: Record<string, unknown>) => unknown
   afterUpdate?: (record: unknown) => unknown
@@ -79,7 +80,29 @@ export interface AdminPanelHooks {
   beforeUpdate?: (payload: Record<string, unknown>) => unknown
 }
 
-export interface AdminPanelConfig {
+interface AdminPanelConfig {
   fields?: AdminPanelFieldConfig
   hooks?: AdminPanelHooks
+  /**
+   * Reactive admin theme supplied by the host application. Accepts a plain
+   * `"dark" | "light"` value or a ref/computed so the panel can follow the
+   * app's color mode without the library depending on `@nuxtjs/color-mode`.
+   */
+  theme?: MaybeRef<AdminPanelTheme>
+}
+
+export type {
+  AdminPanelConfig,
+  AdminPanelFieldConfig,
+  AdminPanelHooks,
+  FieldComponent,
+  FieldComponentProperties,
+  FieldComponentRegistry,
+  FieldDescriptor,
+  FieldKind,
+  FieldKindValueMap,
+  FieldOverride,
+  FieldOverrideNode,
+  FieldValueOfKind,
+  PartialFieldComponentRegistry,
 }

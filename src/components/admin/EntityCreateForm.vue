@@ -145,19 +145,21 @@ function handleClose() {
 <template>
   <div
     v-if="properties.show"
-    class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/30 p-4 pt-[10vh]"
+    class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[var(--ch-admin-overlay)] p-4 pt-[10vh]"
     @click.self="handleClose()"
   >
-    <div class="w-full max-w-lg rounded-xl bg-white shadow-xl">
+    <div
+      class="w-full max-w-lg rounded-[var(--ch-admin-radius-lg)] bg-[var(--ch-admin-surface)] text-[var(--ch-admin-text)] shadow-xl"
+    >
       <div
-        class="flex items-center justify-between border-b border-gray-200 px-6 py-4"
+        class="flex items-center justify-between border-b border-[var(--ch-admin-border)] px-6 py-4"
       >
-        <h2 class="text-lg font-semibold text-gray-800">
+        <h2 class="text-lg font-semibold text-[var(--ch-admin-text)]">
           {{ isEditMode ? "Edit" : "Create" }}
           {{ adminPanelStore.activeEntity?.entityName ?? "record" }}
         </h2>
         <button
-          class="text-gray-400 transition-colors hover:text-gray-600"
+          class="text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
           @click="handleClose()"
         >
           ✕
@@ -177,20 +179,25 @@ function handleClose() {
 
         <FormErrors :errors="formErrors" class="mt-4" />
 
-        <div v-if="sendFormRequestErrors" class="mt-2 text-sm text-red-500">
+        <div
+          v-if="sendFormRequestErrors"
+          class="mt-2 text-sm text-[var(--ch-admin-danger-text)]"
+        >
           {{ sendFormRequestErrors }}
         </div>
 
-        <div class="mt-6 flex justify-end gap-3 border-t border-gray-100 pt-4">
+        <div
+          class="mt-6 flex justify-end gap-3 border-t border-[var(--ch-admin-border)] pt-4"
+        >
           <button
-            class="rounded border border-gray-300 px-5 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+            class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-5 py-2 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
             type="button"
             @click="handleClose()"
           >
             Cancel
           </button>
           <button
-            class="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+            class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-accent)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)] disabled:opacity-50"
             :disabled="sendFormStatus === 'pending'"
             type="submit"
           >

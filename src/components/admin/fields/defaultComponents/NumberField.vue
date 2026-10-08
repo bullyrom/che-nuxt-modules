@@ -9,7 +9,7 @@ const model = defineModel<number | undefined>({ required: true })
 <template>
   <input
     v-model.number="model"
-    class="w-full rounded border border-gray-300 px-3 py-2 text-sm transition-colors outline-none focus:border-blue-400"
+    class="w-full rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-2 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
     type="number"
   />
 </template>

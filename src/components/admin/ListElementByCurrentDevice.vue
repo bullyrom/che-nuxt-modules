@@ -121,13 +121,15 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
 </script>
 
 <template>
-  <div class="flex h-full flex-1 flex-col overflow-y-auto bg-gray-50">
+  <div
+    class="flex h-full flex-1 flex-col overflow-y-auto bg-[var(--ch-admin-bg)]"
+  >
     <div
       v-if="adminPanelStore.activeEntity"
-      class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3"
+      class="flex items-center justify-between border-b border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-4 py-3"
     >
       <button
-        class="rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-500 transition-colors hover:border-gray-400 hover:text-gray-700"
+        class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-3 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
         @click="adminPanelStore.clearEntity()"
       >
         &larr; All endpoints
@@ -135,16 +137,16 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
       <div class="flex items-center gap-3">
         <button
           v-if="adminPanelStore.activeEntity?.createOperation"
-          class="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+          class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-accent)] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)]"
           @click="showCreateForm = true"
         >
           + New
         </button>
         <div class="text-right">
-          <h2 class="text-sm font-semibold text-gray-700">
+          <h2 class="text-sm font-semibold text-[var(--ch-admin-text)]">
             {{ adminPanelStore.activeEntity.entityName }}
           </h2>
-          <p class="text-xs text-gray-400">
+          <p class="text-xs text-[var(--ch-admin-text-muted)]">
             {{ adminPanelStore.activeEntity.fullBasePath }}
           </p>
         </div>
@@ -158,7 +160,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
       <div class="mb-4">
         <input
           v-model="searchQuery"
-          class="w-full rounded border border-gray-300 px-3 py-1.5 text-sm transition-colors outline-none focus:border-blue-400"
+          class="w-full rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-1.5 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
           placeholder="Search..."
           type="text"
         />
@@ -173,7 +175,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
 
       <div
         v-else-if="fetchDataStatus === 'error'"
-        class="flex h-64 items-center justify-center text-sm text-red-500"
+        class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-danger-text)]"
       >
         Failed to load data
       </div>
@@ -181,7 +183,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
       <template v-else-if="entityRecords !== undefined">
         <div
           v-if="entityRecords.length === 0"
-          class="flex h-64 items-center justify-center text-sm text-gray-400"
+          class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-text-muted)]"
         >
           No records found
         </div>
@@ -196,22 +198,23 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
           @fetch-next-page="fetchNextPage()"
         >
           <div
-            class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+            class="rounded-[var(--ch-admin-radius-lg)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
           >
             <div class="mb-2 flex items-center justify-between">
-              <span class="text-xs font-medium text-gray-400"
+              <span
+                class="text-xs font-medium text-[var(--ch-admin-text-muted)]"
                 >#{{ index + 1 }}</span
               >
               <div class="flex items-center gap-1">
                 <button
-                  class="rounded px-2 py-0.5 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                  class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
                   title="Edit"
                   @click="startEdit(item)"
                 >
                   ✎
                 </button>
                 <button
-                  class="rounded px-2 py-0.5 text-xs text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                  class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-danger-bg)] hover:text-[var(--ch-admin-danger-text)]"
                   title="Delete"
                   @click="deletingRecord = item"
                 >
@@ -220,7 +223,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
               </div>
               <span
                 v-if="item.id !== undefined"
-                class="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs text-gray-500"
+                class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-2 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
               >
                 ID: {{ item.id }}
               </span>
@@ -232,7 +235,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
                 class="flex items-start gap-2"
               >
                 <span
-                  class="mt-0.5 shrink-0 rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-500"
+                  class="mt-0.5 shrink-0 rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
                 >
                   {{ key }}
                 </span>
@@ -246,7 +249,7 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
 
     <div
       v-else
-      class="flex flex-1 items-center justify-center text-sm text-gray-400"
+      class="flex flex-1 items-center justify-center text-sm text-[var(--ch-admin-text-muted)]"
     >
       Select an endpoint from the sidebar
     </div>
@@ -266,20 +269,20 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
     @set-visible="deletingRecord = undefined"
   >
     <div class="px-6 py-5 text-center">
-      <p class="text-sm text-gray-600">
+      <p class="text-sm text-[var(--ch-admin-text-muted)]">
         Delete
         {{ adminPanelStore.activeEntity?.entityName ?? "record" }}
         #{{ deletingRecord?.id ?? deletingRecord?.pk ?? "?" }}?
       </p>
       <div class="mt-4 flex justify-center gap-3">
         <button
-          class="rounded border border-gray-300 px-4 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50"
+          class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-4 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
           @click="deletingRecord = undefined"
         >
           Cancel
         </button>
         <button
-          class="rounded bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          class="rounded-[var(--ch-admin-radius-sm)] bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
           @click="doDelete()"
         >
           Delete

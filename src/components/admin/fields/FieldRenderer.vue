@@ -69,7 +69,7 @@ function updateValue(value: unknown) {
 <template>
   <div>
     <label
-      class="mb-1 block text-xs font-medium tracking-wider text-gray-500 uppercase"
+      class="mb-1 block text-xs font-medium tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
     >
       {{ properties.field.key }}
     </label>
@@ -81,7 +81,10 @@ function updateValue(value: unknown) {
       @update:model-value="updateValue"
     />
 
-    <p v-if="properties.field.description" class="mt-1 text-xs text-gray-400">
+    <p
+      v-if="properties.field.description"
+      class="mt-1 text-xs text-[var(--ch-admin-text-muted)]"
+    >
       {{ properties.field.description }}
     </p>
   </div>

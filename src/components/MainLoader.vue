@@ -12,7 +12,7 @@
       fill="none"
     >
       <circle
-        class="stroke-blue-600"
+        class="stroke-[var(--ch-admin-accent,#2563eb)]"
         cx="50"
         cy="50"
         r="40"

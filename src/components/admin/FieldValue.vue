@@ -13,25 +13,27 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 <template>
   <template v-if="value === null || value === undefined">
-    <span class="text-gray-300">—</span>
+    <span class="text-[var(--ch-admin-text-muted)]">—</span>
   </template>
   <template v-else-if="typeof value === 'boolean'">
     <span
-      class="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
+      class="inline-flex rounded-[var(--ch-admin-radius-sm)] px-1.5 py-0.5 text-xs font-medium"
       :class="
-        value ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        value
+          ? 'bg-[var(--ch-admin-success-bg)] text-[var(--ch-admin-success-text)]'
+          : 'bg-[var(--ch-admin-danger-bg)] text-[var(--ch-admin-danger-text)]'
       "
     >
       {{ value ? "Yes" : "No" }}
     </span>
   </template>
   <template v-else-if="typeof value === 'number'">
-    <span class="font-mono text-sm text-gray-600">
+    <span class="font-mono text-sm text-[var(--ch-admin-text-muted)]">
       {{ value.toLocaleString() }}
     </span>
   </template>
   <template v-else-if="typeof value === 'string'">
-    <span class="text-sm text-gray-700">{{ value }}</span>
+    <span class="text-sm text-[var(--ch-admin-text)]">{{ value }}</span>
   </template>
   <template v-else-if="Array.isArray(value)">
     <div class="space-y-1">
@@ -41,9 +43,13 @@ function isObject(value: unknown): value is Record<string, unknown> {
     </div>
   </template>
   <template v-else-if="isObject(value)">
-    <div class="ml-3 space-y-1 rounded border border-gray-100 bg-gray-50 p-2">
+    <div
+      class="ml-3 space-y-1 rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] p-2"
+    >
       <div v-for="(v, k) in value" :key="k" class="flex items-start gap-2">
-        <span class="mt-0.5 shrink-0 font-mono text-xs text-gray-400">
+        <span
+          class="mt-0.5 shrink-0 font-mono text-xs text-[var(--ch-admin-text-muted)]"
+        >
           {{ k }}:
         </span>
         <FieldValue :value="v" />
@@ -51,6 +57,8 @@ function isObject(value: unknown): value is Record<string, unknown> {
     </div>
   </template>
   <template v-else>
-    <span class="text-sm text-gray-400">{{ String(value) }}</span>
+    <span class="text-sm text-[var(--ch-admin-text-muted)]">{{
+      String(value)
+    }}</span>
   </template>
 </template>
