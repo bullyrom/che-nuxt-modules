@@ -65,7 +65,12 @@ const loadDebounced = useDebounceFn(
   SEARCH_DEBOUNCE_MS,
 )
 
-watch([searchQuery, queryValues], loadDebounced, { deep: true })
+watch(searchQuery, loadDebounced)
+
+// Filter/sort updates are already debounced inside QueryParametersMenu.
+watch(queryValues, () => {
+  loadCurrentEntity(true)
+})
 
 // eslint-disable-next-line init-declarations
 let lastFetchedUrl: string | undefined

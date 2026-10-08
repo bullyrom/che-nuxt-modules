@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue"
+import debounce from "lodash-es/debounce"
+import { computed, onBeforeUnmount, ref, watch } from "vue"
 
 import FieldRenderer from "./fields/FieldRenderer.vue"
 
@@ -7,6 +8,8 @@ import type {
   FieldDescriptor,
   PartialFieldComponentRegistry,
 } from "./fields/types"
+
+const INPUT_DEBOUNCE_MS = 300
 
 interface Properties {
   components?: PartialFieldComponentRegistry
@@ -21,17 +24,40 @@ const emit =
     (event: "update:modelValue", value: Record<string, unknown>) => void
   >()
 
+// Local copy so several inputs changed within the debounce window merge
+// instead of overwriting each other.
+const localValues = ref<Record<string, unknown>>({ ...properties.modelValue })
+
+watch(
+  () => properties.modelValue,
+  (value) => {
+    localValues.value = { ...value }
+  },
+  { deep: true },
+)
+
+const emitDebounced = debounce((value: Record<string, unknown>) => {
+  emit("update:modelValue", value)
+}, INPUT_DEBOUNCE_MS)
+
+onBeforeUnmount(() => {
+  emitDebounced.cancel()
+})
+
 const hasParameters = computed(
   () => properties.filters.length > 0 || properties.sorts.length > 0,
 )
 
-const hasValues = computed(() => Object.keys(properties.modelValue).length > 0)
+const hasValues = computed(() => Object.keys(localValues.value).length > 0)
 
 function updateValue(key: string, value: unknown) {
-  emit("update:modelValue", { ...properties.modelValue, [key]: value })
+  localValues.value = { ...localValues.value, [key]: value }
+  emitDebounced({ ...localValues.value })
 }
 
 function resetValues() {
+  emitDebounced.cancel()
+  localValues.value = {}
   emit("update:modelValue", {})
 }
 </script>
@@ -60,7 +86,7 @@ function resetValues() {
           :key="field.key"
           :components="properties.components"
           :field="field"
-          :model-value="properties.modelValue[field.key]"
+          :model-value="localValues[field.key]"
           @update:model-value="(value) => updateValue(field.key, value)"
         />
       </div>
@@ -78,7 +104,7 @@ function resetValues() {
           :key="field.key"
           :components="properties.components"
           :field="field"
-          :model-value="properties.modelValue[field.key]"
+          :model-value="localValues[field.key]"
           @update:model-value="(value) => updateValue(field.key, value)"
         />
       </div>

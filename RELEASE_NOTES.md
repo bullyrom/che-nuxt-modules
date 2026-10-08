@@ -1,5 +1,6 @@
 # Release notes
 
+- feat: OpenAPI admin GET-parameter filter/sort inputs are now debounced with lodash (trailing 300ms, edits within the window merged) so the list request fires once per pause; the separate search box keeps its own debounce
 - fix: nested object blocks in the OpenAPI admin have consistent internal padding at every nesting level (padding is applied per row/button instead of per nesting tier, so it never accumulates with depth)
 - feat: OpenAPI admin list panel now renders query-parameter menus (filters + a separate sorting group) derived from the list endpoint's OpenAPI `parameters`, with controls typed from their schemas (enum → select, number/boolean/string → matching input) applied to the list request
 - feat: admin query controls reuse the field system (`FieldDescriptor`/`FieldRenderer`); added `EnumField` so schema `enum` fields render as `<select>` in both query menus and create/edit forms
