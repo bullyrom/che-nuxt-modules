@@ -10,10 +10,14 @@ type Entry = [string, unknown]
 
 interface Properties {
   fieldKey: string
+  nested?: boolean
   value: unknown
 }
 
 const properties = defineProps<Properties>()
+
+const IDENTIFIER_KEYS = ["id", "pk", "name", "title", "slug"]
+const NESTED_PADDING = "px-1.5"
 
 const nestedEntries = computed<Entry[] | undefined>(() => {
   const { value } = properties
@@ -24,9 +28,42 @@ const nestedEntries = computed<Entry[] | undefined>(() => {
   return undefined
 })
 
+const buttonClasses = computed(() => {
+  const base =
+    "flex w-full items-center gap-2 py-1.5 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+  return properties.nested
+    ? `${base} ${NESTED_PADDING}`
+    : `${base} bg-transparent`
+})
+
+const rowClasses = computed(() =>
+  properties.nested
+    ? `flex items-start gap-2 ${NESTED_PADDING}`
+    : "flex items-start gap-2",
+)
+
+function isPrimitive(value: unknown): boolean {
+  return typeof value === "string" || typeof value === "number"
+}
+
+function readIdentifier(value: unknown): string | undefined {
+  if (!isRecordValue(value)) return undefined
+  for (const key of IDENTIFIER_KEYS) {
+    const candidate = value[key]
+    if (isPrimitive(candidate)) return `${key} ${String(candidate)}`
+  }
+  const scalar = Object.entries(value).find(([, candidate]) =>
+    isPrimitive(candidate),
+  )
+  return scalar ? `${scalar[0]} ${String(scalar[1])}` : undefined
+}
+
 const summary = computed(() => {
-  const count = nestedEntries.value?.length ?? 0
-  return Array.isArray(properties.value) ? `${count} items` : `${count} fields`
+  if (Array.isArray(properties.value)) {
+    return `массив ${properties.value.length}`
+  }
+  const identifier = readIdentifier(properties.value)
+  return identifier ? `объект ${identifier}` : "объект"
 })
 </script>
 
@@ -37,7 +74,8 @@ const summary = computed(() => {
   >
     <RollDown
       :title="properties.fieldKey"
-      button-classes="flex w-full items-center gap-2 px-3 py-2 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+      :button-classes="buttonClasses"
+      :unmount-on-close="true"
     >
       <template #button-content="{ open }">
         <span class="text-[var(--ch-admin-text-muted)]">{{
@@ -50,18 +88,19 @@ const summary = computed(() => {
           summary
         }}</span>
       </template>
-      <div class="space-y-1 border-t border-[var(--ch-admin-border)] py-1">
+      <div class="space-y-2 border-t border-[var(--ch-admin-border)] py-2">
         <RecordEntry
           v-for="[childKey, childValue] in nestedEntries"
           :key="childKey"
           :field-key="childKey"
+          :nested="true"
           :value="childValue"
         />
       </div>
     </RollDown>
   </div>
 
-  <div v-else class="flex items-start gap-2 px-3 py-1.5">
+  <div v-else :class="rowClasses">
     <span
       class="mt-0.5 shrink-0 rounded bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
     >
