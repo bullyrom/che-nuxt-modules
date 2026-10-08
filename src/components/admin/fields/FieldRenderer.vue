@@ -57,7 +57,7 @@ const resolvedComponent = computed(() =>
 const isObject = computed(() => properties.field.kind === "object")
 
 const OBJECT_BUTTON_CLASSES =
-  "flex w-full items-center gap-2 rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-2 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+  "flex w-full items-center gap-2 rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-2 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
 
 provide(FIELD_RENDER_CONTEXT, {
   get components() {

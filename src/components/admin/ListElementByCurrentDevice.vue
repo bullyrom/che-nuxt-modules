@@ -148,7 +148,7 @@ function handleSaved() {
       class="flex items-center justify-between border-b border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-4 py-3"
     >
       <button
-        class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-3 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
+        class="rounded border border-[var(--ch-admin-border)] px-3 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
         @click="adminPanelStore.clearEntity()"
       >
         &larr; All endpoints
@@ -156,7 +156,7 @@ function handleSaved() {
       <div class="flex items-center gap-3">
         <button
           v-if="adminPanelStore.activeEntity?.createOperation"
-          class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-accent)] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)]"
+          class="rounded bg-[var(--ch-admin-accent)] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)]"
           @click="showCreateForm = true"
         >
           + New
@@ -180,7 +180,7 @@ function handleSaved() {
         <input
           v-if="!usesSchemaSearch"
           v-model="searchQuery"
-          class="w-full rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-1.5 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
+          class="w-full rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-1.5 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
           placeholder="Search..."
           type="text"
         />
@@ -276,13 +276,13 @@ function handleSaved() {
       </p>
       <div class="mt-4 flex justify-center gap-3">
         <button
-          class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-4 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+          class="rounded border border-[var(--ch-admin-border)] px-4 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
           @click="deletingRecord = undefined"
         >
           Cancel
         </button>
         <button
-          class="rounded-[var(--ch-admin-radius-sm)] bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+          class="rounded bg-red-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
           @click="doDelete()"
         >
           Delete

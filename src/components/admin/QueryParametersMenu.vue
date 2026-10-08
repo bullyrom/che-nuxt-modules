@@ -47,7 +47,7 @@ function resetValues() {
         </h3>
         <button
           v-if="hasValues"
-          class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
+          class="rounded px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
           type="button"
           @click="resetValues()"
         >

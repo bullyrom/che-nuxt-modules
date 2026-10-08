@@ -28,7 +28,10 @@ export { default as FormErrors } from "@/components/admin/FormErrors.vue"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
 export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
 export { default as RawValue } from "@/components/admin/RawValue.vue"
-export type { AdminPanelTheme } from "@/components/admin/theme"
+export type {
+  AdminPanelTheme,
+  AdminPanelThemeSource,
+} from "@/components/admin/theme"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"
 export { default as ContainerMarginRight } from "@/components/ContainerMarginRight.vue"
 export {

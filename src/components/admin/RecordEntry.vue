@@ -33,7 +33,7 @@ const summary = computed(() => {
 <template>
   <div
     v-if="nestedEntries"
-    class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)]"
+    class="rounded border border-[var(--ch-admin-border)]"
   >
     <RollDown
       :title="properties.fieldKey"
@@ -63,7 +63,7 @@ const summary = computed(() => {
 
   <div v-else class="flex items-start gap-2">
     <span
-      class="mt-0.5 shrink-0 rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
+      class="mt-0.5 shrink-0 rounded bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
     >
       {{ properties.fieldKey }}
     </span>

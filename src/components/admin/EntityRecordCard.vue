@@ -27,7 +27,7 @@ function getRecordId(record: unknown): unknown {
 
 <template>
   <div
-    class="rounded-[var(--ch-admin-radius-lg)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
+    class="rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
   >
     <div class="mb-2 flex items-center justify-between">
       <span class="text-xs font-medium text-[var(--ch-admin-text-muted)]"
@@ -35,14 +35,14 @@ function getRecordId(record: unknown): unknown {
       >
       <div class="flex items-center gap-1">
         <button
-          class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
+          class="rounded px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
           title="Edit"
           @click="emit('edit', properties.item)"
         >
           ✎
         </button>
         <button
-          class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-danger-bg)] hover:text-[var(--ch-admin-danger-text)]"
+          class="rounded px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-danger-bg)] hover:text-[var(--ch-admin-danger-text)]"
           title="Delete"
           @click="emit('delete', properties.item)"
         >
@@ -51,7 +51,7 @@ function getRecordId(record: unknown): unknown {
       </div>
       <span
         v-if="getRecordId(properties.item) !== undefined"
-        class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-2 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
+        class="rounded bg-[var(--ch-admin-bg)] px-2 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
       >
         ID: {{ getRecordId(properties.item) }}
       </span>

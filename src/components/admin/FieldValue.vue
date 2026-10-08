@@ -21,7 +21,7 @@ const displayString = computed(() => formatRawValue(properties.value))
   </template>
   <template v-else-if="typeof value === 'boolean'">
     <span
-      class="inline-flex rounded-[var(--ch-admin-radius-sm)] px-1.5 py-0.5 text-xs font-medium"
+      class="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
       :class="
         value
           ? 'bg-[var(--ch-admin-success-bg)] text-[var(--ch-admin-success-text)]'

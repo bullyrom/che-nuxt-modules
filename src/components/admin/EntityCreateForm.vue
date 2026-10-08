@@ -150,7 +150,7 @@ function handleClose() {
     @click.self="handleClose()"
   >
     <div
-      class="w-full max-w-lg rounded-[var(--ch-admin-radius-lg)] bg-[var(--ch-admin-surface)] text-[var(--ch-admin-text)] shadow-xl"
+      class="w-full max-w-lg rounded-xl bg-[var(--ch-admin-surface)] text-[var(--ch-admin-text)] shadow-xl"
     >
       <div
         class="flex items-center justify-between border-b border-[var(--ch-admin-border)] px-6 py-4"
@@ -198,14 +198,14 @@ function handleClose() {
           class="mt-6 flex justify-end gap-3 border-t border-[var(--ch-admin-border)] pt-4"
         >
           <button
-            class="rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] px-5 py-2 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+            class="rounded border border-[var(--ch-admin-border)] px-5 py-2 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
             type="button"
             @click="handleClose()"
           >
             Cancel
           </button>
           <button
-            class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-accent)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)] disabled:opacity-50"
+            class="rounded bg-[var(--ch-admin-accent)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)] disabled:opacity-50"
             :disabled="sendFormStatus === 'pending'"
             type="submit"
           >

@@ -56,7 +56,7 @@ const properties = defineProps<Properties>()
             <div class="flex items-center gap-2">
               <span
                 v-if="entity.listOperation"
-                class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-success-bg)] px-1.5 py-0.5 font-mono text-xs font-medium text-[var(--ch-admin-success-text)]"
+                class="rounded bg-[var(--ch-admin-success-bg)] px-1.5 py-0.5 font-mono text-xs font-medium text-[var(--ch-admin-success-text)]"
               >
                 {{ entity.listOperation ? "GET" : "" }}
               </span>

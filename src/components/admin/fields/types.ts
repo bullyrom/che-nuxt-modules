@@ -1,6 +1,6 @@
-import type { AdminPanelTheme } from "../theme"
+import type { AdminPanelThemeSource } from "../theme"
 import type { OpenAPIV3 } from "openapi-types"
-import type { Component, MaybeRef } from "vue"
+import type { Component } from "vue"
 
 type FieldKind =
   | "array"
@@ -85,10 +85,11 @@ interface AdminPanelConfig {
   hooks?: AdminPanelHooks
   /**
    * Reactive admin theme supplied by the host application. Accepts a plain
-   * `"dark" | "light"` value or a ref/computed so the panel can follow the
-   * app's color mode without the library depending on `@nuxtjs/color-mode`.
+   * `"dark" | "light"` value, a ref/computed or a getter so the panel can
+   * follow the app's color mode without the library depending on
+   * `@nuxtjs/color-mode`.
    */
-  theme?: MaybeRef<AdminPanelTheme>
+  theme?: AdminPanelThemeSource
 }
 
 export type {
