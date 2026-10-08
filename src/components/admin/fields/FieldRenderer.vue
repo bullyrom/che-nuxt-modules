@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, inject, provide } from "vue"
 
+import RollDown from "../../RollDown.vue"
+
 import {
   FIELD_RENDER_CONTEXT,
   isFieldOverride,
@@ -52,6 +54,11 @@ const resolvedComponent = computed(() =>
   }),
 )
 
+const isObject = computed(() => properties.field.kind === "object")
+
+const OBJECT_BUTTON_CLASSES =
+  "flex w-full items-center gap-2 rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-2 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+
 provide(FIELD_RENDER_CONTEXT, {
   get components() {
     return effectiveComponents.value
@@ -67,8 +74,23 @@ function updateValue(value: unknown) {
 </script>
 
 <template>
-  <div>
+  <component
+    :is="isObject ? RollDown : 'div'"
+    :button-classes="isObject ? OBJECT_BUTTON_CLASSES : undefined"
+    :title="isObject ? properties.field.key : undefined"
+  >
+    <template v-if="isObject" #button-content="{ open }">
+      <span class="text-[var(--ch-admin-text-muted)]">{{
+        open ? "▾" : "▸"
+      }}</span>
+      <span
+        class="font-mono text-xs font-medium text-[var(--ch-admin-text)]"
+        v-text="properties.field.key"
+      />
+    </template>
+
     <label
+      v-if="!isObject"
       class="mb-1 block text-xs font-medium tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
     >
       {{ properties.field.key }}
@@ -87,5 +109,5 @@ function updateValue(value: unknown) {
     >
       {{ properties.field.description }}
     </p>
-  </div>
+  </component>
 </template>

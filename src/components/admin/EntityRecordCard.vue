@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import FieldValue from "./FieldValue.vue"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
+import RecordEntry from "./RecordEntry.vue"
 
 interface Properties {
   index: number
@@ -61,18 +61,12 @@ function getRecordId(record: unknown): unknown {
       :value="properties.item"
     />
     <div v-else class="space-y-2">
-      <div
+      <RecordEntry
         v-for="key in getObjectKeys(properties.item)"
         :key="key"
-        class="flex items-start gap-2"
-      >
-        <span
-          class="mt-0.5 shrink-0 rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
-        >
-          {{ key }}
-        </span>
-        <FieldValue :value="getObjectValue(properties.item, key)" />
-      </div>
+        :field-key="key"
+        :value="getObjectValue(properties.item, key)"
+      />
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 # Release notes
 
+- feat: nested objects in the OpenAPI admin (list records and edit form) are now rendered as collapsed blocks with the library `RollDown` button — each nested object expands in place under its own key with no cumulative horizontal indent, recursively at any depth
 - fix: OpenAPI admin never renders blank output — non-list responses (e.g. `/api/v1/schema/`) and unrenderable objects/arrays are shown as pretty, truncated JSON, while long/binary strings are truncated; create forms fall back to the raw schema when no fields can be derived (`usePaginatedListApi` now exposes `rawData`)
 - fix: `usePaginatedListApi` rewrites `next`/`previous` to the list request origin, so a backend behind a TLS proxy (DRF emits `http://`) no longer causes mixed-content failures on pagination
 - fix: `usePaginatedListApi` now also accepts a plain array response (non-paginated endpoints), so the admin list no longer renders empty
