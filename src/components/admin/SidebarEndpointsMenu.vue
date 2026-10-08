@@ -53,15 +53,7 @@ const properties = defineProps<Properties>()
             }"
             @click="adminPanelStore.activeEntity = entity"
           >
-            <div class="flex items-center gap-2">
-              <span
-                v-if="entity.listOperation"
-                class="rounded bg-[var(--ch-admin-success-bg)] px-1.5 py-0.5 font-mono text-xs font-medium text-[var(--ch-admin-success-text)]"
-              >
-                {{ entity.listOperation ? "GET" : "" }}
-              </span>
-              {{ entity.entityName }}
-            </div>
+            {{ entity.entityName }}
           </button>
         </div>
       </div>
