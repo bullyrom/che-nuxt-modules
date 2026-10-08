@@ -1,5 +1,6 @@
 # Release notes
 
+- fix: switching entities in the OpenAPI admin now shows old records → loader → new records (previously the stale cards stayed under a pagination spinner and the entity/filter reset fired a duplicate request); the previous entity records are cleared on switch and the programmatic search/filter reset no longer schedules an extra fetch
 - feat: mobile OpenAPI admin layout — the endpoints menu fills the screen until an entity is picked, then the entity list takes over (the `← All endpoints` button returns to the menu); the `isMobile` prop still overrides the breakpoint auto-detection (`md`)
 - feat: add a single-record detail view to the OpenAPI admin — a `View` button on each list card opens the full record fetched from the entity's GET detail endpoint (with a back button and a fallback to the list row when no detail endpoint exists)
 - fix: nested object cards in the OpenAPI admin add a minimal (6px) padding only inside child cards, restoring the main record card layout; nested `RollDown`s now drop their subtree from the DOM after collapsing (deep trees no longer lag) and the header shows an identifier (`object id <N>`, or another field when no id) instead of a field count

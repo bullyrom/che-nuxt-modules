@@ -1,5 +1,5 @@
-import { useDebounceFn } from "@vueuse/core"
-import { computed, ref, watch } from "vue"
+import debounce from "lodash-es/debounce"
+import { computed, nextTick, ref, watch } from "vue"
 
 import { useApiDelete, usePaginatedListApi } from "../../composables/api"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
@@ -29,6 +29,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     fetchDataStatus,
     fetchNextPage,
     rawData,
+    reset: resetEntityRecords,
     showNextPageLoader,
   } = usePaginatedListApi<Record<string, unknown>[]>({ url: "" })
 
@@ -54,15 +55,21 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     return rawData.value
   })
 
-  const loadDebounced = useDebounceFn(
-    () => loadCurrentEntity(true),
-    SEARCH_DEBOUNCE_MS,
-  )
+  // While switching entities the search and filter state is cleared
+  // programmatically; those writes must not schedule an extra list request —
+  // the switch handler already triggers exactly one reload.
+  const isSwitchingEntity = ref(false)
+
+  const loadDebounced = debounce(() => {
+    if (isSwitchingEntity.value) return
+    loadCurrentEntity(true)
+  }, SEARCH_DEBOUNCE_MS)
 
   watch(searchQuery, loadDebounced)
 
   // Filter/sort updates are already debounced inside QueryParametersMenu.
   watch(queryValues, () => {
+    if (isSwitchingEntity.value) return
     loadCurrentEntity(true)
   })
 
@@ -128,8 +135,16 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     () => adminPanelStore.activeEntity,
     () => {
       viewingRecord.value = undefined
+      isSwitchingEntity.value = true
+      loadDebounced.cancel()
+      // Drop the previous entity records so the list shows the loader instead
+      // of stale cards while the new entity is loading.
+      resetEntityRecords()
       resetQuery()
-      loadCurrentEntity()
+      loadCurrentEntity(true)
+      nextTick(() => {
+        isSwitchingEntity.value = false
+      })
     },
   )
 
