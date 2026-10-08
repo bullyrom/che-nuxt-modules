@@ -33,11 +33,11 @@ const summary = computed(() => {
 <template>
   <div
     v-if="nestedEntries"
-    class="rounded border border-[var(--ch-admin-border)]"
+    class="overflow-hidden rounded border border-[var(--ch-admin-border)]"
   >
     <RollDown
       :title="properties.fieldKey"
-      button-classes="flex w-full items-center gap-2 bg-transparent py-1.5 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+      button-classes="flex w-full items-center gap-2 px-3 py-2 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
     >
       <template #button-content="{ open }">
         <span class="text-[var(--ch-admin-text-muted)]">{{
@@ -50,7 +50,7 @@ const summary = computed(() => {
           summary
         }}</span>
       </template>
-      <div class="space-y-2 border-t border-[var(--ch-admin-border)] py-2">
+      <div class="space-y-1 border-t border-[var(--ch-admin-border)] py-1">
         <RecordEntry
           v-for="[childKey, childValue] in nestedEntries"
           :key="childKey"
@@ -61,7 +61,7 @@ const summary = computed(() => {
     </RollDown>
   </div>
 
-  <div v-else class="flex items-start gap-2">
+  <div v-else class="flex items-start gap-2 px-3 py-1.5">
     <span
       class="mt-0.5 shrink-0 rounded bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
     >

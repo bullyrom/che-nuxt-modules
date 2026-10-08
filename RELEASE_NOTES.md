@@ -1,5 +1,6 @@
 # Release notes
 
+- fix: nested object blocks in the OpenAPI admin have consistent internal padding at every nesting level (padding is applied per row/button instead of per nesting tier, so it never accumulates with depth)
 - feat: OpenAPI admin list panel now renders query-parameter menus (filters + a separate sorting group) derived from the list endpoint's OpenAPI `parameters`, with controls typed from their schemas (enum → select, number/boolean/string → matching input) applied to the list request
 - feat: admin query controls reuse the field system (`FieldDescriptor`/`FieldRenderer`); added `EnumField` so schema `enum` fields render as `<select>` in both query menus and create/edit forms
 - feat: the admin list no longer hardcodes `search` — it uses the schema-declared `search` query parameter when the endpoint provides one, keeping the standalone search box only as a fallback

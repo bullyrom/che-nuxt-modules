@@ -26,6 +26,7 @@ function updateChild(key: string, value: unknown) {
       :key="child.key"
       :field="child"
       :model-value="properties.modelValue[child.key]"
+      :nested="true"
       @update:model-value="(value) => updateChild(child.key, value)"
     />
   </div>

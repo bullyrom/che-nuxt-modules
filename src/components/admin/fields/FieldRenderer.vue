@@ -19,6 +19,7 @@ interface Properties {
   components?: PartialFieldComponentRegistry
   field: FieldDescriptor
   modelValue: unknown
+  nested?: boolean
   override?: FieldOverrideNode
 }
 
@@ -77,6 +78,7 @@ function updateValue(value: unknown) {
   <component
     :is="isObject ? RollDown : 'div'"
     :button-classes="isObject ? OBJECT_BUTTON_CLASSES : undefined"
+    :class="!isObject && properties.nested ? 'px-3' : undefined"
     :title="isObject ? properties.field.key : undefined"
   >
     <template v-if="isObject" #button-content="{ open }">
@@ -106,6 +108,7 @@ function updateValue(value: unknown) {
     <p
       v-if="properties.field.description"
       class="mt-1 text-xs text-[var(--ch-admin-text-muted)]"
+      :class="isObject ? 'px-3' : undefined"
     >
       {{ properties.field.description }}
     </p>
