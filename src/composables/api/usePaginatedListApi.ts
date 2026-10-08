@@ -148,6 +148,7 @@ export function usePaginatedListApi<
     fetchNextPage,
     nextPageUrl,
     previousPageUrl,
+    rawData: paginatedData,
     reset,
     showFooter,
     showNextPageLoader,

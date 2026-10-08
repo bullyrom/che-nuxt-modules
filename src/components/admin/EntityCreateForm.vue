@@ -14,6 +14,7 @@ import {
   serializeRecord,
 } from "./fields/registry"
 import FormErrors from "./FormErrors.vue"
+import RawValue from "./RawValue.vue"
 
 import type { AdminPanelConfig } from "./fields/types"
 
@@ -175,6 +176,13 @@ function handleClose() {
             :field="field"
             :override="fieldOverrides?.[field.key]"
           />
+
+          <div v-if="schemaFields.length === 0" class="space-y-2">
+            <p class="text-xs text-[var(--ch-admin-text-muted)]">
+              This schema cannot be rendered as a form. Raw schema:
+            </p>
+            <RawValue :value="adminPanelStore.activeEntityCreateSchema" />
+          </div>
         </div>
 
         <FormErrors :errors="formErrors" class="mt-4" />

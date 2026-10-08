@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { computed } from "vue"
+
+import { formatRawValue } from "./rawValue"
+import RawValue from "./RawValue.vue"
+
 interface Properties {
   value: unknown
 }
-defineProps<Properties>()
+
+const properties = defineProps<Properties>()
 
 defineOptions({ name: "FieldValue" })
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value)
-}
+const displayString = computed(() => formatRawValue(properties.value))
 </script>
 
 <template>
@@ -33,32 +37,9 @@ function isObject(value: unknown): value is Record<string, unknown> {
     </span>
   </template>
   <template v-else-if="typeof value === 'string'">
-    <span class="text-sm text-[var(--ch-admin-text)]">{{ value }}</span>
-  </template>
-  <template v-else-if="Array.isArray(value)">
-    <div class="space-y-1">
-      <div v-for="(el, i) in value" :key="i" class="ml-3">
-        <FieldValue :value="el" />
-      </div>
-    </div>
-  </template>
-  <template v-else-if="isObject(value)">
-    <div
-      class="ml-3 space-y-1 rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] p-2"
-    >
-      <div v-for="(v, k) in value" :key="k" class="flex items-start gap-2">
-        <span
-          class="mt-0.5 shrink-0 font-mono text-xs text-[var(--ch-admin-text-muted)]"
-        >
-          {{ k }}:
-        </span>
-        <FieldValue :value="v" />
-      </div>
-    </div>
-  </template>
-  <template v-else>
-    <span class="text-sm text-[var(--ch-admin-text-muted)]">{{
-      String(value)
+    <span class="text-sm text-[var(--ch-admin-text)]">{{
+      displayString
     }}</span>
   </template>
+  <RawValue v-else :value="value" />
 </template>

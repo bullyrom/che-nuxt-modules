@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn } from "@vueuse/core"
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 
 import { useApiDelete, usePaginatedListApi } from "../../composables/api"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
@@ -9,7 +9,9 @@ import MainLoader from "../MainLoader.vue"
 import Modal from "../Modal.vue"
 
 import EntityCreateForm from "./EntityCreateForm.vue"
-import FieldValue from "./FieldValue.vue"
+import EntityRecordCard from "./EntityRecordCard.vue"
+import { isRecordValue } from "./rawValue"
+import RawValue from "./RawValue.vue"
 
 import type { AdminPanelConfig } from "./fields/types"
 
@@ -27,6 +29,7 @@ const {
   fetchData: fetchEntityRecords,
   fetchDataStatus,
   fetchNextPage,
+  rawData,
   showNextPageLoader,
 } = usePaginatedListApi<Record<string, unknown>>({ url: "" })
 
@@ -36,6 +39,14 @@ const showCreateForm = ref(false)
 const editingRecord = ref<Record<string, unknown> | undefined>(undefined)
 const deletingRecord = ref<Record<string, unknown> | undefined>(undefined)
 const searchQuery = ref("")
+
+// A successful response that is not a paginated list (e.g. the OpenAPI schema
+// endpoint) has no `results`, so it is shown raw instead of rendering nothing.
+const fallbackValue = computed(() => {
+  if (fetchDataStatus.value !== "success") return undefined
+  if (entityRecords.value !== undefined) return undefined
+  return rawData.value
+})
 
 const SEARCH_DEBOUNCE_MS = 300
 
@@ -99,9 +110,14 @@ async function doDelete() {
   loadCurrentEntity(true)
 }
 
-function startEdit(record: Record<string, unknown>) {
+function startEdit(record: unknown) {
+  if (!isRecordValue(record)) return
   editingRecord.value = record
   showCreateForm.value = true
+}
+
+function startDelete(record: unknown) {
+  if (isRecordValue(record)) deletingRecord.value = record
 }
 
 function closeCreateForm() {
@@ -113,10 +129,6 @@ function handleSaved() {
   closeCreateForm()
   lastFetchedUrl = undefined
   loadCurrentEntity(true)
-}
-
-function getObjectKeys(object: Record<string, unknown>): string[] {
-  return Object.keys(object)
 }
 </script>
 
@@ -180,6 +192,13 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
         Failed to load data
       </div>
 
+      <template v-else-if="fallbackValue !== undefined">
+        <div class="mb-3 text-xs text-[var(--ch-admin-text-muted)]">
+          This endpoint does not return a list — showing the raw response.
+        </div>
+        <RawValue :value="fallbackValue" />
+      </template>
+
       <template v-else-if="entityRecords !== undefined">
         <div
           v-if="entityRecords.length === 0"
@@ -197,54 +216,21 @@ function getObjectKeys(object: Record<string, unknown>): string[] {
           list-class="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3"
           @fetch-next-page="fetchNextPage()"
         >
-          <div
-            class="rounded-[var(--ch-admin-radius-lg)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
-          >
-            <div class="mb-2 flex items-center justify-between">
-              <span
-                class="text-xs font-medium text-[var(--ch-admin-text-muted)]"
-                >#{{ index + 1 }}</span
-              >
-              <div class="flex items-center gap-1">
-                <button
-                  class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
-                  title="Edit"
-                  @click="startEdit(item)"
-                >
-                  ✎
-                </button>
-                <button
-                  class="rounded-[var(--ch-admin-radius-sm)] px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-danger-bg)] hover:text-[var(--ch-admin-danger-text)]"
-                  title="Delete"
-                  @click="deletingRecord = item"
-                >
-                  ✕
-                </button>
-              </div>
-              <span
-                v-if="item.id !== undefined"
-                class="rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-2 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
-              >
-                ID: {{ item.id }}
-              </span>
-            </div>
-            <div class="space-y-2">
-              <div
-                v-for="key in getObjectKeys(item)"
-                :key="key"
-                class="flex items-start gap-2"
-              >
-                <span
-                  class="mt-0.5 shrink-0 rounded-[var(--ch-admin-radius-sm)] bg-[var(--ch-admin-bg)] px-1.5 py-0.5 font-mono text-xs text-[var(--ch-admin-text-muted)]"
-                >
-                  {{ key }}
-                </span>
-                <FieldValue :value="item[key]" />
-              </div>
-            </div>
-          </div>
+          <EntityRecordCard
+            :index="index"
+            :item="item"
+            @delete="startDelete"
+            @edit="startEdit"
+          />
         </LazyLoadList>
       </template>
+
+      <div
+        v-else
+        class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-text-muted)]"
+      >
+        No data
+      </div>
     </div>
 
     <div

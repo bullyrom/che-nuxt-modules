@@ -25,6 +25,8 @@ export type {
   PartialFieldComponentRegistry,
 } from "@/components/admin/fields/types"
 export { default as FormErrors } from "@/components/admin/FormErrors.vue"
+export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
+export { default as RawValue } from "@/components/admin/RawValue.vue"
 export type { AdminPanelTheme } from "@/components/admin/theme"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"
 export { default as ContainerMarginRight } from "@/components/ContainerMarginRight.vue"

@@ -1,5 +1,6 @@
 # Release notes
 
+- fix: OpenAPI admin never renders blank output — non-list responses (e.g. `/api/v1/schema/`) and unrenderable objects/arrays are shown as pretty, truncated JSON, while long/binary strings are truncated; create forms fall back to the raw schema when no fields can be derived (`usePaginatedListApi` now exposes `rawData`)
 - fix: `usePaginatedListApi` rewrites `next`/`previous` to the list request origin, so a backend behind a TLS proxy (DRF emits `http://`) no longer causes mixed-content failures on pagination
 - fix: `usePaginatedListApi` now also accepts a plain array response (non-paginated endpoints), so the admin list no longer renders empty
 - fix: `useCallBeforeLeaveFromPage(s)` called `isString` without importing it (runtime `ReferenceError`)
