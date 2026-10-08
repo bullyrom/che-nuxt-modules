@@ -205,7 +205,7 @@ function handleClose() {
             Cancel
           </button>
           <button
-            class="rounded bg-[var(--ch-admin-accent)] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)] disabled:opacity-50"
+            class="rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-5 py-2 text-sm font-medium text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] disabled:opacity-50"
             :disabled="sendFormStatus === 'pending'"
             type="submit"
           >

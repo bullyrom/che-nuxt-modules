@@ -45,7 +45,7 @@ const themeStyle = computed<Record<string, string>>(() =>
 useRender(() =>
   isReady.value ? (
     <div
-      class="ch-admin flex h-[calc(100vh-56px)] bg-[var(--ch-admin-bg)] text-[var(--ch-admin-text)]"
+      class="ch-admin flex h-[calc(100vh-56px)] gap-3 bg-[var(--ch-admin-bg)] p-3 text-[var(--ch-admin-text)]"
       data-ch-admin-theme={activeTheme.value}
       style={themeStyle.value}
     >

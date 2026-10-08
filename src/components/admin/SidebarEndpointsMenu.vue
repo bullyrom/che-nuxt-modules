@@ -18,7 +18,7 @@ const properties = defineProps<Properties>()
 
 <template>
   <div
-    class="flex h-full flex-col border-r border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
+    class="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
     :class="properties.isMobile ? 'w-full' : 'w-64'"
   >
     <div class="border-b border-[var(--ch-admin-border)] px-4 py-3">
@@ -46,7 +46,7 @@ const properties = defineProps<Properties>()
             :key="entity.entityName"
             class="block w-full border-b border-[var(--ch-admin-border)] px-4 py-2.5 text-left text-sm text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
             :class="{
-              'border-l-2 border-l-[var(--ch-admin-accent)] bg-[var(--ch-admin-info-bg)] font-medium text-[var(--ch-admin-accent)]':
+              'bg-[var(--ch-admin-surface-hover)] font-medium text-[var(--ch-admin-text)]':
                 adminPanelStore.activeEntity?.entityName ===
                   entity.entityName &&
                 adminPanelStore.activeEntity?.namespace === entity.namespace,

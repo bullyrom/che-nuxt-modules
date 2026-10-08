@@ -146,7 +146,7 @@ function handleSaved() {
 
 <template>
   <div
-    class="flex h-full flex-1 flex-col overflow-y-auto bg-[var(--ch-admin-bg)]"
+    class="flex h-full flex-1 flex-col overflow-x-hidden overflow-y-auto rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
   >
     <div
       v-if="adminPanelStore.activeEntity"
@@ -161,7 +161,7 @@ function handleSaved() {
       <div class="flex items-center gap-3">
         <button
           v-if="adminPanelStore.activeEntity?.createOperation"
-          class="rounded bg-[var(--ch-admin-accent)] px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[var(--ch-admin-accent-hover)]"
+          class="rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-1.5 text-sm font-medium text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
           @click="showCreateForm = true"
         >
           + New

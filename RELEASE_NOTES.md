@@ -43,3 +43,5 @@
 - feat: `AdminPanelConfig.theme` accepts a reactive value (`ref`/`computed`/getter) supplied by the host app; the library no longer needs `@nuxtjs/color-mode`
 - fix: admin theme now reacts to the reactive `theme` source (incl. a top-level `theme` prop) and unknown values fall back to dark instead of dropping the palette
 - fix: admin corner radii restored with the standard Tailwind scale (`rounded` 4 / `rounded-lg` 8 / `rounded-xl` 12) so they render regardless of arbitrary-value generation
+- style: OpenAPI admin working area and entity sidebar are now bordered, rounded panels floating on the page background
+- style: admin action buttons use the neutral dark-surface style (border + page surface) instead of the blue accent, matching the front sidebar menu
