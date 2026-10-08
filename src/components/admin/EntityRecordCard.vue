@@ -9,7 +9,8 @@ interface Properties {
 }
 
 const properties = defineProps<Properties>()
-const emit = defineEmits<(event: "delete" | "edit", item: unknown) => void>()
+const emit =
+  defineEmits<(event: "delete" | "edit" | "view", item: unknown) => void>()
 
 function getObjectKeys(value: unknown): string[] {
   return isRecordValue(value) ? Object.keys(value) : []
@@ -34,6 +35,13 @@ function getRecordId(record: unknown): unknown {
         >#{{ properties.index + 1 }}</span
       >
       <div class="flex items-center gap-1">
+        <button
+          class="rounded px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
+          title="View"
+          @click="emit('view', properties.item)"
+        >
+          View
+        </button>
         <button
           class="rounded px-2 py-0.5 text-xs text-[var(--ch-admin-text-muted)] transition-colors hover:bg-[var(--ch-admin-surface-hover)] hover:text-[var(--ch-admin-text)]"
           title="Edit"
