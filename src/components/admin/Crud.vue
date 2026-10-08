@@ -1,4 +1,5 @@
 <script setup lang="tsx">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core"
 // eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed, onMounted, ref } from "vue"
@@ -32,7 +33,27 @@ onMounted(() => {
 const adminPanelStore = useAdminPanelStore()
 adminPanelStore.setSchema(properties.apiSchema)
 
-const { filteredEntitiesByNamespace } = storeToRefs(adminPanelStore)
+const { activeEntity, filteredEntitiesByNamespace } =
+  storeToRefs(adminPanelStore)
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const isSmallScreen = breakpoints.smaller("md")
+
+// On a mobile layout the menu and the entity list never share the screen: the
+// menu fills the viewport until an entity is picked, then the list takes over.
+const isMobileLayout = computed(() =>
+  properties.isMobile === undefined
+    ? isSmallScreen.value
+    : properties.isMobile,
+)
+
+const showEndpointsMenu = computed(
+  () => !isMobileLayout.value || activeEntity.value === undefined,
+)
+
+const showEntityList = computed(
+  () => !isMobileLayout.value || activeEntity.value !== undefined,
+)
 
 const activeTheme = computed(() =>
   resolveAdminTheme(properties.theme ?? properties.config?.theme),
@@ -49,16 +70,20 @@ useRender(() =>
       data-ch-admin-theme={activeTheme.value}
       style={themeStyle.value}
     >
-      <SidebarEndpointsMenu
-        filteredEntitiesByNamespace={filteredEntitiesByNamespace.value}
-        isMobile={properties.isMobile}
-      />
+      {showEndpointsMenu.value ? (
+        <SidebarEndpointsMenu
+          filteredEntitiesByNamespace={filteredEntitiesByNamespace.value}
+          isMobile={isMobileLayout.value}
+        />
+      ) : undefined}
 
-      <ListElementByCurrentDevice
-        baseUrl={properties.baseUrl}
-        config={properties.config}
-        isMobile={properties.isMobile}
-      />
+      {showEntityList.value ? (
+        <ListElementByCurrentDevice
+          baseUrl={properties.baseUrl}
+          config={properties.config}
+          isMobile={isMobileLayout.value}
+        />
+      ) : undefined}
     </div>
   ) : undefined,
 )
