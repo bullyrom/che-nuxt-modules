@@ -7,8 +7,10 @@ import {
   isReferenceObject,
 } from "../stores/adminPanel/apiTypes"
 import { parseEntities } from "../stores/adminPanel/parser"
+import { extractListQueryParameters } from "../stores/adminPanel/queryParameters"
 
 import type { EntityOperationTypes } from "../stores/adminPanel/apiTypes"
+import type { ListQueryParameters } from "../stores/adminPanel/queryParameters"
 import type {
   MyOpenAPIDocument,
   ParsedEntity,
@@ -77,6 +79,15 @@ export function useAdminPanel() {
   const activeEntityOperationTypes = computed<EntityOperationTypes>(() => {
     if (!activeEntity.value) return {}
     return getEntityOperationTypes(activeEntity.value)
+  })
+
+  // Getter for the list endpoint query parameters (filters + sorting)
+  const activeEntityListQueryParameters = computed<ListQueryParameters>(() => {
+    if (!schema.value) return { filters: [], sorts: [] }
+    return extractListQueryParameters(
+      activeEntity.value?.listOperation,
+      schema.value,
+    )
   })
 
   // Function for resolving schema references
@@ -177,6 +188,7 @@ export function useAdminPanel() {
     activeEntityCreateSchema,
     activeEntityDeleteSchema,
     activeEntityDetailSchema,
+    activeEntityListQueryParameters,
     activeEntityListSchema,
     activeEntityListSchemaName,
     activeEntityOperationTypes,

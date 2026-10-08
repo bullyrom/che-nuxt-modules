@@ -1,3 +1,4 @@
+import EnumField from "./defaultComponents/EnumField.vue"
 import { DEFAULT_FIELD_COMPONENTS, TextareaField } from "./defaults"
 
 import type {
@@ -183,6 +184,10 @@ export function resolveFieldComponent(
 
   const customComponent = options.components?.[field.kind]
   if (customComponent) return customComponent as FieldComponent<unknown>
+
+  if (field.schema?.enum && field.schema.enum.length > 0) {
+    return EnumField as FieldComponent<unknown>
+  }
 
   if (field.kind === "string" && field.multiline) {
     return TextareaField as FieldComponent<unknown>

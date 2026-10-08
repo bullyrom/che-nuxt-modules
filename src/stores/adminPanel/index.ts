@@ -11,6 +11,8 @@ export const useAdminPanelStore = defineStore("admin-panel", () => {
     activeEntityCreateSchema: adminPanel.activeEntityCreateSchema,
     activeEntityDeleteSchema: adminPanel.activeEntityDeleteSchema,
     activeEntityDetailSchema: adminPanel.activeEntityDetailSchema,
+    activeEntityListQueryParameters:
+      adminPanel.activeEntityListQueryParameters,
     activeEntityListSchema: adminPanel.activeEntityListSchema,
     activeEntityOperationTypes: adminPanel.activeEntityOperationTypes,
     activeEntityUpdateSchema: adminPanel.activeEntityUpdateSchema,

@@ -1,5 +1,9 @@
 # Release notes
 
+- feat: OpenAPI admin list panel now renders query-parameter menus (filters + a separate sorting group) derived from the list endpoint's OpenAPI `parameters`, with controls typed from their schemas (enum → select, number/boolean/string → matching input) applied to the list request
+- feat: admin query controls reuse the field system (`FieldDescriptor`/`FieldRenderer`); added `EnumField` so schema `enum` fields render as `<select>` in both query menus and create/edit forms
+- feat: the admin list no longer hardcodes `search` — it uses the schema-declared `search` query parameter when the endpoint provides one, keeping the standalone search box only as a fallback
+- chore: enable `@vitejs/plugin-vue` in the vitest config and add unit tests for list query-parameter extraction and query building
 - feat: nested objects in the OpenAPI admin (list records and edit form) are now rendered as collapsed blocks with the library `RollDown` button — each nested object expands in place under its own key with no cumulative horizontal indent, recursively at any depth
 - fix: OpenAPI admin never renders blank output — non-list responses (e.g. `/api/v1/schema/`) and unrenderable objects/arrays are shown as pretty, truncated JSON, while long/binary strings are truncated; create forms fall back to the raw schema when no fields can be derived (`usePaginatedListApi` now exposes `rawData`)
 - fix: `usePaginatedListApi` rewrites `next`/`previous` to the list request origin, so a backend behind a TLS proxy (DRF emits `http://`) no longer causes mixed-content failures on pagination

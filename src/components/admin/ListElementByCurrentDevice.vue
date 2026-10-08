@@ -10,8 +10,10 @@ import Modal from "../Modal.vue"
 
 import EntityCreateForm from "./EntityCreateForm.vue"
 import EntityRecordCard from "./EntityRecordCard.vue"
+import QueryParametersMenu from "./QueryParametersMenu.vue"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
+import { useListQueryParameters } from "./useListQueryParameters"
 
 import type { AdminPanelConfig } from "./fields/types"
 
@@ -38,7 +40,15 @@ const { destroy: destroyRecord } = useApiDelete({ url: "" })
 const showCreateForm = ref(false)
 const editingRecord = ref<Record<string, unknown> | undefined>(undefined)
 const deletingRecord = ref<Record<string, unknown> | undefined>(undefined)
-const searchQuery = ref("")
+
+const {
+  listQueryParameters,
+  queryValues,
+  requestQuery,
+  reset: resetQuery,
+  searchQuery,
+  usesSchemaSearch,
+} = useListQueryParameters()
 
 // A successful response that is not a paginated list (e.g. the OpenAPI schema
 // endpoint) has no `results`, so it is shown raw instead of rendering nothing.
@@ -55,7 +65,7 @@ const loadDebounced = useDebounceFn(
   SEARCH_DEBOUNCE_MS,
 )
 
-watch(searchQuery, loadDebounced)
+watch([searchQuery, queryValues], loadDebounced, { deep: true })
 
 // eslint-disable-next-line init-declarations
 let lastFetchedUrl: string | undefined
@@ -72,16 +82,13 @@ async function loadCurrentEntity(force = false) {
     return
   lastFetchedUrl = url
 
-  const queryParameters = searchQuery.value
-    ? { search: searchQuery.value }
-    : undefined
-  await fetchEntityRecords({ query: queryParameters, url })
+  await fetchEntityRecords({ query: requestQuery.value, url })
 }
 
 watch(
   () => adminPanelStore.activeEntity,
   () => {
-    searchQuery.value = ""
+    resetQuery()
     loadCurrentEntity()
   },
 )
@@ -169,12 +176,19 @@ function handleSaved() {
       v-if="adminPanelStore.activeEntity"
       class="flex-1 overflow-y-auto p-4"
     >
-      <div class="mb-4">
+      <div class="mb-4 space-y-3">
         <input
+          v-if="!usesSchemaSearch"
           v-model="searchQuery"
           class="w-full rounded-[var(--ch-admin-radius-sm)] border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-1.5 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
           placeholder="Search..."
           type="text"
+        />
+        <QueryParametersMenu
+          v-model="queryValues"
+          :components="properties.config?.fields?.defaultComponents"
+          :filters="listQueryParameters.filters"
+          :sorts="listQueryParameters.sorts"
         />
       </div>
 
