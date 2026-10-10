@@ -1,5 +1,9 @@
 # Release notes
 
+- feat: reusable `MasterDetail` component + `useMasterDetail` composable in the admin module — a routing-free, client-state master-detail mechanism that swaps the entity menu and the working area (and the record list and the record detail) on small screens while keeping both panes side by side on wide screens
+- fix: the OpenAPI admin no longer sets its own outer spacing — removed the root `p-3` and the hard-coded header height (`h-[calc(100vh-56px)]` → `h-full`), so the host page owns the outer margins and the height while the admin keeps only its inner spacing
+- style: modernized the admin Endpoints sidebar — dropped the per-row borders (Excel-like underlines), grouped each namespace into a spaced section and switched the active entity to a rounded accent-highlighted item
+
 - fix: switching entities in the OpenAPI admin now shows old records → loader → new records (previously the stale cards stayed under a pagination spinner and the entity/filter reset fired a duplicate request); the previous entity records are cleared on switch and the programmatic search/filter reset no longer schedules an extra fetch
 - feat: mobile OpenAPI admin layout — the endpoints menu fills the screen until an entity is picked, then the entity list takes over (the `← All endpoints` button returns to the menu); the `isMobile` prop still overrides the breakpoint auto-detection (`md`)
 - feat: add a single-record detail view to the OpenAPI admin — a `View` button on each list card opens the full record fetched from the entity's GET detail endpoint (with a back button and a fallback to the list row when no detail endpoint exists)

@@ -8,6 +8,7 @@ import useRender from "../../composables/useRender"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
+import MasterDetail from "./MasterDetail.vue"
 import SidebarEndpointsMenu from "./SidebarEndpointsMenu.vue"
 import { buildAdminThemeStyle, resolveAdminTheme } from "./theme"
 
@@ -39,20 +40,12 @@ const { activeEntity, filteredEntitiesByNamespace } =
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const isSmallScreen = breakpoints.smaller("md")
 
-// On a mobile layout the menu and the entity list never share the screen: the
-// menu fills the viewport until an entity is picked, then the list takes over.
+// The admin fills its host container; the host page owns the outer spacing and
+// the height, the panel owns only its inner spacing (see MasterDetail).
 const isMobileLayout = computed(() =>
   properties.isMobile === undefined
     ? isSmallScreen.value
     : properties.isMobile,
-)
-
-const showEndpointsMenu = computed(
-  () => !isMobileLayout.value || activeEntity.value === undefined,
-)
-
-const showEntityList = computed(
-  () => !isMobileLayout.value || activeEntity.value !== undefined,
 )
 
 const activeTheme = computed(() =>
@@ -66,24 +59,30 @@ const themeStyle = computed<Record<string, string>>(() =>
 useRender(() =>
   isReady.value ? (
     <div
-      class="ch-admin flex h-[calc(100vh-56px)] gap-3 bg-[var(--ch-admin-bg)] p-3 text-[var(--ch-admin-text)]"
+      class="ch-admin flex h-full min-h-0 w-full bg-[var(--ch-admin-bg)] text-[var(--ch-admin-text)]"
       data-ch-admin-theme={activeTheme.value}
       style={themeStyle.value}
     >
-      {showEndpointsMenu.value ? (
-        <SidebarEndpointsMenu
-          filteredEntitiesByNamespace={filteredEntitiesByNamespace.value}
-          isMobile={isMobileLayout.value}
-        />
-      ) : undefined}
-
-      {showEntityList.value ? (
-        <ListElementByCurrentDevice
-          baseUrl={properties.baseUrl}
-          config={properties.config}
-          isMobile={isMobileLayout.value}
-        />
-      ) : undefined}
+      <MasterDetail
+        detailIsOpen={activeEntity.value !== undefined}
+        isMobile={isMobileLayout.value}
+      >
+        {{
+          detail: ({ isMobile }: { isMobile: boolean }) => (
+            <ListElementByCurrentDevice
+              baseUrl={properties.baseUrl}
+              config={properties.config}
+              isMobile={isMobile}
+            />
+          ),
+          master: ({ isMobile }: { isMobile: boolean }) => (
+            <SidebarEndpointsMenu
+              filteredEntitiesByNamespace={filteredEntitiesByNamespace.value}
+              isMobile={isMobile}
+            />
+          ),
+        }}
+      </MasterDetail>
     </div>
   ) : undefined,
 )

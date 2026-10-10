@@ -19,7 +19,7 @@ const properties = defineProps<Properties>()
 <template>
   <div
     class="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
-    :class="properties.isMobile ? 'w-full' : 'w-64'"
+    :class="properties.isMobile ? 'w-full' : 'w-64 shrink-0'"
   >
     <div class="border-b border-[var(--ch-admin-border)] px-4 py-3">
       <h2
@@ -29,34 +29,36 @@ const properties = defineProps<Properties>()
       </h2>
     </div>
 
-    <div class="flex-1 overflow-y-auto">
-      <div
+    <div class="flex-1 space-y-5 overflow-y-auto p-3">
+      <section
         v-for="group in properties.filteredEntitiesByNamespace"
         :key="group.namespace"
       >
-        <div
-          class="px-4 py-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
+        <h3
+          class="mb-2 px-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
         >
           {{ group.namespace || "No namespace" }}
-        </div>
+        </h3>
 
-        <div>
-          <button
-            v-for="entity in group.entities"
-            :key="entity.entityName"
-            class="block w-full border-b border-[var(--ch-admin-border)] px-4 py-2.5 text-left text-sm text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
-            :class="{
-              'bg-[var(--ch-admin-surface-hover)] font-medium text-[var(--ch-admin-text)]':
+        <ul class="space-y-1">
+          <li v-for="entity in group.entities" :key="entity.entityName">
+            <button
+              class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition-colors"
+              :class="
                 adminPanelStore.activeEntity?.entityName ===
                   entity.entityName &&
-                adminPanelStore.activeEntity?.namespace === entity.namespace,
-            }"
-            @click="adminPanelStore.activeEntity = entity"
-          >
-            {{ entity.entityName }}
-          </button>
-        </div>
-      </div>
+                adminPanelStore.activeEntity?.namespace === entity.namespace
+                  ? 'bg-[var(--ch-admin-accent)] font-medium text-white'
+                  : 'text-[var(--ch-admin-text)] hover:bg-[var(--ch-admin-surface-hover)]'
+              "
+              type="button"
+              @click="adminPanelStore.activeEntity = entity"
+            >
+              <span class="truncate">{{ entity.entityName }}</span>
+            </button>
+          </li>
+        </ul>
+      </section>
     </div>
   </div>
 </template>
