@@ -1,5 +1,7 @@
 # Release notes
 
+- fix: give the admin `MasterDetail` boolean props explicit `undefined` defaults so an absent `isMobile`/`splitOnWideScreen` is not cast to `false` by Vue — wide screens get the two-pane layout again (records fetch, mobile menu is full width) while mobile keeps the single-pane drill-down
+
 - feat: reusable `MasterDetail` component + `useMasterDetail` composable in the admin module — a routing-free, client-state master-detail mechanism that swaps the entity menu and the working area (and the record list and the record detail) on small screens while keeping both panes side by side on wide screens
 - fix: the OpenAPI admin no longer sets its own outer spacing — removed the root `p-3` and the hard-coded header height (`h-[calc(100vh-56px)]` → `h-full`), so the host page owns the outer margins and the height while the admin keeps only its inner spacing
 - style: modernized the admin Endpoints sidebar — dropped the per-row borders (Excel-like underlines), grouped each namespace into a spaced section and switched the active entity to a rounded accent-highlighted item

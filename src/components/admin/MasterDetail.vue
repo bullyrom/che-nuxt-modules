@@ -16,7 +16,13 @@ interface Properties {
   splitOnWideScreen?: boolean
 }
 
-const properties = defineProps<Properties>()
+const properties = withDefaults(defineProps<Properties>(), {
+  // Explicit `undefined` defaults keep the boolean props "absent" (Vue would
+  // otherwise cast a missing Boolean prop to `false`), so the `??` fallbacks
+  // below can still auto-detect the screen and default to a split layout.
+  isMobile: undefined,
+  splitOnWideScreen: undefined,
+})
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const isSmallScreen = breakpoints.smaller("md")
