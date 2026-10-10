@@ -1,4 +1,5 @@
 export { default as Crud } from "@/components/admin/Crud.vue"
+export { default as EntityCreateForm } from "@/components/admin/EntityCreateForm.vue"
 export { default as EntityRecordCard } from "@/components/admin/EntityRecordCard.vue"
 export { default as EntityRecordDetail } from "@/components/admin/EntityRecordDetail.vue"
 export { DEFAULT_FIELD_COMPONENTS } from "@/components/admin/fields/defaults"

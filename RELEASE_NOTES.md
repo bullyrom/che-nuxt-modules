@@ -1,5 +1,7 @@
 # Release notes
 
+- feat: export `EntityCreateForm` from the package root — the single admin form that handles both create and edit (via its `editRecord` prop), so the paginated admin list can add/change records again
+
 - feat: export the admin page-building pieces from the package root — `SidebarEndpointsMenu`, `EntityRecordCard`, `EntityRecordDetail` and `useEntityRecordList` (alongside the existing `Crud`/`MasterDetail`) so the frontend can assemble the paginated `/admin/endpoints/...` routes
 
 - fix: give the admin `MasterDetail` boolean props explicit `undefined` defaults so an absent `isMobile`/`splitOnWideScreen` is not cast to `false` by Vue — wide screens get the two-pane layout again (records fetch, mobile menu is full width) while mobile keeps the single-pane drill-down
