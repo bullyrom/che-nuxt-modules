@@ -1,4 +1,6 @@
 export { default as Crud } from "@/components/admin/Crud.vue"
+export { default as EntityRecordCard } from "@/components/admin/EntityRecordCard.vue"
+export { default as EntityRecordDetail } from "@/components/admin/EntityRecordDetail.vue"
 export { DEFAULT_FIELD_COMPONENTS } from "@/components/admin/fields/defaults"
 export { default as FieldRenderer } from "@/components/admin/fields/FieldRenderer.vue"
 export {
@@ -29,10 +31,12 @@ export { default as MasterDetail } from "@/components/admin/MasterDetail.vue"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
 export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
 export { default as RawValue } from "@/components/admin/RawValue.vue"
+export { default as SidebarEndpointsMenu } from "@/components/admin/SidebarEndpointsMenu.vue"
 export type {
   AdminPanelTheme,
   AdminPanelThemeSource,
 } from "@/components/admin/theme"
+export { useEntityRecordList } from "@/components/admin/useEntityRecordList"
 export { useMasterDetail } from "@/components/admin/useMasterDetail"
 export type { UseMasterDetailOptions } from "@/components/admin/useMasterDetail"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"

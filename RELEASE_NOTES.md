@@ -1,5 +1,7 @@
 # Release notes
 
+- feat: export the admin page-building pieces from the package root — `SidebarEndpointsMenu`, `EntityRecordCard`, `EntityRecordDetail` and `useEntityRecordList` (alongside the existing `Crud`/`MasterDetail`) so the frontend can assemble the paginated `/admin/endpoints/...` routes
+
 - fix: give the admin `MasterDetail` boolean props explicit `undefined` defaults so an absent `isMobile`/`splitOnWideScreen` is not cast to `false` by Vue — wide screens get the two-pane layout again (records fetch, mobile menu is full width) while mobile keeps the single-pane drill-down
 
 - feat: reusable `MasterDetail` component + `useMasterDetail` composable in the admin module — a routing-free, client-state master-detail mechanism that swaps the entity menu and the working area (and the record list and the record detail) on small screens while keeping both panes side by side on wide screens
