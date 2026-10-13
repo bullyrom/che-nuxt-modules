@@ -1,9 +1,11 @@
 <script setup lang="tsx">
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+import { useAdminPanelRecordsStore } from "../../stores/adminPanel/records"
 
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 const adminPanelStore = useAdminPanelStore()
+const recordsStore = useAdminPanelRecordsStore()
 
 interface Properties {
   filteredEntitiesByNamespace: {
@@ -14,6 +16,13 @@ interface Properties {
 }
 
 const properties = defineProps<Properties>()
+
+// Selecting an entity also resets the record view, so clicking the already
+// active entity returns from an open record to the list.
+function selectEntity(entity: ParsedEntity) {
+  adminPanelStore.activeEntity = entity
+  recordsStore.requestEntityViewReset()
+}
 </script>
 
 <template>
@@ -52,7 +61,7 @@ const properties = defineProps<Properties>()
                   : 'text-[var(--ch-admin-text)] hover:bg-[var(--ch-admin-surface-hover)]'
               "
               type="button"
-              @click="adminPanelStore.activeEntity = entity"
+              @click="selectEntity(entity)"
             >
               <span class="truncate">{{ entity.entityName }}</span>
             </button>

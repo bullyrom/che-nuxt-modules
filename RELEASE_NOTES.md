@@ -1,5 +1,8 @@
 # Release notes
 
+- fix: the admin list paginated state is now mirrored into a Pinia store (`admin-panel-records`) so it is part of the Nuxt payload and hydrates — the server-rendered list is reused on the client with no loader flash, no double fetch and no hydration mismatch (the `onMounted` "reload if empty" workaround is gone)
+- fix: selecting an entity in the admin sidebar (including re-clicking the already active one) closes an open record view and returns to the list (`entitySelectionNonce` / `requestEntityViewReset`)
+
 - fix: the admin list no longer auto-reloads on realtime changes (it kept clearing the server-rendered list and flashing "No data"); the entity-switch watcher now ignores a re-assigned identical entity so hydration is preserved, and the client fetches the list after mount when the server data was not part of the payload
 - feat: admin list realtime `changed` events now increment a "new changes" badge (`listChangesCount`) instead of reloading — clicking the badge reloads the list with the user's current filters; the open record still refetches automatically
 

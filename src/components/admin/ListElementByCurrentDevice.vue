@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+import { useAdminPanelRecordsStore } from "../../stores/adminPanel/records"
 import LazyLoadList from "../LazyLoadList.vue"
 import MainLoader from "../MainLoader.vue"
 import Modal from "../Modal.vue"
@@ -27,6 +28,7 @@ const LIST_CHANGES_HINT = "New changes — click to reload the list"
 
 const properties = defineProps<Properties>()
 const adminPanelStore = useAdminPanelStore()
+const recordsStore = useAdminPanelRecordsStore()
 
 const {
   closeView,
@@ -67,6 +69,15 @@ function handleSaved() {
   closeCreateForm()
   reload()
 }
+
+// Selecting an entity in the sidebar returns to the list, even when the same
+// (already active) entity is re-clicked while its record view is open.
+watch(
+  () => recordsStore.entitySelectionNonce,
+  () => {
+    closeView()
+  },
+)
 </script>
 
 <template>

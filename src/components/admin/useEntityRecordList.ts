@@ -8,6 +8,7 @@ import { isRecordValue } from "./rawValue"
 import { resolveRealtimeEntityName } from "./realtime"
 import { getRecordId } from "./recordId"
 import { useEntityRecordDeletion } from "./useEntityRecordDeletion"
+import { useEntityRecordListState } from "./useEntityRecordListState"
 import { useEntityRecordRealtime } from "./useEntityRecordRealtime"
 import { useListQueryParameters } from "./useListQueryParameters"
 
@@ -31,13 +32,24 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     data: entityRecords,
     fetchData: fetchEntityRecords,
     fetchDataStatus,
-    fetchNextPage,
+    fetchNextPage: fetchEntityRecordsNextPage,
+    nextPageUrl,
+    previousPageUrl,
     rawData,
     reset: resetEntityRecords,
     showNextPageLoader,
   } = usePaginatedListApi<Record<string, unknown>[]>({ url: "" })
 
   const viewingRecord = ref<Record<string, unknown>>()
+
+  const { save: saveRecordsToStore } = useEntityRecordListState({
+    entityPath: () => adminPanelStore.activeEntity?.fullBasePath,
+    nextPageUrl,
+    previousPageUrl,
+    rawData,
+    records: entityRecords,
+    status: fetchDataStatus,
+  })
 
   const {
     listQueryParameters,
@@ -48,8 +60,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     usesSchemaSearch,
   } = useListQueryParameters()
 
-  // The backend emits the Django model label in realtime rooms, while the admin
-  // derives names from the URL — the host maps them via `realtimeEntityName`.
+  // Maps the URL-derived entity name to the backend realtime model label.
   function currentRealtimeEntityName(): string | undefined {
     return resolveRealtimeEntityName(
       adminPanelStore.activeEntity,
@@ -80,8 +91,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
 
   onScopeDispose(dispose)
 
-  // A successful response that is not a paginated list (e.g. the OpenAPI schema
-  // endpoint) has no `results`, so it is shown raw instead of rendering nothing.
+  // Non-list responses (no `results`) are shown raw instead of rendering nothing.
   const fallbackValue = computed<unknown>(() => {
     if (fetchDataStatus.value !== "success") return undefined
     if (entityRecords.value !== undefined) return undefined
@@ -125,6 +135,12 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     resetListChanges()
 
     await fetchEntityRecords({ query: requestQuery.value, url })
+    saveRecordsToStore()
+  }
+
+  async function fetchNextPage() {
+    await fetchEntityRecordsNextPage()
+    saveRecordsToStore()
   }
 
   async function reload() {
@@ -167,14 +183,10 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     },
   )
 
-  // Subscribe after mount (not during setup) so a socket event can never change
-  // the data used for hydration; the list may already have an entity selected
-  // (e.g. coming back to the admin). The records live in local refs (not in the
-  // Nuxt payload), so when the client did not receive the server-rendered list
-  // it fetches it here after hydration.
+  // Subscribe after mount so a socket event can never change the data used for
+  // hydration; the list may already have an entity selected at that point.
   onMounted(() => {
     setListChannel(currentRealtimeEntityName())
-    if (entityRecords.value === undefined) loadCurrentEntity()
   })
 
   return {
