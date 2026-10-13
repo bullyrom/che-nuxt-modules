@@ -73,6 +73,7 @@ useRender(() =>
               baseUrl={properties.baseUrl}
               config={properties.config}
               isMobile={isMobile}
+              key={activeEntity.value?.fullBasePath ?? "none"}
             />
           ),
           master: ({ isMobile }: { isMobile: boolean }) => (

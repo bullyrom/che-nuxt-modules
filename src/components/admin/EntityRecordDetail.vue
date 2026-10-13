@@ -1,21 +1,26 @@
 <script setup lang="ts">
-import { computed, onMounted, watch } from "vue"
+// eslint-disable-next-line import/no-unresolved
+import { storeToRefs } from "pinia"
+import { computed, inject, onMounted } from "vue"
 
-import { useDetailApi } from "../../composables/api"
+import {
+  ADMIN_ENTITY_STORE,
+  useAdminPanelEntityStore,
+} from "../../stores/adminPanel/entity"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import MainLoader from "../MainLoader.vue"
 
-import { buildEntityDetailUrl, hasEntityDetailEndpoint } from "./entityDetail"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
 import RecordEntry from "./RecordEntry.vue"
 import { getRecordId } from "./recordId"
 
+import type { AdminPanelConfig } from "./fields/types"
+
 interface Properties {
   baseUrl: string
-  record: Record<string, unknown>
-  /** Bumped by the list composable on a realtime change to refetch. */
-  refreshSignal?: number
+  config?: AdminPanelConfig
+  record?: Record<string, unknown>
 }
 
 const properties = defineProps<Properties>()
@@ -23,25 +28,28 @@ const emit = defineEmits<(event: "close") => void>()
 
 const adminPanelStore = useAdminPanelStore()
 
-const {
-  data: detailRecord,
-  fetchData: fetchDetail,
-  fetchDataStatus,
-} = useDetailApi<unknown>()
+const injectedStore = inject(ADMIN_ENTITY_STORE, undefined)
+const store =
+  injectedStore ??
+  useAdminPanelEntityStore({
+    baseUrl: properties.baseUrl,
+    config: properties.config,
+    entityPath: adminPanelStore.activeEntity?.fullBasePath ?? "none",
+  })
 
-const recordId = computed(() => {
-  const id = getRecordId(properties.record)
-  return id === undefined ? undefined : String(id)
-})
+const { detailRecord, detailStatus, hasDetailEndpoint, viewingRecord } =
+  storeToRefs(store)
 
-const canFetchDetail = computed(
-  () =>
-    recordId.value !== undefined &&
-    hasEntityDetailEndpoint(adminPanelStore.activeEntity),
+const displayRecord = computed(
+  () => detailRecord.value ?? viewingRecord.value ?? properties.record,
 )
 
-// Falls back to the list row when the entity exposes no detail endpoint.
-const displayRecord = computed(() => detailRecord.value ?? properties.record)
+const recordId = computed(() => {
+  const record = displayRecord.value
+  if (!isRecordValue(record)) return undefined
+  const id = getRecordId(record)
+  return id === undefined ? undefined : String(id)
+})
 
 const entries = computed(() =>
   isRecordValue(displayRecord.value)
@@ -49,30 +57,11 @@ const entries = computed(() =>
     : [],
 )
 
-async function loadDetail() {
-  const id = recordId.value
-  if (!canFetchDetail.value || id === undefined) return
-
-  const url = buildEntityDetailUrl(
-    properties.baseUrl,
-    adminPanelStore.activeEntity,
-    id,
-  )
-  if (url) await fetchDetail({ url })
-}
-
 onMounted(() => {
-  loadDetail()
+  if (viewingRecord.value === undefined && properties.record !== undefined) {
+    store.startView(properties.record)
+  }
 })
-
-// A realtime change to this record asks the parent to bump the signal; refetch
-// the fresh record instead of relying on the stale list row.
-watch(
-  () => properties.refreshSignal,
-  () => {
-    loadDetail()
-  },
-)
 </script>
 
 <template>
@@ -97,8 +86,8 @@ watch(
 
     <div
       v-if="
-        fetchDataStatus === 'pending' ||
-        (canFetchDetail && fetchDataStatus === 'idle')
+        detailStatus === 'pending' ||
+        (hasDetailEndpoint && detailStatus === 'idle')
       "
       class="flex h-64 items-center justify-center"
     >
@@ -106,7 +95,7 @@ watch(
     </div>
 
     <div
-      v-else-if="fetchDataStatus === 'error'"
+      v-else-if="detailStatus === 'error'"
       class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-danger-text)]"
     >
       Failed to load record

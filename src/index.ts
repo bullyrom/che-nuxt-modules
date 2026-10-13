@@ -53,7 +53,6 @@ export type {
   AdminPanelTheme,
   AdminPanelThemeSource,
 } from "@/components/admin/theme"
-export { useEntityRecordList } from "@/components/admin/useEntityRecordList"
 export { useMasterDetail } from "@/components/admin/useMasterDetail"
 export type { UseMasterDetailOptions } from "@/components/admin/useMasterDetail"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"
@@ -121,6 +120,15 @@ export { default as useRender } from "@/composables/useRender"
 export { useScrollToTop } from "@/composables/useScrollToTop"
 export { useShowLoader } from "@/composables/useShowLoader"
 export { useVoidAsyncData } from "@/composables/useVoidAsyncData"
+export {
+  ADMIN_ENTITY_STORE,
+  getAdminPanelEntityStore,
+  useAdminPanelEntityStore,
+} from "@/stores/adminPanel/entity"
+export type {
+  AdminPanelEntityStore,
+  UseAdminPanelEntityStoreParameters,
+} from "@/stores/adminPanel/entity"
 export { useAdminPanelStore } from "@/stores/adminPanel/index"
 export {
   buildQueryValues,

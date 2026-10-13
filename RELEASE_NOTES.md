@@ -1,5 +1,8 @@
 # Release notes
 
+- refactor: all OpenAPI-admin data now lives in a Pinia store — `useAdminPanelEntityStore` (one store per entity, built on `usePaginatedListApi`/`useDetailApi`/`useFormApi`/`useApiDelete`/`useApiUpdate`) with list, filters, view, detail, create/edit form and delete state plus computed derivations; components (`ListElementByCurrentDevice`, `EntityRecordDetail`, `EntityCreateForm`) read it via `storeToRefs` and hold no data themselves
+- refactor: removed the `admin-panel-records` mirror store, `useEntityRecordListState`, `useEntityRecordList`/`useEntityRecordDeletion` composables and the `entitySelectionNonce`; sidebar `selectEntity` now closes the open record view explicitly, hydration comes from the Pinia payload (no `onMounted` reload / same-entity guard), and realtime stays client-only and mutates the store
+
 - fix: the admin list paginated state is now mirrored into a Pinia store (`admin-panel-records`) so it is part of the Nuxt payload and hydrates — the server-rendered list is reused on the client with no loader flash, no double fetch and no hydration mismatch (the `onMounted` "reload if empty" workaround is gone)
 - fix: selecting an entity in the admin sidebar (including re-clicking the already active one) closes an open record view and returns to the list (`entitySelectionNonce` / `requestEntityViewReset`)
 

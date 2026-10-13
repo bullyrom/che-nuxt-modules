@@ -1,11 +1,10 @@
 <script setup lang="tsx">
+import { getAdminPanelEntityStore } from "../../stores/adminPanel/entity"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
-import { useAdminPanelRecordsStore } from "../../stores/adminPanel/records"
 
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 const adminPanelStore = useAdminPanelStore()
-const recordsStore = useAdminPanelRecordsStore()
 
 interface Properties {
   filteredEntitiesByNamespace: {
@@ -17,11 +16,13 @@ interface Properties {
 
 const properties = defineProps<Properties>()
 
-// Selecting an entity also resets the record view, so clicking the already
+// Selecting an entity also closes an open record view, so clicking the already
 // active entity returns from an open record to the list.
 function selectEntity(entity: ParsedEntity) {
+  getAdminPanelEntityStore(
+    adminPanelStore.activeEntity?.fullBasePath,
+  )?.closeView()
   adminPanelStore.activeEntity = entity
-  recordsStore.requestEntityViewReset()
 }
 </script>
 

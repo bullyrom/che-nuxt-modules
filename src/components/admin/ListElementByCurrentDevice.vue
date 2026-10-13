@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+// eslint-disable-next-line import/no-unresolved
+import { storeToRefs } from "pinia"
+import { provide } from "vue"
 
+import {
+  ADMIN_ENTITY_STORE,
+  useAdminPanelEntityStore,
+} from "../../stores/adminPanel/entity"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
-import { useAdminPanelRecordsStore } from "../../stores/adminPanel/records"
 import LazyLoadList from "../LazyLoadList.vue"
 import MainLoader from "../MainLoader.vue"
 import Modal from "../Modal.vue"
@@ -12,9 +17,7 @@ import EntityRecordCard from "./EntityRecordCard.vue"
 import EntityRecordDetail from "./EntityRecordDetail.vue"
 import MasterDetail from "./MasterDetail.vue"
 import QueryParametersMenu from "./QueryParametersMenu.vue"
-import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
-import { useEntityRecordList } from "./useEntityRecordList"
 
 import type { AdminPanelConfig } from "./fields/types"
 
@@ -28,56 +31,42 @@ const LIST_CHANGES_HINT = "New changes — click to reload the list"
 
 const properties = defineProps<Properties>()
 const adminPanelStore = useAdminPanelStore()
-const recordsStore = useAdminPanelRecordsStore()
+
+const store = useAdminPanelEntityStore({
+  baseUrl: properties.baseUrl,
+  config: properties.config,
+  entityPath: adminPanelStore.activeEntity?.fullBasePath ?? "none",
+})
+provide(ADMIN_ENTITY_STORE, store)
 
 const {
-  closeView,
   deletingRecord,
-  detailRefreshSignal,
-  doDelete,
   entityRecords,
   fallbackValue,
   fetchDataStatus,
-  fetchNextPage,
   listChangesCount,
   listQueryParameters,
   queryValues,
-  reload,
   searchQuery,
   showNextPageLoader,
-  startDelete,
-  startView,
   usesSchemaSearch,
   viewingRecord,
-} = useEntityRecordList(properties)
+} = storeToRefs(store)
 
-const showCreateForm = ref(false)
-const editingRecord = ref<Record<string, unknown> | undefined>(undefined)
-
-function startEdit(record: unknown) {
-  if (!isRecordValue(record)) return
-  editingRecord.value = record
-  showCreateForm.value = true
-}
-
-function closeCreateForm() {
-  showCreateForm.value = false
-  editingRecord.value = undefined
-}
+const {
+  closeView,
+  doDelete,
+  fetchNextPage,
+  reload,
+  startCreate,
+  startDelete,
+  startEdit,
+  startView,
+} = store
 
 function handleSaved() {
-  closeCreateForm()
   reload()
 }
-
-// Selecting an entity in the sidebar returns to the list, even when the same
-// (already active) entity is re-clicked while its record view is open.
-watch(
-  () => recordsStore.entitySelectionNonce,
-  () => {
-    closeView()
-  },
-)
 </script>
 
 <template>
@@ -106,7 +95,7 @@ watch(
         <button
           v-if="adminPanelStore.activeEntity?.createOperation"
           class="rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-1.5 text-sm font-medium text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
-          @click="showCreateForm = true"
+          @click="startCreate()"
         >
           + New
         </button>
@@ -134,8 +123,8 @@ watch(
           <EntityRecordDetail
             v-if="viewingRecord"
             :base-url="properties.baseUrl"
+            :config="properties.config"
             :record="viewingRecord"
-            :refresh-signal="detailRefreshSignal"
             @close="closeView()"
           />
         </template>
@@ -231,9 +220,6 @@ watch(
   <EntityCreateForm
     :base-url="properties.baseUrl"
     :config="properties.config"
-    :edit-record="editingRecord"
-    :show="showCreateForm"
-    @close="closeCreateForm()"
     @saved="handleSaved()"
   />
 
