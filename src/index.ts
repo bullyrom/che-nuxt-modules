@@ -88,6 +88,11 @@ export { default as useSeo } from "@/composables/seo"
 export {
   useCallBeforeLeaveFromPage,
   useCallBeforeLeaveFromPages,
+  useOnPageEnterAndLeave,
+} from "@/composables/stores"
+export type {
+  PageLifecycleCallback,
+  PageLifecycleCallbackSource,
 } from "@/composables/stores"
 export { useAdminPanel } from "@/composables/useAdminPanel"
 export { useCalendar } from "@/composables/useCalendar"
