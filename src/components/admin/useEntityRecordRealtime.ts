@@ -29,7 +29,11 @@ interface UseEntityRecordRealtimeParameters {
 function useEntityRecordRealtime(
   parameters: UseEntityRecordRealtimeParameters,
 ) {
-  const realtime = getAdminRealtime(parameters.client)
+  // Realtime only exists in the browser: the socket, the subscriptions and the
+  // change-driven refetch must never run during SSR, otherwise the admin fetches
+  // with an incomplete base path and the server/client markup diverges.
+  const isClient = import.meta.client
+  const realtime = isClient ? getAdminRealtime(parameters.client) : undefined
 
   const detailRefreshSignal = ref(0)
 
@@ -47,6 +51,7 @@ function useEntityRecordRealtime(
   }
 
   function setListChannel(entityName: string | undefined) {
+    if (!isClient) return
     const nextChannel =
       entityName === undefined ? undefined : entityListChannel(entityName)
     if (nextChannel === activeListChannel) return
@@ -59,6 +64,7 @@ function useEntityRecordRealtime(
     entityName: string | undefined,
     recordId: number | string | undefined,
   ) {
+    if (!isClient) return
     const nextChannel =
       entityName === undefined || recordId === undefined
         ? undefined

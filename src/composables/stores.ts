@@ -1,4 +1,6 @@
 import { isString } from "lodash-es"
+// eslint-disable-next-line import/no-unresolved
+import { useRouter } from "vue-router"
 
 /** A single lifecycle handler invoked on entering or leaving a page group. */
 type PageLifecycleCallback = () => void

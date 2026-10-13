@@ -1,5 +1,8 @@
 # Release notes
 
+- fix: the library no longer relies on Nuxt auto-imports for `useRouter` — `useOnPageEnterAndLeave` / `useCallBeforeLeaveFromPages` import it explicitly from `vue-router` (added as a peer dependency and kept external in the build), so `useRouter is not defined` no longer happens when consumed as an npm package
+- fix: admin realtime is strictly client-only (`import.meta.client`) — subscriptions and change-driven refetch never run during SSR, so the detail no longer fetches an empty URL and the server/client markup stays in sync
+
 - feat: realtime in the OpenAPI admin via an injected, dependency-free client (`AdminPanelConfig.realtime`) — the list follows `entity:<model>` and reloads, the open record follows `entity:<model>:<id>` and refetches (subscribe/unsubscribe in `startView`/`closeView`); channels are reference-counted and released on unmount; exported `AdminRealtimeClient`/`AdminRealtimeChange`/`AdminRealtimeHandler`/`AdminRealtimeSubscriptions` types, the `entityListChannel`/`entityDetailChannel` helpers, `getAdminRealtime`, `createRealtimeSubscriptions` and `getRecordId`; the list composable is split into realtime and deletion helpers
 
 - feat: add `useOnPageEnterAndLeave(pages, onEnter, onLeave)` — fires `onEnter` once when entering a route-name group from outside (including the initial route already inside) and `onLeave` once when leaving it, ignores moves between pages of the group and accepts single callbacks or arrays; the existing `useCallBeforeLeaveFromPages` is untouched

@@ -20,7 +20,14 @@ export default defineConfig({
     },
     minify: false,
     rollupOptions: {
-      external: ["vue", "pinia", "openapi-types", "nuxt/schema", "@vueuse/components"],
+      external: [
+        "vue",
+        "vue-router",
+        "pinia",
+        "openapi-types",
+        "nuxt/schema",
+        "@vueuse/components",
+      ],
       output: {
         exports: "named",
         globals: {
