@@ -1,5 +1,8 @@
 # Release notes
 
+- fix: SSR data loading in the admin is restored — only realtime subscriptions and the event-driven refetch are client-only, detected with `typeof window` (the `import.meta.client` constant is not rewritten inside a pre-built package consumed from `node_modules`); the realtime subscription now starts in `onMounted` so no socket event can change the data before hydration
+- feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `record.recordproject`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
+
 - fix: the library no longer relies on Nuxt auto-imports for `useRouter` — `useOnPageEnterAndLeave` / `useCallBeforeLeaveFromPages` import it explicitly from `vue-router` (added as a peer dependency and kept external in the build), so `useRouter is not defined` no longer happens when consumed as an npm package
 - fix: admin realtime is strictly client-only (`import.meta.client`) — subscriptions and change-driven refetch never run during SSR, so the detail no longer fetches an empty URL and the server/client markup stays in sync
 

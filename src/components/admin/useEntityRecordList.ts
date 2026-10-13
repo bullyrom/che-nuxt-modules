@@ -1,10 +1,11 @@
 import debounce from "lodash-es/debounce"
-import { computed, nextTick, onScopeDispose, ref, watch } from "vue"
+import { computed, nextTick, onMounted, onScopeDispose, ref, watch } from "vue"
 
 import { usePaginatedListApi } from "../../composables/api"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
 import { isRecordValue } from "./rawValue"
+import { resolveRealtimeEntityName } from "./realtime"
 import { getRecordId } from "./recordId"
 import { useEntityRecordDeletion } from "./useEntityRecordDeletion"
 import { useEntityRecordRealtime } from "./useEntityRecordRealtime"
@@ -47,11 +48,20 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     usesSchemaSearch,
   } = useListQueryParameters()
 
+  // The backend emits the Django model label in realtime rooms, while the admin
+  // derives names from the URL — the host maps them via `realtimeEntityName`.
+  function currentRealtimeEntityName(): string | undefined {
+    return resolveRealtimeEntityName(
+      adminPanelStore.activeEntity,
+      parameters.config?.realtimeEntityName,
+    )
+  }
+
   const { detailRefreshSignal, dispose, setDetailChannel, setListChannel } =
     useEntityRecordRealtime({
       client: parameters.config?.realtime,
       closeView,
-      getEntityName: () => adminPanelStore.activeEntity?.entityName,
+      getEntityName: currentRealtimeEntityName,
       getViewedRecord: () => viewingRecord.value,
       reload,
     })
@@ -117,10 +127,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
   function startView(record: unknown) {
     if (!isRecordValue(record)) return
     viewingRecord.value = record
-    setDetailChannel(
-      adminPanelStore.activeEntity?.entityName,
-      getRecordId(record),
-    )
+    setDetailChannel(currentRealtimeEntityName(), getRecordId(record))
   }
 
   function closeView() {
@@ -135,7 +142,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
       isSwitchingEntity.value = true
       loadDebounced.cancel()
       setDetailChannel(undefined, undefined)
-      setListChannel(adminPanelStore.activeEntity?.entityName)
+      setListChannel(currentRealtimeEntityName())
       // Drop the previous entity records so the list shows the loader instead
       // of stale cards while the new entity is loading.
       resetEntityRecords()
@@ -147,9 +154,12 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     },
   )
 
-  // The list may already be mounted with an entity selected (e.g. coming back
-  // to the admin), so subscribe without waiting for the entity switch.
-  setListChannel(adminPanelStore.activeEntity?.entityName)
+  // Subscribe after mount (not during setup) so a socket event can never change
+  // the data used for hydration; the list may already have an entity selected
+  // (e.g. coming back to the admin).
+  onMounted(() => {
+    setListChannel(currentRealtimeEntityName())
+  })
 
   return {
     closeView,

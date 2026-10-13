@@ -5,6 +5,7 @@ import {
   entityDetailChannel,
   entityListChannel,
   getAdminRealtime,
+  resolveRealtimeEntityName,
 } from "./realtime"
 import { getRecordId } from "./recordId"
 
@@ -13,6 +14,7 @@ import type {
   AdminRealtimeClient,
   AdminRealtimeHandler,
 } from "./realtime"
+import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 const RECORD_ID = 42
 
@@ -133,5 +135,30 @@ describe("getRecordId", () => {
   it("ignores records without a usable identifier", () => {
     expect(getRecordId({})).toBeUndefined()
     expect(getRecordId({ id: { nested: true } })).toBeUndefined()
+  })
+})
+
+describe("resolveRealtimeEntityName", () => {
+  const entity: ParsedEntity = {
+    basePath: "/record-projects/",
+    details: [],
+    entityName: "record-projects",
+    fullBasePath: "/api/v1/record-projects/",
+    methods: [],
+    namespace: "record",
+  }
+
+  it("defaults to the URL-derived entity name", () => {
+    expect(resolveRealtimeEntityName(entity)).toBe("record-projects")
+  })
+
+  it("uses the host resolver for the backend model label", () => {
+    expect(
+      resolveRealtimeEntityName(entity, () => "record.recordproject"),
+    ).toBe("record.recordproject")
+  })
+
+  it("returns undefined without an entity", () => {
+    expect(resolveRealtimeEntityName(undefined)).toBeUndefined()
   })
 })

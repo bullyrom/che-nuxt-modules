@@ -37,11 +37,13 @@ export {
   entityDetailChannel,
   entityListChannel,
   getAdminRealtime,
+  resolveRealtimeEntityName,
 } from "@/components/admin/realtime"
 export type {
   AdminRealtimeAction,
   AdminRealtimeChange,
   AdminRealtimeClient,
+  AdminRealtimeEntityName,
   AdminRealtimeHandler,
   AdminRealtimeSubscriptions,
 } from "@/components/admin/realtime"

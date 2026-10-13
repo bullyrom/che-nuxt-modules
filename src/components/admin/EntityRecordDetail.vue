@@ -50,9 +50,6 @@ const entries = computed(() =>
 )
 
 async function loadDetail() {
-  // Client-only: on the server the base path/config is not ready yet, which
-  // would request an empty URL and desync the hydrated markup.
-  if (!import.meta.client) return
   const id = recordId.value
   if (!canFetchDetail.value || id === undefined) return
 

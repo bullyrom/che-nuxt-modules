@@ -32,7 +32,9 @@ function useEntityRecordRealtime(
   // Realtime only exists in the browser: the socket, the subscriptions and the
   // change-driven refetch must never run during SSR, otherwise the admin fetches
   // with an incomplete base path and the server/client markup diverges.
-  const isClient = import.meta.client
+  // `typeof window` is used instead of `import.meta.client` because the latter
+  // is not rewritten inside a pre-built package consumed from node_modules.
+  const isClient = globalThis.window !== undefined
   const realtime = isClient ? getAdminRealtime(parameters.client) : undefined
 
   const detailRefreshSignal = ref(0)

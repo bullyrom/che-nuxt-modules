@@ -1,4 +1,4 @@
-import type { AdminRealtimeClient } from "../realtime"
+import type { AdminRealtimeClient, AdminRealtimeEntityName } from "../realtime"
 import type { AdminPanelThemeSource } from "../theme"
 import type { OpenAPIV3 } from "openapi-types"
 import type { Component } from "vue"
@@ -90,6 +90,13 @@ interface AdminPanelConfig {
    * `entity:<model>:<id>` rooms and reload/refetch on `changed`.
    */
   realtime?: AdminRealtimeClient
+  /**
+   * Resolves the realtime room identifier for an entity. The backend emits the
+   * Django model label (`model._meta.label_lower`, e.g. `record.recordproject`)
+   * while the admin derives names from the URL (`record-projects`), so the host
+   * maps one to the other here. Defaults to `entity.entityName`.
+   */
+  realtimeEntityName?: AdminRealtimeEntityName
   /**
    * Reactive admin theme supplied by the host application. Accepts a plain
    * `"dark" | "light"` value, a ref/computed or a getter so the panel can

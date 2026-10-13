@@ -1,3 +1,5 @@
+import type { ParsedEntity } from "../../stores/adminPanel/types"
+
 /** Action carried by a realtime `changed` event. */
 type AdminRealtimeAction = "created" | "deleted" | "updated"
 
@@ -42,6 +44,25 @@ function entityListChannel(entityName: string): string {
 /** Room for one record of a model, e.g. `entity:categories:42`. */
 function entityDetailChannel(entityName: string, id: number | string): string {
   return `${entityListChannel(entityName)}:${id}`
+}
+
+/**
+ * Maps a parsed OpenAPI entity to the identifier the backend uses in realtime
+ * rooms (`model._meta.label_lower`, e.g. `record.recordproject`).
+ */
+type AdminRealtimeEntityName = (entity: ParsedEntity) => string
+
+/**
+ * Resolves the realtime room identifier for an entity: the host-provided
+ * resolver (backend model label) when present, otherwise the URL-derived
+ * `entity.entityName`.
+ */
+function resolveRealtimeEntityName(
+  entity: ParsedEntity | undefined,
+  resolve?: AdminRealtimeEntityName,
+): string | undefined {
+  if (entity === undefined) return undefined
+  return resolve?.(entity) ?? entity.entityName
 }
 
 /**
@@ -128,11 +149,13 @@ export {
   entityDetailChannel,
   entityListChannel,
   getAdminRealtime,
+  resolveRealtimeEntityName,
 }
 export type {
   AdminRealtimeAction,
   AdminRealtimeChange,
   AdminRealtimeClient,
+  AdminRealtimeEntityName,
   AdminRealtimeHandler,
   AdminRealtimeSubscriptions,
 }
