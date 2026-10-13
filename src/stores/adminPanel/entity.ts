@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { defineStore } from "pinia"
+import { defineStore, getActivePinia } from "pinia"
 
 import { createAdminPanelEntityDeletion } from "./entityDeletion"
 import { createAdminPanelEntityForm } from "./entityForm"
@@ -35,23 +35,44 @@ function createAdminPanelEntityStore(
   return { ...list, ...deletion, ...form }
 }
 
-const entityStoreDefinitions = new Map<string, () => AdminPanelEntityStore>()
+// Store definitions are scoped to the active Pinia (one per SSR request and per
+// client app) so nothing leaks between requests and no stale entity store is
+// reused with another request's `baseUrl`/`config`.
+const registries = new WeakMap<
+  object,
+  Map<string, () => AdminPanelEntityStore>
+>()
+
+function entityRegistry():
+  | Map<string, () => AdminPanelEntityStore>
+  | undefined {
+  const pinia = getActivePinia()
+  if (pinia === undefined) return undefined
+
+  const existing = registries.get(pinia)
+  if (existing !== undefined) return existing
+
+  const registry = new Map<string, () => AdminPanelEntityStore>()
+  registries.set(pinia, registry)
+  return registry
+}
 
 /**
  * Returns the per-entity admin store, creating it on first use. One store per
- * entity (`entity.entityName`/`fullBasePath`), so different entities keep
- * independent, SSR-hydrated data.
+ * entity id (`entity.fullBasePath`), so every entity keeps independent,
+ * SSR-hydrated data.
  */
 function useAdminPanelEntityStore(
   parameters: UseAdminPanelEntityStoreParameters,
 ): AdminPanelEntityStore {
-  const existing = entityStoreDefinitions.get(parameters.entityPath)
+  const registry = entityRegistry()
+  const existing = registry?.get(parameters.entityPath)
   if (existing !== undefined) return existing()
 
   const useStore = defineStore(`admin-entity:${parameters.entityPath}`, () =>
     createAdminPanelEntityStore(parameters),
   )
-  entityStoreDefinitions.set(parameters.entityPath, useStore)
+  registry?.set(parameters.entityPath, useStore)
   return useStore()
 }
 
@@ -60,8 +81,7 @@ function getAdminPanelEntityStore(
   entityPath: string | undefined,
 ): AdminPanelEntityStore | undefined {
   if (entityPath === undefined) return undefined
-  const useStore = entityStoreDefinitions.get(entityPath)
-  return useStore?.()
+  return entityRegistry()?.get(entityPath)?.()
 }
 
 export {

@@ -1,5 +1,8 @@
 # Release notes
 
+- fix: `LazyLoadList` is hydration-safe — the visibility observers now attach in `onMounted` (client only) via `useElementVisibility` instead of the `v-element-visibility` directive, so the server and the client render identical markup (the server no longer emits a placeholder comment where the client renders a node)
+- fix: the admin entity-store registry is scoped to the active Pinia (per SSR request / per client app) instead of a module-level map, so entity stores no longer leak between requests; `ListElementByCurrentDevice` became a thin wrapper over `EntityRecordList` and only creates a store for the active entity — no placeholder/extra-entity store is created
+
 - refactor: all OpenAPI-admin data now lives in a Pinia store — `useAdminPanelEntityStore` (one store per entity, built on `usePaginatedListApi`/`useDetailApi`/`useFormApi`/`useApiDelete`/`useApiUpdate`) with list, filters, view, detail, create/edit form and delete state plus computed derivations; components (`ListElementByCurrentDevice`, `EntityRecordDetail`, `EntityCreateForm`) read it via `storeToRefs` and hold no data themselves
 - refactor: removed the `admin-panel-records` mirror store, `useEntityRecordListState`, `useEntityRecordList`/`useEntityRecordDeletion` composables and the `entitySelectionNonce`; sidebar `selectEntity` now closes the open record view explicitly, hydration comes from the Pinia payload (no `onMounted` reload / same-entity guard), and realtime stays client-only and mutates the store
 

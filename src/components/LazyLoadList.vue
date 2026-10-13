@@ -4,18 +4,13 @@
       <div v-for="(item, index) in items" :key="index">
         <slot :item="item" :index="index" />
 
-        <div
-          v-if="
-            items && items.length - fetchVisibleItemNumber + 1 === index + 1
-          "
-          v-element-visibility="onElementVisibility"
-        />
+        <div v-if="isTriggerItem(index)" ref="triggerElement" />
       </div>
     </div>
 
     <div
       v-if="showLoader"
-      v-element-visibility="onElementVisibility"
+      ref="loaderElement"
       :class="items && items.length > 0 ? 'h-[250px]' : 'h-[60vh]'"
     >
       <MainLoader :wh="60" />
@@ -24,8 +19,8 @@
 </template>
 
 <script setup lang="ts" generic="ElementType">
-import { vElementVisibility } from "@vueuse/components"
-import { ref } from "vue"
+import { useElementVisibility } from "@vueuse/core"
+import { onMounted, ref, watch } from "vue"
 
 import MainLoader from "./MainLoader.vue"
 
@@ -45,6 +40,22 @@ const emit = defineEmits<(event: "fetchNextPage") => Promise<void>>()
 
 const isFetchingNext = ref(false)
 
+// The visibility observers are attached in `onMounted` (client only) instead of
+// with `v-element-visibility`: directives would make the server render a
+// placeholder comment where the client renders the element, breaking hydration.
+const triggerElement = ref<HTMLElement>()
+const loaderElement = ref<HTMLElement>()
+const triggerIsVisible = useElementVisibility(triggerElement)
+const loaderIsVisible = useElementVisibility(loaderElement)
+
+function isTriggerItem(index: number): boolean {
+  if (properties.items === undefined) return false
+  return (
+    properties.items.length - properties.fetchVisibleItemNumber + 1 ===
+    index + 1
+  )
+}
+
 async function onElementVisibility(state: boolean) {
   const isFetching = isFetchingNext.value
   if (
@@ -62,4 +73,9 @@ async function onElementVisibility(state: boolean) {
     }
   }
 }
+
+onMounted(() => {
+  watch(triggerIsVisible, onElementVisibility)
+  watch(loaderIsVisible, onElementVisibility)
+})
 </script>
