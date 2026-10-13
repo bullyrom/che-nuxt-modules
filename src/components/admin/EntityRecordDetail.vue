@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue"
+import { computed, onMounted, watch } from "vue"
 
 import { useDetailApi } from "../../composables/api"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
@@ -9,10 +9,13 @@ import { buildEntityDetailUrl, hasEntityDetailEndpoint } from "./entityDetail"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
 import RecordEntry from "./RecordEntry.vue"
+import { getRecordId } from "./recordId"
 
 interface Properties {
   baseUrl: string
   record: Record<string, unknown>
+  /** Bumped by the list composable on a realtime change to refetch. */
+  refreshSignal?: number
 }
 
 const properties = defineProps<Properties>()
@@ -27,8 +30,8 @@ const {
 } = useDetailApi<unknown>()
 
 const recordId = computed(() => {
-  const candidate = properties.record.id ?? properties.record.pk
-  return candidate === undefined ? undefined : String(candidate)
+  const id = getRecordId(properties.record)
+  return id === undefined ? undefined : String(id)
 })
 
 const canFetchDetail = computed(
@@ -61,6 +64,15 @@ async function loadDetail() {
 onMounted(() => {
   loadDetail()
 })
+
+// A realtime change to this record asks the parent to bump the signal; refetch
+// the fresh record instead of relying on the stale list row.
+watch(
+  () => properties.refreshSignal,
+  () => {
+    loadDetail()
+  },
+)
 </script>
 
 <template>

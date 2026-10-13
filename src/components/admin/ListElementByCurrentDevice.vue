@@ -29,6 +29,7 @@ const adminPanelStore = useAdminPanelStore()
 const {
   closeView,
   deletingRecord,
+  detailRefreshSignal,
   doDelete,
   entityRecords,
   fallbackValue,
@@ -112,6 +113,7 @@ function handleSaved() {
             v-if="viewingRecord"
             :base-url="properties.baseUrl"
             :record="viewingRecord"
+            :refresh-signal="detailRefreshSignal"
             @close="closeView()"
           />
         </template>

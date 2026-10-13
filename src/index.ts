@@ -32,6 +32,20 @@ export { default as MasterDetail } from "@/components/admin/MasterDetail.vue"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
 export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
 export { default as RawValue } from "@/components/admin/RawValue.vue"
+export {
+  createRealtimeSubscriptions,
+  entityDetailChannel,
+  entityListChannel,
+  getAdminRealtime,
+} from "@/components/admin/realtime"
+export type {
+  AdminRealtimeAction,
+  AdminRealtimeChange,
+  AdminRealtimeClient,
+  AdminRealtimeHandler,
+  AdminRealtimeSubscriptions,
+} from "@/components/admin/realtime"
+export { getRecordId } from "@/components/admin/recordId"
 export { default as SidebarEndpointsMenu } from "@/components/admin/SidebarEndpointsMenu.vue"
 export type {
   AdminPanelTheme,

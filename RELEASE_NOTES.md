@@ -1,5 +1,7 @@
 # Release notes
 
+- feat: realtime in the OpenAPI admin via an injected, dependency-free client (`AdminPanelConfig.realtime`) — the list follows `entity:<model>` and reloads, the open record follows `entity:<model>:<id>` and refetches (subscribe/unsubscribe in `startView`/`closeView`); channels are reference-counted and released on unmount; exported `AdminRealtimeClient`/`AdminRealtimeChange`/`AdminRealtimeHandler`/`AdminRealtimeSubscriptions` types, the `entityListChannel`/`entityDetailChannel` helpers, `getAdminRealtime`, `createRealtimeSubscriptions` and `getRecordId`; the list composable is split into realtime and deletion helpers
+
 - feat: add `useOnPageEnterAndLeave(pages, onEnter, onLeave)` — fires `onEnter` once when entering a route-name group from outside (including the initial route already inside) and `onLeave` once when leaving it, ignores moves between pages of the group and accepts single callbacks or arrays; the existing `useCallBeforeLeaveFromPages` is untouched
 
 - feat: export `EntityCreateForm` from the package root — the single admin form that handles both create and edit (via its `editRecord` prop), so the paginated admin list can add/change records again

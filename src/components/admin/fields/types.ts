@@ -1,3 +1,4 @@
+import type { AdminRealtimeClient } from "../realtime"
 import type { AdminPanelThemeSource } from "../theme"
 import type { OpenAPIV3 } from "openapi-types"
 import type { Component } from "vue"
@@ -83,6 +84,12 @@ interface AdminPanelHooks {
 interface AdminPanelConfig {
   fields?: AdminPanelFieldConfig
   hooks?: AdminPanelHooks
+  /**
+   * Structural realtime client injected by the host app. When present, the
+   * admin list and detail subscribe to their `entity:<model>` /
+   * `entity:<model>:<id>` rooms and reload/refetch on `changed`.
+   */
+  realtime?: AdminRealtimeClient
   /**
    * Reactive admin theme supplied by the host application. Accepts a plain
    * `"dark" | "light"` value, a ref/computed or a getter so the panel can
