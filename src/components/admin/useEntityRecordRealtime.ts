@@ -1,4 +1,3 @@
-import debounce from "lodash-es/debounce"
 import { ref } from "vue"
 
 import {
@@ -10,21 +9,20 @@ import { getRecordId } from "./recordId"
 
 import type { AdminRealtimeChange, AdminRealtimeClient } from "./realtime"
 
-const REALTIME_RELOAD_DEBOUNCE_MS = 150
-
 interface UseEntityRecordRealtimeParameters {
   client?: AdminRealtimeClient
   closeView: () => void
   getEntityName: () => string | undefined
   getViewedRecord: () => Record<string, unknown> | undefined
-  reload: () => void
 }
 
 /**
  * Wires the admin record list to the injected realtime client: the list follows
- * `entity:<model>`, the open record `entity:<model>:<id>`. Channels are
- * reference-counted by the shared pool, so several panels viewing the same
- * entity share one subscription, and are released when `dispose` is called.
+ * `entity:<model>` and only counts new changes (the UI prompts a manual,
+ * filter-preserving reload), while the open record follows
+ * `entity:<model>:<id>` and refetches on change. Channels are reference-counted
+ * by the shared pool, so several panels viewing the same entity share one
+ * subscription, and are released when `dispose` is called.
  */
 function useEntityRecordRealtime(
   parameters: UseEntityRecordRealtimeParameters,
@@ -38,15 +36,12 @@ function useEntityRecordRealtime(
   const realtime = isClient ? getAdminRealtime(parameters.client) : undefined
 
   const detailRefreshSignal = ref(0)
+  const listChangesCount = ref(0)
 
   // eslint-disable-next-line init-declarations
   let activeListChannel: string | undefined
   // eslint-disable-next-line init-declarations
   let activeDetailChannel: string | undefined
-
-  const reloadDebounced = debounce(() => {
-    parameters.reload()
-  }, REALTIME_RELOAD_DEBOUNCE_MS)
 
   function releaseChannel(channel: string | undefined) {
     if (channel !== undefined) realtime?.release([channel])
@@ -81,7 +76,9 @@ function useEntityRecordRealtime(
     const entityName = parameters.getEntityName()
     if (entityName === undefined || change.entity !== entityName) return
 
-    if (activeListChannel !== undefined) reloadDebounced()
+    // The list does not refetch by itself (that would drop the user's filters
+    // and flash the panel); it only accumulates a "new changes" badge.
+    if (activeListChannel !== undefined) listChangesCount.value += 1
 
     const viewedRecord = parameters.getViewedRecord()
     const viewedRecordId =
@@ -103,14 +100,25 @@ function useEntityRecordRealtime(
 
   const detachListener = realtime?.onChange(handleChange)
 
+  /** Clears the badge once the list is reloaded with the user's filters. */
+  function resetListChanges() {
+    listChangesCount.value = 0
+  }
+
   function dispose() {
     detachListener?.()
-    reloadDebounced.cancel()
     setListChannel(undefined)
     setDetailChannel(undefined, undefined)
   }
 
-  return { detailRefreshSignal, dispose, setDetailChannel, setListChannel }
+  return {
+    detailRefreshSignal,
+    dispose,
+    listChangesCount,
+    resetListChanges,
+    setDetailChannel,
+    setListChannel,
+  }
 }
 
 export { useEntityRecordRealtime }

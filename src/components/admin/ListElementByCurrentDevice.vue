@@ -23,6 +23,8 @@ interface Properties {
   isMobile?: boolean
 }
 
+const LIST_CHANGES_HINT = "New changes — click to reload the list"
+
 const properties = defineProps<Properties>()
 const adminPanelStore = useAdminPanelStore()
 
@@ -35,6 +37,7 @@ const {
   fallbackValue,
   fetchDataStatus,
   fetchNextPage,
+  listChangesCount,
   listQueryParameters,
   queryValues,
   reload,
@@ -81,6 +84,14 @@ function handleSaved() {
         &larr; All endpoints
       </button>
       <div class="flex items-center gap-3">
+        <button
+          v-if="listChangesCount > 0"
+          class="rounded-full border border-[var(--ch-admin-accent)] px-2.5 py-0.5 text-xs font-medium text-[var(--ch-admin-accent)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+          :title="LIST_CHANGES_HINT"
+          @click="reload()"
+        >
+          {{ listChangesCount }} new
+        </button>
         <button
           v-if="adminPanelStore.activeEntity?.createOperation"
           class="rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] px-3 py-1.5 text-sm font-medium text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"

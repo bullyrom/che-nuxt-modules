@@ -1,5 +1,8 @@
 # Release notes
 
+- fix: the admin list no longer auto-reloads on realtime changes (it kept clearing the server-rendered list and flashing "No data"); the entity-switch watcher now ignores a re-assigned identical entity so hydration is preserved, and the client fetches the list after mount when the server data was not part of the payload
+- feat: admin list realtime `changed` events now increment a "new changes" badge (`listChangesCount`) instead of reloading — clicking the badge reloads the list with the user's current filters; the open record still refetches automatically
+
 - fix: SSR data loading in the admin is restored — only realtime subscriptions and the event-driven refetch are client-only, detected with `typeof window` (the `import.meta.client` constant is not rewritten inside a pre-built package consumed from `node_modules`); the realtime subscription now starts in `onMounted` so no socket event can change the data before hydration
 - feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `record.recordproject`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
 

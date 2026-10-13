@@ -57,14 +57,19 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     )
   }
 
-  const { detailRefreshSignal, dispose, setDetailChannel, setListChannel } =
-    useEntityRecordRealtime({
-      client: parameters.config?.realtime,
-      closeView,
-      getEntityName: currentRealtimeEntityName,
-      getViewedRecord: () => viewingRecord.value,
-      reload,
-    })
+  const {
+    detailRefreshSignal,
+    dispose,
+    listChangesCount,
+    resetListChanges,
+    setDetailChannel,
+    setListChannel,
+  } = useEntityRecordRealtime({
+    client: parameters.config?.realtime,
+    closeView,
+    getEntityName: currentRealtimeEntityName,
+    getViewedRecord: () => viewingRecord.value,
+  })
 
   const { deletingRecord, doDelete, startDelete } = useEntityRecordDeletion({
     baseUrl: parameters.baseUrl,
@@ -115,6 +120,9 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     if (!force && url === lastFetchedUrl && entityRecords.value !== undefined)
       return
     lastFetchedUrl = url
+    // A reload always reflects the latest state, so the "new changes" badge is
+    // cleared here (also on filter changes and the manual badge click).
+    resetListChanges()
 
     await fetchEntityRecords({ query: requestQuery.value, url })
   }
@@ -137,7 +145,12 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
 
   watch(
     () => adminPanelStore.activeEntity,
-    () => {
+    (nextEntity, previousEntity) => {
+      // The consumer re-assigns `activeEntity` from the re-parsed schema on the
+      // client (a new object for the same entity). Resetting then would wipe the
+      // server-rendered list and break hydration, so only a real switch acts.
+      if (nextEntity?.fullBasePath === previousEntity?.fullBasePath) return
+
       viewingRecord.value = undefined
       isSwitchingEntity.value = true
       loadDebounced.cancel()
@@ -156,9 +169,12 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
 
   // Subscribe after mount (not during setup) so a socket event can never change
   // the data used for hydration; the list may already have an entity selected
-  // (e.g. coming back to the admin).
+  // (e.g. coming back to the admin). The records live in local refs (not in the
+  // Nuxt payload), so when the client did not receive the server-rendered list
+  // it fetches it here after hydration.
   onMounted(() => {
     setListChannel(currentRealtimeEntityName())
+    if (entityRecords.value === undefined) loadCurrentEntity()
   })
 
   return {
@@ -170,6 +186,7 @@ function useEntityRecordList(parameters: UseEntityRecordListParameters) {
     fallbackValue,
     fetchDataStatus,
     fetchNextPage,
+    listChangesCount,
     listQueryParameters,
     queryValues,
     reload,
