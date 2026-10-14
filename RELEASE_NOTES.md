@@ -1,5 +1,10 @@
 # Release notes
 
+- fix: OpenAPI admin nested field labels are English again (`N items` / `N fields · identifier`) and the type summary is right-aligned in the RollDown header
+- fix: `RecordEntry` no longer renders a (empty) `RollDown` for empty arrays/objects — they fall back to the raw-value row
+- style: nested OpenAPI admin children are visually separated by a distinct card background and a left guide line
+- test: added an SSR test for `RecordEntry` (English labels, no `RollDown` for empty collections)
+
 - fix: the admin entity store no longer refetches right after hydration — the filter/search watchers are now registered in `onMounted` (client, after Pinia restored the state), so the fresh `queryValues` object Pinia assigns during hydration is not mistaken for a filter change. This removes the SSR-data → loader → data double load and the `LazyLoadList` hydration mismatch it caused (the loader `v-if` comment vs div)
 
 - fix: `LazyLoadList` no longer emits `v-if` comment anchors (`<!---->`) between the items — the visibility trigger is now bound to the trigger item's wrapper with a function ref instead of a sibling `v-if` node, so the server (`@vue/server-renderer`) and the client render the same list markup; added an SSR regression test (`LazyLoadList.ssr.test.ts`) that renders the component and the admin `EntityRecordCard` slot

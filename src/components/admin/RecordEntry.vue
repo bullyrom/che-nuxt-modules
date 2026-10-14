@@ -21,9 +21,14 @@ const NESTED_PADDING = "px-1.5"
 
 const nestedEntries = computed<Entry[] | undefined>(() => {
   const { value } = properties
-  if (isRecordValue(value)) return Object.entries(value)
   if (Array.isArray(value)) {
-    return value.map((item, index): Entry => [String(index), item])
+    return value.length > 0
+      ? value.map((item, index): Entry => [String(index), item])
+      : undefined
+  }
+  if (isRecordValue(value)) {
+    const entries = Object.entries(value)
+    return entries.length > 0 ? entries : undefined
   }
   return undefined
 })
@@ -59,18 +64,17 @@ function readIdentifier(value: unknown): string | undefined {
 }
 
 const summary = computed(() => {
-  if (Array.isArray(properties.value)) {
-    return `массив ${properties.value.length}`
-  }
+  const count = nestedEntries.value?.length ?? 0
+  if (Array.isArray(properties.value)) return `${count} items`
   const identifier = readIdentifier(properties.value)
-  return identifier ? `объект ${identifier}` : "объект"
+  return identifier ? `${count} fields · ${identifier}` : `${count} fields`
 })
 </script>
 
 <template>
   <div
     v-if="nestedEntries"
-    class="overflow-hidden rounded border border-[var(--ch-admin-border)]"
+    class="overflow-hidden rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
   >
     <RollDown
       :title="properties.fieldKey"
@@ -78,17 +82,24 @@ const summary = computed(() => {
       :unmount-on-close="true"
     >
       <template #button-content="{ open }">
-        <span class="text-[var(--ch-admin-text-muted)]">{{
-          open ? "▾" : "▸"
-        }}</span>
-        <span class="font-mono text-xs text-[var(--ch-admin-text)]">{{
-          properties.fieldKey
-        }}</span>
-        <span class="text-xs text-[var(--ch-admin-text-muted)]">{{
-          summary
-        }}</span>
+        <span class="flex min-w-0 items-center gap-2">
+          <span class="text-[var(--ch-admin-text-muted)]">{{
+            open ? "▾" : "▸"
+          }}</span>
+          <span
+            class="truncate font-mono text-xs text-[var(--ch-admin-text)]"
+            v-text="properties.fieldKey"
+          />
+        </span>
+        <span
+          class="ml-auto shrink-0 text-xs text-[var(--ch-admin-text-muted)]"
+        >
+          {{ summary }}
+        </span>
       </template>
-      <div class="space-y-2 border-t border-[var(--ch-admin-border)] py-2">
+      <div
+        class="ml-2 space-y-2 border-t border-l border-[var(--ch-admin-border)] py-2 pl-3"
+      >
         <RecordEntry
           v-for="[childKey, childValue] in nestedEntries"
           :key="childKey"
