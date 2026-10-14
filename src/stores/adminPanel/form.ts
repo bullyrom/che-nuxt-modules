@@ -5,27 +5,31 @@ import { isRecordValue } from "../../components/admin/rawValue"
 import { getRecordId } from "../../components/admin/recordId"
 import { useFormApi } from "../../composables/api"
 
+import { resolveConfig, resolveEntity } from "./instance"
+import { createInstanceRegistry } from "./instanceRegistry"
+
 import { useAdminPanelStore } from "./index"
 
-import type { AdminPanelConfig } from "../../components/admin/fields/types"
+import type { AdminInstanceParameters } from "./instance"
+import type { ParsedEntity } from "./types"
 
 const REQUEST_ERROR_MESSAGE = "Failed to save record"
 
-interface CreateAdminPanelEntityFormParameters {
-  baseUrl: string
-  config?: AdminPanelConfig
-}
-
 /**
- * Create/edit form slice of the admin entity store: the form state, backend
- * errors, the open/close state and the submit flow (with the host
- * `before*`/`after*` hooks), built on `useFormApi`. Called only from the entity
- * store setup.
+ * Create/edit form slice of a keyed admin instance: the form state, backend
+ * errors, open state and the submit flow (with the host `before*`/`after*`
+ * hooks), built on `useFormApi`. Independent from the list/detail slices.
  */
-function createAdminPanelEntityForm(
-  parameters: CreateAdminPanelEntityFormParameters,
-) {
+function createAdminPanelForm(parameters: AdminInstanceParameters) {
   const adminPanelStore = useAdminPanelStore()
+
+  function currentEntity(): ParsedEntity | undefined {
+    return resolveEntity(parameters, () => adminPanelStore.activeEntity)
+  }
+
+  function currentConfig() {
+    return resolveConfig(parameters, adminPanelStore.config)
+  }
 
   const { form, formErrors, sendForm, sendFormRequestErrors, sendFormStatus } =
     useFormApi<Record<string, unknown>>({
@@ -63,7 +67,7 @@ function createAdminPanelEntityForm(
   }
 
   function submitUrl(): string | undefined {
-    const entity = adminPanelStore.activeEntity
+    const entity = currentEntity()
     if (!entity?.fullBasePath) return undefined
 
     const recordId = editingRecord.value
@@ -76,14 +80,14 @@ function createAdminPanelEntityForm(
   }
 
   async function applyBeforeHook(payload: Record<string, unknown>) {
-    const { hooks } = parameters.config ?? {}
+    const { hooks } = currentConfig() ?? {}
     const hook = isEditMode.value ? hooks?.beforeUpdate : hooks?.beforeCreate
     const result = await hook?.(payload)
     return isRecord(result) ? result : payload
   }
 
   async function applyAfterHook(record: unknown) {
-    const { hooks } = parameters.config ?? {}
+    const { hooks } = currentConfig() ?? {}
     await (isEditMode.value
       ? hooks?.afterUpdate?.(record)
       : hooks?.afterCreate?.(record))
@@ -132,5 +136,29 @@ function createAdminPanelEntityForm(
   }
 }
 
-export { createAdminPanelEntityForm }
-export type { CreateAdminPanelEntityFormParameters }
+type AdminPanelFormStore = ReturnType<typeof createAdminPanelForm>
+
+const formRegistry = createInstanceRegistry<
+  AdminInstanceParameters,
+  AdminPanelFormStore
+>({
+  idPrefix: "admin-form",
+  setup: createAdminPanelForm,
+})
+
+/** Returns (creating on first use) the form store for the instance key. */
+function useAdminPanelFormStore(
+  parameters: AdminInstanceParameters,
+): AdminPanelFormStore {
+  return formRegistry.use(parameters)
+}
+
+/** Returns an already-created form store, or `undefined`. */
+function getAdminPanelFormStore(
+  instanceKey: string | undefined,
+): AdminPanelFormStore | undefined {
+  return formRegistry.get(instanceKey)
+}
+
+export { createAdminPanelForm, getAdminPanelFormStore, useAdminPanelFormStore }
+export type { AdminPanelFormStore }

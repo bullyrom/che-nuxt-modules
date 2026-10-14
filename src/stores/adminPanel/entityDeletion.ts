@@ -4,27 +4,24 @@ import { isRecordValue } from "../../components/admin/rawValue"
 import { getRecordId } from "../../components/admin/recordId"
 import { useApiDelete, useApiUpdate } from "../../composables/api"
 
-import { useAdminPanelStore } from "./index"
-
+import type { ParsedEntity } from "./types"
 import type { AdminPanelConfig } from "../../components/admin/fields/types"
 
 interface CreateAdminPanelEntityDeletionParameters {
   baseUrl: string
-  config?: AdminPanelConfig
   reload: () => Promise<void>
+  resolveConfig: () => AdminPanelConfig | undefined
+  resolveEntity: () => ParsedEntity | undefined
 }
 
 /**
- * Delete/update slice of the admin entity store: the pending deletion, the
- * request (with the host `beforeDelete`/`afterDelete` hooks) and the keyed
- * update state, built on `useApiDelete`/`useApiUpdate`. Called only from the
- * entity store setup.
+ * Delete/update slice of the admin list store: the pending deletion, the request
+ * (with the host `beforeDelete`/`afterDelete` hooks) and the keyed update state,
+ * built on `useApiDelete`/`useApiUpdate`. Called only from the list store setup.
  */
 function createAdminPanelEntityDeletion(
   parameters: CreateAdminPanelEntityDeletionParameters,
 ) {
-  const adminPanelStore = useAdminPanelStore()
-
   const { destroy } = useApiDelete({ url: "" })
   const {
     reset: resetUpdate,
@@ -44,11 +41,11 @@ function createAdminPanelEntityDeletion(
     const record = deletingRecord.value
     if (!record) return
 
-    const entity = adminPanelStore.activeEntity
+    const entity = parameters.resolveEntity()
     const recordId = getRecordId(record)
     if (!entity?.fullBasePath || recordId === undefined) return
 
-    const { hooks } = parameters.config ?? {}
+    const { hooks } = parameters.resolveConfig() ?? {}
     const canDelete = await hooks?.beforeDelete?.(record)
     if (canDelete === false) return
 

@@ -1,25 +1,30 @@
 <script setup lang="ts">
 // eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
-import { computed, inject, onMounted } from "vue"
+import { computed, onMounted } from "vue"
 
-import {
-  ADMIN_ENTITY_STORE,
-  useAdminPanelEntityStore,
-} from "../../stores/adminPanel/entity"
+import { useAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+import { resolveEntityConfig } from "../../stores/adminPanel/instance"
 import MainLoader from "../MainLoader.vue"
 
+import { detailConfigToPanelConfig } from "./config"
+import FieldGroupRenderer from "./FieldGroupRenderer.vue"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
 import RecordEntry from "./RecordEntry.vue"
 import { getRecordId } from "./recordId"
 
-import type { AdminPanelConfig } from "./fields/types"
+import type { AdminDetailConfig, AdminPanelConfig } from "./fields/types"
+import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 interface Properties {
   baseUrl: string
   config?: AdminPanelConfig
+  /** Embedded-detail config fragment (used when `config` is not passed). */
+  detailConfig?: AdminDetailConfig
+  entity?: ParsedEntity
+  instanceKey?: string
   record?: Record<string, unknown>
 }
 
@@ -28,17 +33,36 @@ const emit = defineEmits<(event: "close") => void>()
 
 const adminPanelStore = useAdminPanelStore()
 
-const injectedStore = inject(ADMIN_ENTITY_STORE, undefined)
-const store =
-  injectedStore ??
-  useAdminPanelEntityStore({
-    baseUrl: properties.baseUrl,
-    config: properties.config,
-    entityPath: adminPanelStore.activeEntity?.fullBasePath ?? "none",
-  })
+const store = useAdminPanelDetailStore({
+  baseUrl: properties.baseUrl,
+  config: properties.config,
+  entity: () => properties.entity,
+  instanceKey: properties.instanceKey ?? "admin-1",
+})
 
 const { detailRecord, detailStatus, hasDetailEndpoint, viewingRecord } =
   storeToRefs(store)
+const { closeView, loadRecordDetail, patchRecord, startView } = store
+
+const currentEntity = computed(
+  () => properties.entity ?? adminPanelStore.activeEntity,
+)
+const instanceConfig = computed(
+  () =>
+    properties.config ??
+    (properties.detailConfig === undefined
+      ? undefined
+      : detailConfigToPanelConfig(
+          properties.detailConfig,
+          currentEntity.value?.entityName,
+        )) ??
+    adminPanelStore.config,
+)
+const entityConfig = computed(() =>
+  resolveEntityConfig(instanceConfig.value, currentEntity.value),
+)
+const detailOverride = computed(() => entityConfig.value?.detailOverride)
+const customDetail = computed(() => instanceConfig.value?.views?.detail)
 
 const displayRecord = computed(
   () => detailRecord.value ?? viewingRecord.value ?? properties.record,
@@ -51,35 +75,64 @@ const recordId = computed(() => {
   return id === undefined ? undefined : String(id)
 })
 
+const groupValue = computed<Record<string, unknown>>(() =>
+  isRecordValue(displayRecord.value) ? displayRecord.value : {},
+)
+
+const hiddenKeys = computed(
+  () => new Set<string>(detailOverride.value?.hiddenFields),
+)
+
 const entries = computed(() =>
   isRecordValue(displayRecord.value)
-    ? Object.entries(displayRecord.value)
+    ? Object.entries(displayRecord.value).filter(
+        ([key]) => !hiddenKeys.value.has(key),
+      )
     : [],
 )
 
+function handleGroupChange(changed: Record<string, unknown>) {
+  patchRecord(changed)
+}
+
+function handleClose() {
+  closeView()
+  emit("close")
+}
+
 onMounted(() => {
   if (viewingRecord.value === undefined && properties.record !== undefined) {
-    store.startView(properties.record)
+    startView(properties.record)
   }
 })
 </script>
 
 <template>
-  <div class="w-full space-y-4">
+  <component
+    :is="customDetail"
+    v-if="customDetail"
+    :close="handleClose"
+    :has-detail-endpoint="hasDetailEndpoint"
+    :record="displayRecord"
+    :reload="loadRecordDetail"
+    :status="detailStatus"
+  />
+
+  <div v-else class="w-full space-y-4">
     <div class="flex items-center justify-between gap-3">
       <button
         class="rounded border border-[var(--ch-admin-border)] px-3 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
-        @click="emit('close')"
+        @click="handleClose"
       >
         &larr; Back to list
       </button>
       <div class="text-right">
         <h2 class="text-sm font-semibold text-[var(--ch-admin-text)]">
-          {{ adminPanelStore.activeEntity?.entityName ?? "record" }}
+          {{ currentEntity?.entityName ?? "record" }}
           <span v-if="recordId !== undefined">#{{ recordId }}</span>
         </h2>
         <p class="text-xs text-[var(--ch-admin-text-muted)]">
-          {{ adminPanelStore.activeEntity?.fullBasePath }}
+          {{ currentEntity?.fullBasePath }}
         </p>
       </div>
     </div>
@@ -112,6 +165,13 @@ onMounted(() => {
           :key="key"
           :field-key="key"
           :value="value"
+        />
+
+        <FieldGroupRenderer
+          v-if="detailOverride"
+          :override="detailOverride"
+          :value="groupValue"
+          :on-change="handleGroupChange"
         />
       </template>
     </div>

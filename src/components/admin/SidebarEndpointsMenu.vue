@@ -1,28 +1,34 @@
-<script setup lang="tsx">
-import { getAdminPanelEntityStore } from "../../stores/adminPanel/entity"
+<script setup lang="ts">
+import { getAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
+import type { AdminPanelMenuLink, AdminSidebarGroup } from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
-const adminPanelStore = useAdminPanelStore()
-
 interface Properties {
-  filteredEntitiesByNamespace: {
-    entities: ParsedEntity[]
-    namespace: string
-  }[]
+  extraLinks?: AdminPanelMenuLink[]
+  filteredEntitiesByNamespace: AdminSidebarGroup[]
+  instanceKey?: string
   isMobile?: boolean
+  onSelectEntity?: (entity: ParsedEntity) => void
 }
 
 const properties = defineProps<Properties>()
+const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
+
+const adminPanelStore = useAdminPanelStore()
 
 // Selecting an entity also closes an open record view, so clicking the already
-// active entity returns from an open record to the list.
+// active entity returns from an open record to the list. A host-supplied
+// handler (custom sidebar wiring) wins over the default navigation.
 function selectEntity(entity: ParsedEntity) {
-  getAdminPanelEntityStore(
-    adminPanelStore.activeEntity?.fullBasePath,
-  )?.closeView()
+  if (properties.onSelectEntity) {
+    properties.onSelectEntity(entity)
+    return
+  }
+  getAdminPanelDetailStore(properties.instanceKey)?.closeView()
   adminPanelStore.activeEntity = entity
+  emit("select", entity)
 }
 </script>
 
@@ -66,6 +72,26 @@ function selectEntity(entity: ParsedEntity) {
             >
               <span class="truncate">{{ entity.entityName }}</span>
             </button>
+          </li>
+        </ul>
+      </section>
+
+      <section
+        v-if="properties.extraLinks && properties.extraLinks.length > 0"
+      >
+        <h3
+          class="mb-2 px-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
+        >
+          Links
+        </h3>
+        <ul class="space-y-1">
+          <li v-for="link in properties.extraLinks" :key="link.href">
+            <a
+              class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
+              :href="link.href"
+            >
+              <span class="truncate">{{ link.label }}</span>
+            </a>
           </li>
         </ul>
       </section>

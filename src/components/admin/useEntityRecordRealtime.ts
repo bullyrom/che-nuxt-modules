@@ -12,17 +12,24 @@ import type { AdminRealtimeChange, AdminRealtimeClient } from "./realtime"
 interface UseEntityRecordRealtimeParameters {
   client?: AdminRealtimeClient
   closeView: () => void
+  /** Track the viewed-record channel and refetch it (default `true`). */
+  detail?: boolean
   getEntityName: () => string | undefined
   getViewedRecord: () => Record<string, unknown> | undefined
+  /** Track the list channel and count changes (default `true`). */
+  list?: boolean
 }
 
 /**
- * Wires the admin record list to the injected realtime client: the list follows
+ * Wires an admin area to the injected realtime client. The list follows
  * `entity:<model>` and only counts new changes (the UI prompts a manual,
  * filter-preserving reload), while the open record follows
  * `entity:<model>:<id>` and refetches on change. Channels are reference-counted
  * by the shared pool, so several panels viewing the same entity share one
  * subscription, and are released when `dispose` is called.
+ *
+ * `list`/`detail` let the split list and detail stores use the same helper for
+ * only the channel they own.
  */
 function useEntityRecordRealtime(
   parameters: UseEntityRecordRealtimeParameters,
@@ -34,6 +41,9 @@ function useEntityRecordRealtime(
   // is not rewritten inside a pre-built package consumed from node_modules.
   const isClient = globalThis.window !== undefined
   const realtime = isClient ? getAdminRealtime(parameters.client) : undefined
+
+  const listEnabled = parameters.list ?? true
+  const detailEnabled = parameters.detail ?? true
 
   const detailRefreshSignal = ref(0)
   const listChangesCount = ref(0)
@@ -48,7 +58,7 @@ function useEntityRecordRealtime(
   }
 
   function setListChannel(entityName: string | undefined) {
-    if (!isClient) return
+    if (!isClient || !listEnabled) return
     const nextChannel =
       entityName === undefined ? undefined : entityListChannel(entityName)
     if (nextChannel === activeListChannel) return
@@ -61,7 +71,7 @@ function useEntityRecordRealtime(
     entityName: string | undefined,
     recordId: number | string | undefined,
   ) {
-    if (!isClient) return
+    if (!isClient || !detailEnabled) return
     const nextChannel =
       entityName === undefined || recordId === undefined
         ? undefined
@@ -78,7 +88,11 @@ function useEntityRecordRealtime(
 
     // The list does not refetch by itself (that would drop the user's filters
     // and flash the panel); it only accumulates a "new changes" badge.
-    if (activeListChannel !== undefined) listChangesCount.value += 1
+    if (listEnabled && activeListChannel !== undefined) {
+      listChangesCount.value += 1
+    }
+
+    if (!detailEnabled) return
 
     const viewedRecord = parameters.getViewedRecord()
     const viewedRecordId =
@@ -107,8 +121,8 @@ function useEntityRecordRealtime(
 
   function dispose() {
     detachListener?.()
-    setListChannel(undefined)
-    setDetailChannel(undefined, undefined)
+    if (listEnabled) setListChannel(undefined)
+    if (detailEnabled) setDetailChannel(undefined, undefined)
   }
 
   return {

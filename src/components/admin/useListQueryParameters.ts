@@ -1,23 +1,29 @@
-import { computed, ref } from "vue"
+import { computed, ref, toValue } from "vue"
 
-import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import {
   buildQueryValues,
   hasQueryParameter,
 } from "../../stores/adminPanel/queryParameters"
 
+import type { ListQueryParameters } from "../../stores/adminPanel/queryParameters"
+import type { MaybeRefOrGetter } from "vue"
+
+interface UseListQueryParametersParameters {
+  listQueryParameters: MaybeRefOrGetter<ListQueryParameters>
+}
+
 /**
  * Reactive state for the list endpoint query parameters (filters and sorting),
  * merging the generic schema-driven values with the fallback `search` input.
+ * The schema parameters are supplied per instance so a standalone list works
+ * without the global admin navigation.
  */
-function useListQueryParameters() {
-  const adminPanelStore = useAdminPanelStore()
-
+function useListQueryParameters(parameters: UseListQueryParametersParameters) {
   const searchQuery = ref("")
   const queryValues = ref<Record<string, unknown>>({})
 
-  const listQueryParameters = computed(
-    () => adminPanelStore.activeEntityListQueryParameters,
+  const listQueryParameters = computed(() =>
+    toValue(parameters.listQueryParameters),
   )
 
   const usesSchemaSearch = computed(() =>
@@ -50,3 +56,4 @@ function useListQueryParameters() {
 }
 
 export { useListQueryParameters }
+export type { UseListQueryParametersParameters }

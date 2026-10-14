@@ -1,15 +1,18 @@
 <script setup lang="ts">
 // eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
-import { computed, inject, provide, watch } from "vue"
+import { computed, provide, watch } from "vue"
 
-import { getSchemaNameFromRef as getSchemaNameFromReference } from "../../stores/adminPanel/apiTypes"
 import {
-  ADMIN_ENTITY_STORE,
-  useAdminPanelEntityStore,
-} from "../../stores/adminPanel/entity"
+  getRequestSchema,
+  getSchemaNameFromRef as getSchemaNameFromReference,
+} from "../../stores/adminPanel/apiTypes"
+import { useAdminPanelFormStore } from "../../stores/adminPanel/form"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
+import { resolveEntityConfig } from "../../stores/adminPanel/instance"
 
+import { formConfigToPanelConfig } from "./config"
+import FieldGroupRenderer from "./FieldGroupRenderer.vue"
 import FieldRenderer from "./fields/FieldRenderer.vue"
 import {
   buildBlankRecord,
@@ -20,11 +23,16 @@ import {
 import FormErrors from "./FormErrors.vue"
 import RawValue from "./RawValue.vue"
 
-import type { AdminPanelConfig } from "./fields/types"
+import type { AdminFormConfig, AdminPanelConfig } from "./fields/types"
+import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 interface Properties {
   baseUrl: string
   config?: AdminPanelConfig
+  entity?: ParsedEntity
+  /** Embedded-form config fragment (used when `config` is not passed). */
+  formConfig?: AdminFormConfig
+  instanceKey?: string
 }
 
 const properties = defineProps<Properties>()
@@ -32,14 +40,12 @@ const emit = defineEmits<(event: "saved") => void>()
 
 const adminPanelStore = useAdminPanelStore()
 
-const injectedStore = inject(ADMIN_ENTITY_STORE, undefined)
-const store =
-  injectedStore ??
-  useAdminPanelEntityStore({
-    baseUrl: properties.baseUrl,
-    config: properties.config,
-    entityPath: adminPanelStore.activeEntity?.fullBasePath ?? "none",
-  })
+const store = useAdminPanelFormStore({
+  baseUrl: properties.baseUrl,
+  config: properties.config,
+  entity: () => properties.entity,
+  instanceKey: properties.instanceKey ?? "admin-1",
+})
 
 const {
   editingRecord,
@@ -53,15 +59,32 @@ const {
 
 const { closeForm, submitForm } = store
 
+const currentEntity = computed(
+  () => properties.entity ?? adminPanelStore.activeEntity,
+)
+const instanceConfig = computed(
+  () =>
+    properties.config ??
+    (properties.formConfig === undefined
+      ? undefined
+      : formConfigToPanelConfig(
+          properties.formConfig,
+          currentEntity.value?.entityName,
+        )) ??
+    adminPanelStore.config,
+)
+
 const schemaFields = computed(() =>
   buildFieldDescriptors(
-    adminPanelStore.activeEntityCreateSchema,
+    adminPanelStore.resolveSchema(
+      getRequestSchema(currentEntity.value?.createOperation),
+    ),
     adminPanelStore.schema?.components?.schemas,
   ),
 )
 
 const createSchemaName = computed(() => {
-  const { requestBody } = adminPanelStore.activeEntity?.createOperation ?? {}
+  const { requestBody } = currentEntity.value?.createOperation ?? {}
   if (requestBody && "$ref" in requestBody) {
     return getSchemaNameFromReference(requestBody)
   }
@@ -71,12 +94,26 @@ const createSchemaName = computed(() => {
 const fieldOverrides = computed(() => {
   const schemaName = createSchemaName.value
   if (!schemaName) return undefined
-  return properties.config?.fields?.overrides?.[schemaName]
+  return instanceConfig.value?.fields?.overrides?.[schemaName]
 })
+
+const formOverride = computed(
+  () =>
+    resolveEntityConfig(instanceConfig.value, currentEntity.value)
+      ?.formOverride,
+)
+
+const hiddenKeys = computed(
+  () => new Set<string>(formOverride.value?.hiddenFields),
+)
+
+const visibleFields = computed(() =>
+  schemaFields.value.filter((field) => !hiddenKeys.value.has(field.key)),
+)
 
 provide(FIELD_RENDER_CONTEXT, {
   get components() {
-    return properties.config?.fields?.defaultComponents
+    return instanceConfig.value?.fields?.defaultComponents
   },
 })
 
@@ -86,6 +123,10 @@ watch(formIsOpen, (isOpen) => {
     ? serializeRecord(editingRecord.value, schemaFields.value)
     : buildBlankRecord(schemaFields.value)
 })
+
+function handleFormGroupChange(changed: Record<string, unknown>) {
+  Object.assign(form.value, changed)
+}
 
 async function handleSubmit(submitEvent: SubmitEvent) {
   submitEvent.preventDefault()
@@ -107,7 +148,7 @@ async function handleSubmit(submitEvent: SubmitEvent) {
       >
         <h2 class="text-lg font-semibold text-[var(--ch-admin-text)]">
           {{ isEditMode ? "Edit" : "Create" }}
-          {{ adminPanelStore.activeEntity?.entityName ?? "record" }}
+          {{ currentEntity?.entityName ?? "record" }}
         </h2>
         <button
           class="text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
@@ -120,11 +161,18 @@ async function handleSubmit(submitEvent: SubmitEvent) {
       <form class="px-6 py-4" @submit="handleSubmit">
         <div class="space-y-4">
           <FieldRenderer
-            v-for="field in schemaFields"
+            v-for="field in visibleFields"
             :key="field.key"
             v-model="form[field.key]"
             :field="field"
             :override="fieldOverrides?.[field.key]"
+          />
+
+          <FieldGroupRenderer
+            v-if="formOverride"
+            :override="formOverride"
+            :value="form"
+            :on-change="handleFormGroupChange"
           />
 
           <div v-if="schemaFields.length === 0" class="space-y-2">

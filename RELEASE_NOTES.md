@@ -1,5 +1,19 @@
 # Release notes
 
+- feat: `AdminPanelConfig` is now generic over an entity-name→object-type map, so per-entity override components and their typed `value`/`onChange` are checked against the generated OpenAPI types
+- feat: whole-object field-group overrides (level 1) for the create/edit form, list items and record detail — `entities.<name>.formOverride|listItemOverride|detailOverride` with `hiddenFields` plus a component that receives the whole object and a typed `onChange` setter (standard fields keep rendering before it)
+- feat: full list/detail overrides (`views.list`/`views.detail`) and partial `views.listHeader`/`views.listFooter` wrapping the default list — components receive records, `fetchNextPage`, next/previous URL, count, status, grid columns and `reload`
+- feat: grid columns (level 3) configurable globally (`gridColumns`) and per entity via `entities.<name>.gridColumns`
+- feat: header override (level 4) via `views.header`, receiving `entity`, `canCreate`, `listChangesCount`, `startCreate`, `reload` and `clearEntity`
+- feat: sidebar override (level 5) via `views.sidebar`, plus the gentler `menu.hiddenEntities` and `menu.extraLinks` tweaks on the default menu
+- feat: admin pieces are now keyed dictionaries — the global `useAdminPanelStore` holds the one shared config + schema, and `useAdminPanelListStore`/`useAdminPanelDetailStore`/`useAdminPanelFormStore` are per-`instanceKey` stores; the admin reuses `admin-1` for every entity, while an embedded piece uses its own key and creates only its own dictionary entry (other entries and the global config are untouched)
+- feat: an embedded list takes `detailHref` to build detail links (the `View` action becomes a link); with no `detailHref` and no `showDetail` the detail action is hidden — the normal admin generates its own links
+- feat: per-component config fragments `AdminListConfig`/`AdminDetailConfig`/`AdminFormConfig` with the converters `listConfigToPanelConfig`/`detailConfigToPanelConfig`/`formConfigToPanelConfig`, so embedded pieces only receive the config slice they need
+- feat: exported `EntityWorkspace`, `EntityRecordList`, `EntityListHeader`, `EntityDeleteModal`, `FieldGroupRenderer`, `ListElementByCurrentDevice`, the fragment types/converters and the keyed store accessors
+- refactor: replaced the per-entity `useAdminPanelEntityStore` with the keyed list/detail/form stores (deleted `entity.ts`/`entityList.ts`/`entityForm.ts`); the realtime helper gained `list`/`detail` modes for the split stores
+- docs: added `docs/admin-customization.md` covering every customization level, embedding outside the admin and the store structure
+- test: added unit tests for the config-fragment converters
+
 - fix: admin list filters work again on every entity — the `searchQuery`/`queryValues` watchers are registered in the store's own effect scope instead of `onMounted`, so they survive entity switches and component remounts (a memoized store no longer loses its watchers)
 - fix: `searchQuery`/`queryValues` are marked `skipHydrate`, so Pinia restoring the store no longer looks like a filter change — no false reload on hydration
 - test: added a scope-lifecycle regression test (`entityWatchers.test.ts`) reproducing why the watchers must live in the store scope
