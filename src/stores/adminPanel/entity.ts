@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { defineStore, getActivePinia } from "pinia"
+import { defineStore, getActivePinia, skipHydrate } from "pinia"
 
 import { createAdminPanelEntityDeletion } from "./entityDeletion"
 import { createAdminPanelEntityForm } from "./entityForm"
@@ -32,7 +32,16 @@ function createAdminPanelEntityStore(
   })
   const form = createAdminPanelEntityForm(parameters)
 
-  return { ...list, ...deletion, ...form }
+  return {
+    ...list,
+    ...deletion,
+    ...form,
+    // Filters are UI state: keep them out of the SSR payload so restoring the
+    // store never reassigns them (which a setup-scope watcher would treat as a
+    // filter change and refetch).
+    queryValues: skipHydrate(list.queryValues),
+    searchQuery: skipHydrate(list.searchQuery),
+  }
 }
 
 // Store definitions are scoped to the active Pinia (one per SSR request and per

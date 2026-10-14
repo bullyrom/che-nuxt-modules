@@ -63,6 +63,15 @@ function createAdminPanelEntityList(
     loadCurrentEntity(true)
   }, SEARCH_DEBOUNCE_MS)
 
+  // Registered in the store's own effect scope (not a component's), so they
+  // survive entity switches and component remounts. The filter refs opt out of
+  // Pinia hydration (see `skipHydrate` in the store), so restoring the store
+  // does not look like a filter change and never triggers a redundant reload.
+  watch(query.searchQuery, loadDebounced)
+  watch(query.queryValues, () => {
+    loadCurrentEntity(true)
+  })
+
   // eslint-disable-next-line init-declarations
   let lastFetchedUrl: string | undefined
 
@@ -143,14 +152,6 @@ function createAdminPanelEntityList(
 
   onMounted(() => {
     realtime.setListChannel(currentRealtimeEntityName())
-    // Register the filter/search watchers on the client only, after hydration:
-    // Pinia restores `searchQuery`/`queryValues` into fresh refs during
-    // hydration, and a setup-time watcher would treat that as a user change and
-    // refetch — flashing a loader over the SSR-rendered list (double load).
-    watch(query.searchQuery, loadDebounced)
-    watch(query.queryValues, () => {
-      loadCurrentEntity(true)
-    })
   })
   onScopeDispose(realtime.dispose)
 

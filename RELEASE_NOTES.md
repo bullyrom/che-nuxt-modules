@@ -1,5 +1,9 @@
 # Release notes
 
+- fix: admin list filters work again on every entity — the `searchQuery`/`queryValues` watchers are registered in the store's own effect scope instead of `onMounted`, so they survive entity switches and component remounts (a memoized store no longer loses its watchers)
+- fix: `searchQuery`/`queryValues` are marked `skipHydrate`, so Pinia restoring the store no longer looks like a filter change — no false reload on hydration
+- test: added a scope-lifecycle regression test (`entityWatchers.test.ts`) reproducing why the watchers must live in the store scope
+
 - fix: the root-level OpenAPI admin nested `RollDown` now has horizontal padding (`px-3`) so the arrow and the summary are not flush with the edges (nested levels unchanged)
 - fix: empty arrays/objects keep the same card/header design as non-empty collections but without a `RollDown`, labelled `0 items` / `0 fields`
 - fix: the record/model title on the OpenAPI admin detail page is right-aligned again — the detail root spans the full pane
