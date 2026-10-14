@@ -5,6 +5,8 @@ export {
 } from "@/components/admin/config"
 export { default as Crud } from "@/components/admin/Crud.vue"
 export { default as EntityCreateForm } from "@/components/admin/EntityCreateForm.vue"
+export { default as EntityDeleteModal } from "@/components/admin/EntityDeleteModal.vue"
+export { default as EntityListHeader } from "@/components/admin/EntityListHeader.vue"
 export { default as EntityRecordCard } from "@/components/admin/EntityRecordCard.vue"
 export { default as EntityRecordDetail } from "@/components/admin/EntityRecordDetail.vue"
 export { default as EntityRecordList } from "@/components/admin/EntityRecordList.vue"
