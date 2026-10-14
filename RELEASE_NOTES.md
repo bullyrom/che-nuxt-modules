@@ -1,5 +1,7 @@
 # Release notes
 
+- fix: the admin entity store no longer refetches right after hydration — the filter/search watchers are now registered in `onMounted` (client, after Pinia restored the state), so the fresh `queryValues` object Pinia assigns during hydration is not mistaken for a filter change. This removes the SSR-data → loader → data double load and the `LazyLoadList` hydration mismatch it caused (the loader `v-if` comment vs div)
+
 - fix: `LazyLoadList` no longer emits `v-if` comment anchors (`<!---->`) between the items — the visibility trigger is now bound to the trigger item's wrapper with a function ref instead of a sibling `v-if` node, so the server (`@vue/server-renderer`) and the client render the same list markup; added an SSR regression test (`LazyLoadList.ssr.test.ts`) that renders the component and the admin `EntityRecordCard` slot
 
 - fix: `LazyLoadList` is hydration-safe — the visibility observers now attach in `onMounted` (client only) via `useElementVisibility` instead of the `v-element-visibility` directive, so the server and the client render identical markup (the server no longer emits a placeholder comment where the client renders a node)

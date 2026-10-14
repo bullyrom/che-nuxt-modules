@@ -63,11 +63,6 @@ function createAdminPanelEntityList(
     loadCurrentEntity(true)
   }, SEARCH_DEBOUNCE_MS)
 
-  watch(query.searchQuery, loadDebounced)
-  watch(query.queryValues, () => {
-    loadCurrentEntity(true)
-  })
-
   // eslint-disable-next-line init-declarations
   let lastFetchedUrl: string | undefined
 
@@ -148,6 +143,14 @@ function createAdminPanelEntityList(
 
   onMounted(() => {
     realtime.setListChannel(currentRealtimeEntityName())
+    // Register the filter/search watchers on the client only, after hydration:
+    // Pinia restores `searchQuery`/`queryValues` into fresh refs during
+    // hydration, and a setup-time watcher would treat that as a user change and
+    // refetch — flashing a loader over the SSR-rendered list (double load).
+    watch(query.searchQuery, loadDebounced)
+    watch(query.queryValues, () => {
+      loadCurrentEntity(true)
+    })
   })
   onScopeDispose(realtime.dispose)
 
