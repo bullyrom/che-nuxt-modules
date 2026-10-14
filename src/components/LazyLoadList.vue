@@ -1,10 +1,12 @@
 <template>
   <div>
     <div :class="listClass">
-      <div v-for="(item, index) in items" :key="index">
+      <div
+        v-for="(item, index) in items"
+        :key="index"
+        :ref="(element) => registerTrigger(element, index)"
+      >
         <slot :item="item" :index="index" />
-
-        <div v-if="isTriggerItem(index)" ref="triggerElement" />
       </div>
     </div>
 
@@ -20,11 +22,11 @@
 
 <script setup lang="ts" generic="ElementType">
 import { useElementVisibility } from "@vueuse/core"
-import { onMounted, ref, watch } from "vue"
+import { computed, onMounted, ref, watch } from "vue"
 
 import MainLoader from "./MainLoader.vue"
 
-import type { PropType } from "vue"
+import type { ComponentPublicInstance, PropType } from "vue"
 
 const properties = defineProps({
   fetchVisibleItemNumber: { required: true, type: Number },
@@ -40,20 +42,28 @@ const emit = defineEmits<(event: "fetchNextPage") => Promise<void>>()
 
 const isFetchingNext = ref(false)
 
-// The visibility observers are attached in `onMounted` (client only) instead of
-// with `v-element-visibility`: directives would make the server render a
-// placeholder comment where the client renders the element, breaking hydration.
+// The visibility observers are attached in `onMounted` (client only). The
+// trigger is bound to the wrapper of the trigger item via a function ref — no
+// extra `v-if` node and, crucially, no `v-if` comment anchors inside the
+// `v-for`, which were the source of the server/client hydration difference.
 const triggerElement = ref<HTMLElement>()
 const loaderElement = ref<HTMLElement>()
 const triggerIsVisible = useElementVisibility(triggerElement)
 const loaderIsVisible = useElementVisibility(loaderElement)
 
-function isTriggerItem(index: number): boolean {
-  if (properties.items === undefined) return false
-  return (
-    properties.items.length - properties.fetchVisibleItemNumber + 1 ===
-    index + 1
-  )
+const triggerIndex = computed(() =>
+  properties.items === undefined
+    ? -1
+    : properties.items.length - properties.fetchVisibleItemNumber,
+)
+
+function registerTrigger(
+  element: ComponentPublicInstance | Element | null,
+  index: number,
+) {
+  if (element instanceof HTMLElement && index === triggerIndex.value) {
+    triggerElement.value = element
+  }
 }
 
 async function onElementVisibility(state: boolean) {
