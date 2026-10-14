@@ -155,6 +155,7 @@ interface AdminFormConfig<
   ObjectType extends Record<string, unknown> = Record<string, unknown>,
 > {
   defaultComponents?: PartialFieldComponentRegistry
+  formats?: Partial<Record<string, FieldComponent>>
   override?: FieldGroupOverride<ObjectType>
   overrides?: Record<string, Record<string, FieldOverrideNode>>
 }
@@ -242,6 +243,12 @@ interface AdminPanelEntityConfig<
 
 interface AdminPanelFieldConfig {
   defaultComponents?: PartialFieldComponentRegistry
+  /**
+   * Format-driven component overrides (OpenAPI `format` -> component), e.g.
+   * `{ image: ImageField, "date-time": DateTimeField }`. More specific than
+   * `defaultComponents` (kind).
+   */
+  formats?: Partial<Record<string, FieldComponent>>
   overrides?: Record<string, Record<string, FieldOverrideNode>>
 }
 

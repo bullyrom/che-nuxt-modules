@@ -20,6 +20,14 @@
 
 ---
 
+## Architecture: the future admin package
+
+- The OpenAPI admin panel is planned to be moved into a **separate package** that will depend on `che-nuxt-modules` (the admin consumes this library's modules).
+- Design every reusable piece (fields, selects, data/store helpers, API wrappers) as a generic `che-nuxt-modules` export with **no admin-panel-specific coupling**; keep admin-only composition thin and in the admin layer so the split stays cheap.
+- Prefer project-agnostic names/props over admin terminology when the piece is general-purpose.
+
+---
+
 ## Build
 
 After making any changes, run `yarn build` to verify the build succeeds.

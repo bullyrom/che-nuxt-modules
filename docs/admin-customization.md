@@ -38,6 +38,7 @@ const config: AdminPanelConfig = {
   gridColumns: 3,
   fields: {
     defaultComponents: {},
+    formats: {},
     overrides: {},
   },
   hooks: {
@@ -346,7 +347,7 @@ Embedded pieces accept only the fragment they need instead of the whole config:
 - `AdminListConfig` — `gridColumns`, `detailHref`, `itemOverride`,
   `list`/`listHeader`/`listFooter`, `defaultComponents`.
 - `AdminDetailConfig` — `detail`, `override`.
-- `AdminFormConfig` — `overrides`, `defaultComponents`, `override`.
+- `AdminFormConfig` — `overrides`, `defaultComponents`, `formats`, `override`.
 
 Helpers convert a fragment into the store config shape if you build admin
 pieces by hand: `listConfigToPanelConfig`, `detailConfigToPanelConfig`,

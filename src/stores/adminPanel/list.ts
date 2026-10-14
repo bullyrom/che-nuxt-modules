@@ -5,10 +5,10 @@ import { resolveRealtimeEntityName } from "../../components/admin/realtime"
 import { useEntityRecordRealtime } from "../../components/admin/useEntityRecordRealtime"
 import { useListQueryParameters } from "../../components/admin/useListQueryParameters"
 import { usePaginatedListApi } from "../../composables/api"
+import { createInstanceRegistry } from "../instanceRegistry"
 
 import { createAdminPanelEntityDeletion } from "./entityDeletion"
 import { resolveConfig, resolveEntity } from "./instance"
-import { createInstanceRegistry } from "./instanceRegistry"
 import { extractListQueryParameters } from "./queryParameters"
 
 import { useAdminPanelStore } from "./index"

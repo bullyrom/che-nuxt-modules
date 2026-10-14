@@ -10,6 +10,7 @@ import {
 } from "./registry"
 
 import type {
+  FieldComponent,
   FieldDescriptor,
   FieldOverrideNode,
   PartialFieldComponentRegistry,
@@ -18,6 +19,7 @@ import type {
 interface Properties {
   components?: PartialFieldComponentRegistry
   field: FieldDescriptor
+  formats?: Partial<Record<string, FieldComponent>>
   modelValue: unknown
   nested?: boolean
   override?: FieldOverrideNode
@@ -31,6 +33,10 @@ const parentContext = inject(FIELD_RENDER_CONTEXT, undefined)
 
 const effectiveComponents = computed(
   () => properties.components ?? parentContext?.components,
+)
+
+const effectiveFormats = computed(
+  () => properties.formats ?? parentContext?.formats,
 )
 
 const ownOverride = computed(
@@ -51,6 +57,7 @@ const childOverrides = computed(() => {
 const resolvedComponent = computed(() =>
   resolveFieldComponent(properties.field, {
     components: effectiveComponents.value,
+    formats: effectiveFormats.value,
     override: leafOverride.value,
   }),
 )
@@ -63,6 +70,9 @@ const OBJECT_BUTTON_CLASSES =
 provide(FIELD_RENDER_CONTEXT, {
   get components() {
     return effectiveComponents.value
+  },
+  get formats() {
+    return effectiveFormats.value
   },
   get overrides() {
     return childOverrides.value

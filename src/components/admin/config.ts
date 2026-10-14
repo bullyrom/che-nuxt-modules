@@ -60,6 +60,7 @@ function formConfigToPanelConfig(
         : { [entityName]: { formOverride: config.override } },
     fields: {
       defaultComponents: config.defaultComponents,
+      formats: config.formats,
       overrides: config.overrides,
     },
   }

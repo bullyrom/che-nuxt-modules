@@ -1,5 +1,9 @@
 import EnumField from "./defaultComponents/EnumField.vue"
-import { DEFAULT_FIELD_COMPONENTS, TextareaField } from "./defaults"
+import {
+  DEFAULT_FIELD_COMPONENTS,
+  DEFAULT_FORMAT_COMPONENTS,
+  TextareaField,
+} from "./defaults"
 
 import type {
   FieldComponent,
@@ -20,6 +24,7 @@ type SchemaDocument = Record<string, SchemaOrReference>
 
 export interface FieldRenderContext {
   components?: PartialFieldComponentRegistry
+  formats?: Partial<Record<string, FieldComponent>>
   overrides?: Record<string, FieldOverrideNode>
 }
 
@@ -175,11 +180,19 @@ export function resolveFieldComponent(
   field: FieldDescriptor,
   options: {
     components?: PartialFieldComponentRegistry
+    formats?: Partial<Record<string, FieldComponent>>
     override?: FieldOverride
   } = {},
 ): FieldComponent<unknown> {
   if (options.override) {
     return options.override.component as FieldComponent<unknown>
+  }
+
+  if (field.format !== undefined) {
+    const formatComponent =
+      options.formats?.[field.format] ??
+      DEFAULT_FORMAT_COMPONENTS[field.format]
+    if (formatComponent) return formatComponent as FieldComponent<unknown>
   }
 
   const customComponent = options.components?.[field.kind]

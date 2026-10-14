@@ -191,6 +191,7 @@ function itemHref(item: unknown): string | undefined {
             v-model="queryValues"
             :components="instanceConfig?.fields?.defaultComponents"
             :filters="listQueryParameters.filters"
+            :formats="instanceConfig?.fields?.formats"
             :sorts="listQueryParameters.sorts"
           />
         </div>

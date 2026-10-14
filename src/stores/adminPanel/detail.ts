@@ -9,9 +9,9 @@ import { resolveRealtimeEntityName } from "../../components/admin/realtime"
 import { getRecordId } from "../../components/admin/recordId"
 import { useEntityRecordRealtime } from "../../components/admin/useEntityRecordRealtime"
 import { useDetailApi } from "../../composables/api"
+import { createInstanceRegistry } from "../instanceRegistry"
 
 import { resolveConfig, resolveEntity } from "./instance"
-import { createInstanceRegistry } from "./instanceRegistry"
 
 import { useAdminPanelStore } from "./index"
 

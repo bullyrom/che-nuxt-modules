@@ -5,6 +5,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue"
 import FieldRenderer from "./fields/FieldRenderer.vue"
 
 import type {
+  FieldComponent,
   FieldDescriptor,
   PartialFieldComponentRegistry,
 } from "./fields/types"
@@ -14,6 +15,7 @@ const INPUT_DEBOUNCE_MS = 300
 interface Properties {
   components?: PartialFieldComponentRegistry
   filters: FieldDescriptor[]
+  formats?: Partial<Record<string, FieldComponent>>
   modelValue: Record<string, unknown>
   sorts: FieldDescriptor[]
 }
@@ -85,6 +87,7 @@ function resetValues() {
           v-for="field in properties.filters"
           :key="field.key"
           :components="properties.components"
+          :formats="properties.formats"
           :field="field"
           :model-value="localValues[field.key]"
           @update:model-value="(value) => updateValue(field.key, value)"
@@ -103,6 +106,7 @@ function resetValues() {
           v-for="field in properties.sorts"
           :key="field.key"
           :components="properties.components"
+          :formats="properties.formats"
           :field="field"
           :model-value="localValues[field.key]"
           @update:model-value="(value) => updateValue(field.key, value)"

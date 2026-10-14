@@ -115,6 +115,9 @@ provide(FIELD_RENDER_CONTEXT, {
   get components() {
     return instanceConfig.value?.fields?.defaultComponents
   },
+  get formats() {
+    return instanceConfig.value?.fields?.formats
+  },
 })
 
 watch(formIsOpen, (isOpen) => {

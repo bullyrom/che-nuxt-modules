@@ -4,9 +4,9 @@ import { isRecord } from "../../components/admin/fields/registry"
 import { isRecordValue } from "../../components/admin/rawValue"
 import { getRecordId } from "../../components/admin/recordId"
 import { useFormApi } from "../../composables/api"
+import { createInstanceRegistry } from "../instanceRegistry"
 
 import { resolveConfig, resolveEntity } from "./instance"
-import { createInstanceRegistry } from "./instanceRegistry"
 
 import { useAdminPanelStore } from "./index"
 

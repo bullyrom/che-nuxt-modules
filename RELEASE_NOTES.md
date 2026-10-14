@@ -1,5 +1,14 @@
 # Release notes
 
+- feat: reusable `Select`/`MultiSelect` (presentational) and `RemoteSelect`/`RemoteMultiSelect` (options loaded through a keyed Pinia store built on `usePaginatedListApi`, handling both a flat array and the Django paginated envelope) with search, paginated `LazyLoadList` loading and typed `labelKey`/`valueKey`; plus `toSelectOptions`, `useRemoteSelectOptions`, `useSelectOptionsStore`/`getSelectOptionsStore`, `SelectOption` and the shared select styles
+- feat: media field components for the admin field API — `FileField` (on `FileInput`), `ImageField`/`AudioField`/`VideoField` (current media + replace input) and display-only `ImageValue` (link + hover preview), `AudioValue`, `VideoValue`
+- feat: date field components `DateField`/`DateTimeField` (ISO strings, timezone-safe) with `DEFAULT_FORMAT_COMPONENTS` mapping `date`/`date-time` automatically
+- feat: format-based field dispatch — `AdminPanelFieldConfig.formats` (OpenAPI `format` -> component) is resolved before the kind `defaultComponents`, threaded through `FieldRenderer`/`QueryParametersMenu`/`EntityCreateForm` and the render context
+- refactor: moved `createInstanceRegistry` to `src/stores/instanceRegistry.ts` so it is shared by the admin instance stores and the new select options store
+- docs: added `docs/components.md` (selects, media/date field components, field-API wiring, project wrappers) and referenced it from the README; documented `fields.formats`
+- chore: added the "future admin package" architecture rule to `AGENTS.md`
+- test: unit tests for `toSelectOptions` and the date-input helpers
+
 - feat: `AdminPanelConfig` is now generic over an entity-name→object-type map, so per-entity override components and their typed `value`/`onChange` are checked against the generated OpenAPI types
 - feat: whole-object field-group overrides (level 1) for the create/edit form, list items and record detail — `entities.<name>.formOverride|listItemOverride|detailOverride` with `hiddenFields` plus a component that receives the whole object and a typed `onChange` setter (standard fields keep rendering before it)
 - feat: full list/detail overrides (`views.list`/`views.detail`) and partial `views.listHeader`/`views.listFooter` wrapping the default list — components receive records, `fetchNextPage`, next/previous URL, count, status, grid columns and `reload`
