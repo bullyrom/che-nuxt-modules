@@ -17,29 +17,39 @@ interface Properties {
 const properties = defineProps<Properties>()
 
 const IDENTIFIER_KEYS = ["id", "pk", "name", "title", "slug"]
+const ROOT_PADDING = "px-3"
 const NESTED_PADDING = "px-1.5"
+const HEADER_BASE =
+  "flex w-full items-center gap-2 py-1.5 text-left text-[var(--ch-admin-text)]"
 
-const nestedEntries = computed<Entry[] | undefined>(() => {
+const collectionEntries = computed<Entry[] | undefined>(() => {
   const { value } = properties
   if (Array.isArray(value)) {
-    return value.length > 0
-      ? value.map((item, index): Entry => [String(index), item])
-      : undefined
+    return value.map((item, index): Entry => [String(index), item])
   }
-  if (isRecordValue(value)) {
-    const entries = Object.entries(value)
-    return entries.length > 0 ? entries : undefined
-  }
+  if (isRecordValue(value)) return Object.entries(value)
   return undefined
 })
 
-const buttonClasses = computed(() => {
-  const base =
-    "flex w-full items-center gap-2 py-1.5 text-left text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
-  return properties.nested
-    ? `${base} ${NESTED_PADDING}`
-    : `${base} bg-transparent`
+const nestedEntries = computed<Entry[] | undefined>(() => {
+  const entries = collectionEntries.value
+  return entries !== undefined && entries.length > 0 ? entries : undefined
 })
+
+// Collections with no children keep the card look but are not expandable.
+const isEmptyCollection = computed(
+  () =>
+    collectionEntries.value !== undefined && nestedEntries.value === undefined,
+)
+
+const headerClasses = computed(
+  () => `${HEADER_BASE} ${properties.nested ? NESTED_PADDING : ROOT_PADDING}`,
+)
+
+const buttonClasses = computed(
+  () =>
+    `${headerClasses.value} bg-transparent transition-colors hover:bg-[var(--ch-admin-surface-hover)]`,
+)
 
 const rowClasses = computed(() =>
   properties.nested
@@ -64,7 +74,7 @@ function readIdentifier(value: unknown): string | undefined {
 }
 
 const summary = computed(() => {
-  const count = nestedEntries.value?.length ?? 0
+  const count = collectionEntries.value?.length ?? 0
   if (Array.isArray(properties.value)) return `${count} items`
   const identifier = readIdentifier(properties.value)
   return identifier ? `${count} fields · ${identifier}` : `${count} fields`
@@ -109,6 +119,24 @@ const summary = computed(() => {
         />
       </div>
     </RollDown>
+  </div>
+
+  <div
+    v-else-if="isEmptyCollection"
+    class="overflow-hidden rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
+  >
+    <div :class="headerClasses">
+      <span class="flex min-w-0 items-center gap-2">
+        <span class="text-[var(--ch-admin-text-muted)]">▸</span>
+        <span
+          class="truncate font-mono text-xs text-[var(--ch-admin-text)]"
+          v-text="properties.fieldKey"
+        />
+      </span>
+      <span class="ml-auto shrink-0 text-xs text-[var(--ch-admin-text-muted)]">
+        {{ summary }}
+      </span>
+    </div>
   </div>
 
   <div v-else :class="rowClasses">

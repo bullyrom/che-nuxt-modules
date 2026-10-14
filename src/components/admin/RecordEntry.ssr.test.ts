@@ -19,13 +19,13 @@ describe("RecordEntry SSR", () => {
     expect(await render({ id: 5, name: "x" })).toContain("2 fields · id 5")
   })
 
-  it("does not render a RollDown for empty collections", async () => {
+  it("renders the collection card without a RollDown for empty collections", async () => {
     const emptyObject = await render({})
     const emptyArray = await render([])
 
     expect(emptyObject).not.toContain("<button")
     expect(emptyArray).not.toContain("<button")
-    expect(emptyObject).toContain("{}")
-    expect(emptyArray).toContain("[]")
+    expect(emptyObject).toContain("0 fields")
+    expect(emptyArray).toContain("0 items")
   })
 })

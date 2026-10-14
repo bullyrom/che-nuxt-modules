@@ -1,5 +1,10 @@
 # Release notes
 
+- fix: the root-level OpenAPI admin nested `RollDown` now has horizontal padding (`px-3`) so the arrow and the summary are not flush with the edges (nested levels unchanged)
+- fix: empty arrays/objects keep the same card/header design as non-empty collections but without a `RollDown`, labelled `0 items` / `0 fields`
+- fix: the record/model title on the OpenAPI admin detail page is right-aligned again — the detail root spans the full pane
+- test: `RecordEntry` SSR test now covers empty collections rendering the collection card
+
 - fix: OpenAPI admin nested field labels are English again (`N items` / `N fields · identifier`) and the type summary is right-aligned in the RollDown header
 - fix: `RecordEntry` no longer renders a (empty) `RollDown` for empty arrays/objects — they fall back to the raw-value row
 - style: nested OpenAPI admin children are visually separated by a distinct card background and a left guide line
