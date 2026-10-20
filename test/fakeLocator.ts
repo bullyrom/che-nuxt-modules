@@ -5,10 +5,12 @@ import type { LocatorLike } from "../src/testing/types"
 class FakeLocator implements LocatorLike {
   private readonly elements: FakeElement[]
   private readonly index: number
+  private readonly onScroll?: () => void
 
-  constructor(elements: FakeElement[], index = 0) {
+  constructor(elements: FakeElement[], index = 0, onScroll?: () => void) {
     this.elements = elements
     this.index = index
+    this.onScroll = onScroll
   }
 
   public click(): Promise<void> {
@@ -30,9 +32,8 @@ class FakeLocator implements LocatorLike {
     return Promise.resolve()
   }
 
-  public fill(value: string): Promise<void> {
-    this.getElement().value = value
-    return Promise.resolve()
+  public first(): LocatorLike {
+    return new FakeLocator(this.elements, 0, this.onScroll)
   }
 
   /** Returns the element addressed by the current index. */
@@ -42,42 +43,30 @@ class FakeLocator implements LocatorLike {
     return element
   }
 
-  public hover(): Promise<void> {
-    this.getElement().hovered = true
-    return Promise.resolve()
+  public last(): LocatorLike {
+    return new FakeLocator(
+      this.elements,
+      this.elements.length - 1,
+      this.onScroll,
+    )
   }
 
-  public isVisible(): Promise<boolean> {
-    return Promise.resolve(this.getElement().visible)
+  public locator(selector: string): LocatorLike {
+    return new FakeLocator(this.getElement().children.get(selector) ?? [])
   }
 
   public nth(index: number): LocatorLike {
-    return new FakeLocator(this.elements, index)
-  }
-
-  public press(key: string): Promise<void> {
-    this.getElement().pressedKey = key
-    return Promise.resolve()
+    return new FakeLocator(this.elements, index, this.onScroll)
   }
 
   public scrollIntoViewIfNeeded(): Promise<void> {
     this.getElement().scrolled = true
+    this.onScroll?.()
     return Promise.resolve()
-  }
-
-  public selectOption(values: string | string[]): Promise<string[]> {
-    const selectedValues = Array.isArray(values) ? values : [values]
-    this.getElement().selectedValues = selectedValues
-    return Promise.resolve(selectedValues)
   }
 
   public textContent(): Promise<null | string> {
     return Promise.resolve(this.getElement().text)
-  }
-
-  public waitFor(): Promise<void> {
-    this.getElement().waited = true
-    return Promise.resolve()
   }
 }
 

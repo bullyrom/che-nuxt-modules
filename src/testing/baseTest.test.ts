@@ -1,123 +1,174 @@
 import { describe, expect, it } from "vitest"
 
-import { createElement, createPoint } from "../../test/fakeDom"
+import { createElement, setChildren } from "../../test/fakeDom"
 import { FakePage } from "../../test/fakePage"
 
 import { BaseTest } from "./baseTest"
 
+const BASE_URL = "https://example.test"
+const BASE_PATH = "/app"
+const PATH = "/items"
+const ROOT = "body"
 const BUTTON = "#button"
-const INPUT = "#input"
 const LIST = "#list"
-const SOURCE = "#source"
-const TARGET = "#target"
-const PAGE_URL = "https://example.test/path"
-const BUTTON_TEXT = "Submit"
-const FIRST_INDEX = 0
-const ELEMENT_INDEX = 1
-const START_X = 10
-const START_Y = 20
-const END_X = 30
-const END_Y = 40
-const START_POINT = createPoint(START_X, START_Y)
-const END_POINT = createPoint(END_X, END_Y)
+const SELECT = ".v-select"
+const EMPTY_SELECT = "#empty-select"
+const OPTION = "#option"
+const FILTERED = ".filtered"
+const CARDS = ".cards"
+const OPTION_TEXT = "Alpha"
+const ORDER = 0
+const SECOND_ORDER = 1
+const INITIAL_CARD_COUNT = 1
+const SCROLL_COUNT = 2
+const FILTER_WAIT_COUNT = 2
 
 describe("BaseTest", () => {
-  it("navigates and operates on real fake DOM elements", async () => {
+  it("navigates through configured URLs and clicks locator targets", async () => {
     const page = new FakePage()
-    const button = createElement({ text: BUTTON_TEXT })
-    const input = createElement()
+    const button = createElement()
     page.set(BUTTON, button)
-    page.set(INPUT, input)
-    const baseTest = new BaseTest(page)
+    const baseTest = new BaseTest(page, {
+      basePath: BASE_PATH,
+      baseUrl: BASE_URL,
+    })
 
-    await baseTest.goto(PAGE_URL)
-    // eslint-disable-next-line unicorn/no-array-callback-reference
-    const buttonLocator = baseTest.find(BUTTON)
-    await expect(buttonLocator.count()).resolves.toBe(1)
-    await baseTest.click(BUTTON)
-    await baseTest.fill(INPUT, "hello")
+    await baseTest.goToBaseUrl()
+    await baseTest.goToPath(PATH)
+    await baseTest.pageClick(page.locator(BUTTON))
 
-    expect(page.visitedUrls).toEqual([PAGE_URL])
+    expect(page.visitedUrls).toEqual([
+      `${BASE_URL}${BASE_PATH}`,
+      `${BASE_URL}${BASE_PATH}${PATH}`,
+    ])
     expect(button.clicked).toBe(true)
-    expect(input.value).toBe("hello")
-    await expect(baseTest.text(BUTTON)).resolves.toBe(BUTTON_TEXT)
   })
 
-  it("checks text presence and selectors against the fake DOM", async () => {
+  it("asserts page text and its absence", async () => {
     const page = new FakePage()
-    page.set("#root", createElement({ text: "Hello world" }))
+    page.set(ROOT, createElement({ text: "Hello world" }))
+    const baseTest = new BaseTest(page)
+
+    await expect(baseTest.expectPageHasText("world")).resolves.toBeUndefined()
+    await expect(
+      baseTest.expectPageHasTexts(["Hello", "world"]),
+    ).resolves.toBeUndefined()
+    await expect(
+      baseTest.expectPageHasNoText("missing"),
+    ).resolves.toBeUndefined()
+    await expect(baseTest.expectPageHasText("missing")).rejects.toThrow()
+    await expect(baseTest.expectPageHasNoText("world")).rejects.toThrow()
+  })
+
+  it("asserts selectors and their absence", async () => {
+    const page = new FakePage()
     page.set(LIST, createElement(), createElement())
     const baseTest = new BaseTest(page)
 
-    await expect(baseTest.contains("#root", "world")).resolves.toBe(true)
+    await expect(baseTest.expectPageHasSelector(LIST)).resolves.toBeUndefined()
     await expect(
-      baseTest.containsAll("#root", ["Hello", "world"]),
-    ).resolves.toBe(true)
-    await expect(baseTest.notContains("#root", "missing")).resolves.toBe(true)
-    await expect(baseTest.exists(LIST)).resolves.toBe(true)
-    await expect(baseTest.notExists("#missing")).resolves.toBe(true)
-    await expect(baseTest.count(LIST)).resolves.toBe(2)
+      baseTest.expectPageHasNoSelector("#missing"),
+    ).resolves.toBeUndefined()
+    await expect(baseTest.expectPageHasSelector("#missing")).rejects.toThrow()
+    await expect(baseTest.expectPageHasNoSelector(LIST)).rejects.toThrow()
   })
 
-  it("performs common element actions", async () => {
+  it("asserts ordered element text with regular expressions", async () => {
     const page = new FakePage()
-    const element = createElement()
-    page.set(BUTTON, element)
+    page.set(
+      LIST,
+      createElement({ text: "first" }),
+      createElement({ text: "second" }),
+    )
     const baseTest = new BaseTest(page)
 
-    await baseTest.scrollTo(BUTTON)
-    await baseTest.waitFor(BUTTON)
-    await baseTest.hover(BUTTON)
-    await baseTest.press(BUTTON, "Enter")
     await expect(
-      baseTest.selectOption(BUTTON, ["one", "two"]),
-    ).resolves.toEqual(["one", "two"])
-
-    expect(element.scrolled).toBe(true)
-    expect(element.waited).toBe(true)
-    expect(element.hovered).toBe(true)
-    expect(element.pressedKey).toBe("Enter")
-    expect(element.selectedValues).toEqual(["one", "two"])
+      baseTest.exceptOrderElementHasText(LIST, SECOND_ORDER, "sec.nd"),
+    ).resolves.toBeUndefined()
+    await expect(
+      baseTest.exceptOrderElementHasText(LIST, SECOND_ORDER, "first"),
+    ).rejects.toThrow()
   })
 
-  it("reads ordered elements and visibility", async () => {
+  it("opens a select and asserts uploaded options", async () => {
     const page = new FakePage()
-    const first = createElement({ text: "first", visible: false })
-    const second = createElement({ text: "second" })
-    page.set(LIST, first, second)
+    const select = createElement()
+    const emptySelect = createElement()
+    setChildren(select, "li", createElement(), createElement())
+    page.set(SELECT, select)
+    page.set(EMPTY_SELECT, emptySelect)
     const baseTest = new BaseTest(page)
 
-    await expect(baseTest.textAt(LIST, ELEMENT_INDEX)).resolves.toBe("second")
-    const firstLocator = page.locator(LIST).nth(FIRST_INDEX)
-    const secondLocator = page.locator(LIST).nth(ELEMENT_INDEX)
-    await expect(baseTest.isVisible(secondLocator)).resolves.toBe(true)
-    await expect(baseTest.isVisible(firstLocator)).resolves.toBe(false)
+    await expect(
+      baseTest.expectVueSelectUploadedOptions(ORDER),
+    ).resolves.toBeUndefined()
+    await expect(
+      baseTest.expectVueSelectUploadedOptions(ORDER, EMPTY_SELECT),
+    ).rejects.toThrow()
+    expect(select.clicked).toBe(true)
+    expect(emptySelect.clicked).toBe(true)
   })
 
-  it("drags a target onto another target", async () => {
+  it("asserts lazy loading by scrolling and recounting cards", async () => {
+    const page = new FakePage()
+    let cardCount = INITIAL_CARD_COUNT
+    page.set(CARDS, createElement())
+    page.onScroll(CARDS, () => {
+      cardCount += 1
+      page.set(
+        CARDS,
+        ...Array.from({ length: cardCount }, () => createElement()),
+      )
+    })
+    const baseTest = new BaseTest(page)
+
+    await expect(baseTest.isLazyLoadingWorks(CARDS)).resolves.toBeUndefined()
+
+    expect(cardCount).toBe(INITIAL_CARD_COUNT + SCROLL_COUNT)
+    expect(page.waitForTimeouts).toHaveLength(SCROLL_COUNT)
+  })
+
+  it("drags one locator target onto another", async () => {
     const page = new FakePage()
     const source = createElement()
     const target = createElement()
-    page.set(SOURCE, source)
-    page.set(TARGET, target)
+    page.set("#source", source)
+    page.set("#target", target)
     const baseTest = new BaseTest(page)
 
-    await baseTest.dragTo(SOURCE, TARGET)
+    await baseTest.dragAndDrop("#source", "#target")
 
     expect(source.draggedTo).toBe(target)
   })
 
-  it("drags between page coordinates with the mouse", async () => {
+  it("checks that selecting a filter updates the first block", async () => {
     const page = new FakePage()
+    const select = createElement()
+    const option = createElement({ text: OPTION_TEXT })
+    const filteredBlock = createElement({ text: OPTION_TEXT })
+    page.set(SELECT, select)
+    page.set(OPTION, option)
+    page.set(FILTERED, filteredBlock)
     const baseTest = new BaseTest(page)
 
-    await baseTest.dragTo(START_POINT, END_POINT)
+    await expect(
+      baseTest.exceptVueSelectCanFilterBlockBySelector(
+        SELECT,
+        OPTION,
+        FILTERED,
+      ),
+    ).resolves.toBeUndefined()
+    expect(select.clicked).toBe(true)
+    expect(option.clicked).toBe(true)
+    expect(page.waitForTimeouts).toHaveLength(FILTER_WAIT_COUNT)
 
-    expect(page.mouseActions).toEqual([
-      { positionX: START_POINT.x, positionY: START_POINT.y, type: "move" },
-      { type: "down" },
-      { positionX: END_POINT.x, positionY: END_POINT.y, type: "move" },
-      { type: "up" },
-    ])
+    page.set(FILTERED, createElement({ text: "Beta" }))
+    await expect(
+      baseTest.exceptVueSelectCanFilterBlockBySelector(
+        SELECT,
+        OPTION,
+        FILTERED,
+      ),
+    ).rejects.toThrow()
   })
 })
