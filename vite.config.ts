@@ -23,6 +23,7 @@ export default defineConfig({
     minify: false,
     rollupOptions: {
       external: [
+        "@playwright/test",
         "vue",
         "vue-router",
         "pinia",
