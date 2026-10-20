@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed, provide, watch } from "vue"
 
@@ -74,19 +73,21 @@ const instanceConfig = computed(
     adminPanelStore.config,
 )
 
+const createRequestSchema = computed(() =>
+  getRequestSchema(currentEntity.value?.createOperation),
+)
+
 const schemaFields = computed(() =>
   buildFieldDescriptors(
-    adminPanelStore.resolveSchema(
-      getRequestSchema(currentEntity.value?.createOperation),
-    ),
+    adminPanelStore.resolveSchema(createRequestSchema.value),
     adminPanelStore.schema?.components?.schemas,
   ),
 )
 
 const createSchemaName = computed(() => {
-  const { requestBody } = currentEntity.value?.createOperation ?? {}
-  if (requestBody && "$ref" in requestBody) {
-    return getSchemaNameFromReference(requestBody)
+  const schema = createRequestSchema.value
+  if (schema && "$ref" in schema) {
+    return getSchemaNameFromReference(schema)
   }
   return undefined
 })

@@ -39,7 +39,7 @@ function useRemoteSelectOptions<OptionType extends Record<string, unknown>>(
   const options = computed<SelectOption[]>(() => [
     ...(parameters.extraOptions ?? []),
     ...toSelectOptions(
-      store.options.value,
+      store.options,
       parameters.labelKey,
       parameters.valueKey,
     ),

@@ -12,7 +12,9 @@
     "watch": "vite build --watch",
     "lint": "yarn eslint",
     "prepack": "yarn build",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "type": "module",
   "files": [
@@ -50,14 +52,17 @@
     "@vueuse/core": "^14.2.0",
     "animejs": "^4.3.5",
     "eslint": "^9.39.2",
+    "happy-dom": "^20.0.0",
     "jiti": "^2.6.1",
+    "pinia": "^3.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.1.0",
-    "vue": "^3.5.27"
+    "vue": "^3.5.27",
+    "vue-router": "^4.0.0"
   },
   "packageManager": "yarn@4.10.3",
   "dependencies": {

@@ -144,6 +144,10 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
       ignoringQueryReset = false
       list.reset()
       lastFetchedUrl = undefined
+      // The same instance key is reused across entities, so the realtime
+      // subscription must follow the switch as well (the store setup runs only
+      // once for that key).
+      realtime.setListChannel(currentRealtimeEntityName())
       loadCurrentEntity(true)
     },
   )
@@ -157,6 +161,9 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
 
   onMounted(() => {
     realtime.setListChannel(currentRealtimeEntityName())
+    // Records live in the keyed store, so a fresh key (or a client that did
+    // not receive server-rendered data) fetches the first page after mount.
+    if (list.data.value === undefined) loadCurrentEntity()
   })
   onScopeDispose(realtime.dispose)
 

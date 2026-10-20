@@ -1,5 +1,13 @@
 # Release notes
 
+- fix: admin list fetches its first page on mount again (the keyed-store refactor dropped the initial load, leaving the panel empty until a filter or reload)
+- fix: list realtime channel follows the entity switch even though the admin reuses one instance key
+- fix: remote selects use the unwrapped options store values and forward the search term, so options render and search requests carry `search`
+- fix: the detail group still renders when `detailOverride.hiddenFields` hides every field
+- fix: `fields.overrides` resolves the request-body schema name for inline OpenAPI `requestBody` definitions
+- test: external behavior suite (`test/unit`) for customization levels, keyed stores, realtime wiring, selects, media and date fields; `yarn test` script added
+- docs: added `docs/testing.md` and documented the select search binding, fully-hidden detail groups and request-body override lookup
+
 - feat: reusable `Select`/`MultiSelect` (presentational) and `RemoteSelect`/`RemoteMultiSelect` (options loaded through a keyed Pinia store built on `usePaginatedListApi`, handling both a flat array and the Django paginated envelope) with search, paginated `LazyLoadList` loading and typed `labelKey`/`valueKey`; plus `toSelectOptions`, `useRemoteSelectOptions`, `useSelectOptionsStore`/`getSelectOptionsStore`, `SelectOption` and the shared select styles
 - feat: media field components for the admin field API — `FileField` (on `FileInput`), `ImageField`/`AudioField`/`VideoField` (current media + replace input) and display-only `ImageValue` (link + hover preview), `AudioValue`, `VideoValue`
 - feat: date field components `DateField`/`DateTimeField` (ISO strings, timezone-safe) with `DEFAULT_FORMAT_COMPONENTS` mapping `date`/`date-time` automatically

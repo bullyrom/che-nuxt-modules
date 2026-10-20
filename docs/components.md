@@ -32,8 +32,9 @@ the chosen value(s). No data fetching — feed them options and a `showLoader`.
 Props: `modelValue`, `options: SelectOption[]`, `placeholder`, `searchable`,
 `disabled`, `showLoader`, `status`. Emits `update:modelValue` and
 `fetchNextPage` (drives the internal `LazyLoadList`). The panel closes on
-outside click; the search box is local and can be read with
-`v-model:search-query`.
+outside click. The search box is exposed with `v-model:search-query`, so a
+parent can debounce its own request. The remote selects use exactly that to
+pass the term to their options store.
 
 `SelectOption` is `{ label: string; value: unknown }`; `toSelectOptions(records,
 labelKey, valueKey)` maps raw API records to options.
@@ -80,6 +81,9 @@ Props: `modelValue`, `url`, `labelKey`, `valueKey`, `instanceKey?`, `query?`
 `disabled?`, `placeholder?`, `extraOptions?` (always shown first, e.g. the
 current value).
 
+- **Search** — typing in a `searchable` remote select updates the options
+  store's `searchQuery`; after the debounce the list request carries
+  `searchParameter` (default `search`).
 - **Instance key** — each select gets its own keyed options store. One is
   generated per component when `instanceKey` is omitted (SSR-safe); pass one to
   share options between components.

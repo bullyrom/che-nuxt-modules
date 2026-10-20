@@ -5,7 +5,7 @@ import Select from "./Select.vue"
 
 import type { SelectOption } from "./select"
 
-interface Properties {
+const properties = defineProps<{
   disabled?: boolean
   extraOptions?: SelectOption[]
   instanceKey?: string
@@ -17,9 +17,7 @@ interface Properties {
   searchParameter?: string
   url: string
   valueKey: keyof OptionType
-}
-
-const properties = defineProps<Properties>()
+}>()
 const emit =
   defineEmits<(event: "update:modelValue", value: unknown) => void>()
 
@@ -41,9 +39,11 @@ const { options, store } = useRemoteSelectOptions<OptionType>({
     :options="options"
     :placeholder="properties.placeholder"
     :searchable="properties.searchable"
+    :search-query="store.searchQuery"
     :show-loader="store.showLoader"
     :status="store.status"
     @fetch-next-page="store.loadNextPage()"
+    @update:search-query="store.searchQuery = $event"
     @update:model-value="emit('update:modelValue', $event)"
   />
 </template>

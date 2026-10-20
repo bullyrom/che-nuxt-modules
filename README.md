@@ -15,3 +15,9 @@ See [docs/admin-customization.md](docs/admin-customization.md).
 Selects (single/multi, with paginated remote option loading), media/file/date
 field components and their admin field-API integration are documented in
 [docs/components.md](docs/components.md).
+
+## Testing
+
+Behavior-level tests mount the public components (Vue + Pinia + happy-dom) and
+cover customization, keyed stores, realtime wiring and the reusable field
+components. See [docs/testing.md](docs/testing.md).

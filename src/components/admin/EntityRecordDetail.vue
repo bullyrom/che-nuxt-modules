@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed, onMounted } from "vue"
 
@@ -158,8 +157,7 @@ onMounted(() => {
       v-else
       class="space-y-2 rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4"
     >
-      <RawValue v-if="entries.length === 0" :value="displayRecord" />
-      <template v-else>
+      <template v-if="isRecordValue(displayRecord)">
         <RecordEntry
           v-for="[key, value] in entries"
           :key="key"
@@ -173,7 +171,14 @@ onMounted(() => {
           :value="groupValue"
           :on-change="handleGroupChange"
         />
+
+        <RawValue
+          v-if="entries.length === 0 && !detailOverride"
+          :value="displayRecord"
+        />
       </template>
+
+      <RawValue v-else :value="displayRecord" />
     </div>
   </div>
 </template>

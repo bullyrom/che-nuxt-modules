@@ -156,6 +156,10 @@ entities: {
 - The standard fields keep rendering **before** the group component. To show
   the group in the middle, render your own component and hide every field the
   admin would render.
+- Hiding **all** detail fields is valid: the detail group still renders (it
+  replaces the whole detail body).
+- Per-field `fields.overrides` is keyed by the request-body schema name; for an
+  inline `requestBody` the name is read from its `content.*.schema.$ref`.
 
 ## Level 2 — whole list / detail override (+ before/after)
 

@@ -26,7 +26,9 @@ const emit = defineEmits<{
 
 const root = ref<HTMLElement>()
 const isOpen = ref(false)
-const searchQuery = ref("")
+// Exposed as `v-model:search-query` so remote selects can drive their own
+// options query; without a binding it stays a local search box.
+const searchQuery = defineModel<string>("searchQuery", { default: "" })
 
 onClickOutside(root, () => {
   isOpen.value = false
