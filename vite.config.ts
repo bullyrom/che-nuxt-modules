@@ -11,6 +11,8 @@ export default defineConfig({
       entry: {
         // eslint-disable-next-line unicorn/prefer-module
         index: path.resolve(__dirname, "src/index.ts"),
+        // eslint-disable-next-line unicorn/prefer-module
+        testing: path.resolve(__dirname, "src/testing/index.ts"),
         // composables: path.resolve(dirname, 'src/composables/index.ts'),
         // components: path.resolve(dirname, 'src/components/index.ts')
       },
@@ -21,6 +23,7 @@ export default defineConfig({
     minify: false,
     rollupOptions: {
       external: [
+        "@playwright/test",
         "vue",
         "vue-router",
         "pinia",

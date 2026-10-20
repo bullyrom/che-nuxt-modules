@@ -298,6 +298,7 @@ __metadata:
   dependencies:
     "@bullyrom/eslint-config": "git+https://github.com/Chapaev17/eslint-config.git#583a9088093973b05585d881012174d7898b01b1"
     "@headlessui/vue": "npm:^1.7.23"
+    "@playwright/test": "npm:1.64.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^25.2.1"
     "@vitejs/plugin-vue": "npm:^6.0.4"
@@ -317,9 +318,14 @@ __metadata:
     vitest: "npm:^4.1.0"
     vue: "npm:^3.5.27"
   peerDependencies:
+    "@playwright/test": ^1.64.0
     nuxt: ^3.0.0
     openapi-types: ^12.0.0
     pinia: ^2.0.0 || ^3.0.0
+    vue-router: ^4.0.0
+  peerDependenciesMeta:
+    "@playwright/test":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -922,6 +928,17 @@ __metadata:
   version: 0.3.6
   resolution: "@pkgr/core@npm:0.3.6"
   checksum: 10c0/153f0f4563f505faeba13c733efa0e05e467ce1c6b941055a5fd3b4560da60fbf1dff4b11da0075f034ddda11f2842b90395f60895dde5825875b616edccc11c
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:1.64.0":
+  version: 1.64.0
+  resolution: "@playwright/test@npm:1.64.0"
+  dependencies:
+    playwright: "npm:1.64.0"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/96db203daa9e5aa5fcbec3f8bc92074346334980961dcc2ef6e660add5ad4647037f98f3a84ba1ec431bfb6e6368df0fd53e7dbdd427560627deef978c762f0c
   languageName: node
   linkType: hard
 
@@ -5492,6 +5509,26 @@ __metadata:
     exsolve: "npm:^1.0.7"
     pathe: "npm:^2.0.3"
   checksum: 10c0/d2bbddc5b81bd4741e1529c08ef4c5f1542bbdcf63498b73b8e1d84cff71806d1b8b1577800549bb569cb7aa20056257677b979bff48c97967cba7e64f72ae12
+  languageName: node
+  linkType: hard
+
+"playwright-core@npm:1.64.0":
+  version: 1.64.0
+  resolution: "playwright-core@npm:1.64.0"
+  bin:
+    playwright-core: cli.js
+  checksum: 10c0/fe3237282ada99d634e4d002efd3db6aa51218f7f4f3b1bc31515d30fa6eec5ec940d425e035db2af4e2856d9cae30b7a27bd167870b3285d40bdffd399ab286
+  languageName: node
+  linkType: hard
+
+"playwright@npm:1.64.0":
+  version: 1.64.0
+  resolution: "playwright@npm:1.64.0"
+  dependencies:
+    playwright-core: "npm:1.64.0"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/f1ee856c280af2ac256225a1cc5e957847f0d2c56a039c89f02e31b0c9928c44e04311923a1b315bea16e3b26e5124e7c296644ad3c05e4c0a6aaa9584009933
   languageName: node
   linkType: hard
 

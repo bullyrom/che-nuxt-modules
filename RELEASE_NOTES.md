@@ -23,6 +23,7 @@
 - docs: added `docs/admin-customization.md` covering every customization level, embedding outside the admin and the store structure
 - test: added unit tests for the config-fragment converters
 
+- feat: `@bullyrom/che-nuxt-modules/testing` exposes a Playwright 1.64 `BaseTest` port of the old technical methods (`pageClick`, page text/selector assertions, ordered text, `goToBaseUrl`/`goToPath`, Vue-select helpers, lazy loading, drag-and-drop, filter check); old dotenv/coordinate/timeout coupling is replaced by options, locators and Playwright auto-wait, and `pageRootSelector` defaults to `#__nuxt`
 - fix: admin list filters work again on every entity — the `searchQuery`/`queryValues` watchers are registered in the store's own effect scope instead of `onMounted`, so they survive entity switches and component remounts (a memoized store no longer loses its watchers)
 - fix: `searchQuery`/`queryValues` are marked `skipHydrate`, so Pinia restoring the store no longer looks like a filter change — no false reload on hydration
 - test: added a scope-lifecycle regression test (`entityWatchers.test.ts`) reproducing why the watchers must live in the store scope
