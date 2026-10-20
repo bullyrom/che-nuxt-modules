@@ -135,6 +135,16 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     { flush: "sync" },
   )
 
+  // Keep the list room in sync with the active entity. This watcher lives in
+  // the keyed store (not in a component lifecycle hook), so it also runs when a
+  // store created during SSR is hydrated on the client and when the admin
+  // reuses the same instance key for another entity or route.
+  watch(
+    () => currentRealtimeEntityName(),
+    (entityName) => realtime.setListChannel(entityName),
+    { immediate: true },
+  )
+
   // A switch inside the admin reuses the same instance key: reset and refetch.
   watch(
     () => currentEntity()?.fullBasePath,
@@ -144,10 +154,6 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
       ignoringQueryReset = false
       list.reset()
       lastFetchedUrl = undefined
-      // The same instance key is reused across entities, so the realtime
-      // subscription must follow the switch as well (the store setup runs only
-      // once for that key).
-      realtime.setListChannel(currentRealtimeEntityName())
       loadCurrentEntity(true)
     },
   )
@@ -160,7 +166,6 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
   })
 
   onMounted(() => {
-    realtime.setListChannel(currentRealtimeEntityName())
     // Records live in the keyed store, so a fresh key (or a client that did
     // not receive server-rendered data) fetches the first page after mount.
     if (list.data.value === undefined) loadCurrentEntity()
