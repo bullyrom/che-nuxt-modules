@@ -1,11 +1,10 @@
-// eslint-disable-next-line import/no-unresolved
 import { expect } from "@playwright/test"
 
 import type { BaseTestOptions } from "./types"
 import type { Locator, Page } from "@playwright/test"
 
-/** Default root used for page-wide text checks instead of Nuxt 2 `#__nuxt`. */
-const DEFAULT_PAGE_ROOT_SELECTOR = "body"
+/** Default root used for page-wide text checks, matching the old BaseTest. */
+const DEFAULT_PAGE_ROOT_SELECTOR = "#__nuxt"
 
 /** Default selector used by the Vue-select helpers. */
 const DEFAULT_SELECT_SELECTOR = ".v-select"
