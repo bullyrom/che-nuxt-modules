@@ -1,119 +1,123 @@
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
+
+import { createElement, createPoint } from "../../test/fakeDom"
+import { FakePage } from "../../test/fakePage"
 
 import { BaseTest } from "./baseTest"
 
-import type { LocatorLike, PageLike } from "./types"
-
-const DEFAULT_TEXT = "Hello"
-const TEST_ID = "submit"
-const CUSTOM_ATTRIBUTE = "data-qa"
-
-/** Creates a locator that records every call it receives. */
-function createFakeLocator() {
-  const locator = {
-    click: vi.fn(() => Promise.resolve(undefined)),
-    fill: vi.fn(() => Promise.resolve(undefined)),
-    isVisible: vi.fn(() => Promise.resolve(true)),
-    scrollIntoViewIfNeeded: vi.fn(() => Promise.resolve(undefined)),
-    textContent: vi.fn(() => Promise.resolve(DEFAULT_TEXT)),
-    waitFor: vi.fn(() => Promise.resolve(undefined)),
-  } satisfies LocatorLike
-
-  return locator
-}
-
-/** Creates a page-like object backed by a fake locator. */
-function createFakePage(locator: LocatorLike = createFakeLocator()) {
-  const page = {
-    goto: vi.fn(() => Promise.resolve(undefined)),
-    locator: vi.fn(() => locator),
-  } satisfies PageLike
-
-  return { locator, page }
-}
+const BUTTON = "#button"
+const INPUT = "#input"
+const LIST = "#list"
+const SOURCE = "#source"
+const TARGET = "#target"
+const PAGE_URL = "https://example.test/path"
+const BUTTON_TEXT = "Submit"
+const FIRST_INDEX = 0
+const ELEMENT_INDEX = 1
+const START_X = 10
+const START_Y = 20
+const END_X = 30
+const END_Y = 40
+const START_POINT = createPoint(START_X, START_Y)
+const END_POINT = createPoint(END_X, END_Y)
 
 describe("BaseTest", () => {
-  it("delegates navigation to the page", async () => {
-    const { page } = createFakePage()
+  it("navigates and operates on real fake DOM elements", async () => {
+    const page = new FakePage()
+    const button = createElement({ text: BUTTON_TEXT })
+    const input = createElement()
+    page.set(BUTTON, button)
+    page.set(INPUT, input)
     const baseTest = new BaseTest(page)
 
-    await baseTest.goto("https://example.test/path")
+    await baseTest.goto(PAGE_URL)
+    // eslint-disable-next-line unicorn/no-array-callback-reference
+    const buttonLocator = baseTest.find(BUTTON)
+    await expect(buttonLocator.count()).resolves.toBe(1)
+    await baseTest.click(BUTTON)
+    await baseTest.fill(INPUT, "hello")
 
-    expect(page.goto).toHaveBeenCalledWith("https://example.test/path")
+    expect(page.visitedUrls).toEqual([PAGE_URL])
+    expect(button.clicked).toBe(true)
+    expect(input.value).toBe("hello")
+    await expect(baseTest.text(BUTTON)).resolves.toBe(BUTTON_TEXT)
   })
 
-  it("builds test id locators with the default attribute", () => {
-    const { page } = createFakePage()
+  it("checks text presence and selectors against the fake DOM", async () => {
+    const page = new FakePage()
+    page.set("#root", createElement({ text: "Hello world" }))
+    page.set(LIST, createElement(), createElement())
     const baseTest = new BaseTest(page)
 
-    baseTest.byTestId(TEST_ID)
-
-    expect(page.locator).toHaveBeenCalledWith(`[data-testid="${TEST_ID}"]`)
+    await expect(baseTest.contains("#root", "world")).resolves.toBe(true)
+    await expect(
+      baseTest.containsAll("#root", ["Hello", "world"]),
+    ).resolves.toBe(true)
+    await expect(baseTest.notContains("#root", "missing")).resolves.toBe(true)
+    await expect(baseTest.exists(LIST)).resolves.toBe(true)
+    await expect(baseTest.notExists("#missing")).resolves.toBe(true)
+    await expect(baseTest.count(LIST)).resolves.toBe(2)
   })
 
-  it("supports a custom test id attribute", () => {
-    const { page } = createFakePage()
-    const baseTest = new BaseTest(page, { testIdAttribute: CUSTOM_ATTRIBUTE })
-
-    baseTest.byTestId(TEST_ID)
-
-    expect(page.locator).toHaveBeenCalledWith(`[data-qa="${TEST_ID}"]`)
-  })
-
-  it("escapes quotes in test ids", () => {
-    const { page } = createFakePage()
+  it("performs common element actions", async () => {
+    const page = new FakePage()
+    const element = createElement()
+    page.set(BUTTON, element)
     const baseTest = new BaseTest(page)
 
-    baseTest.byTestId('a"b')
+    await baseTest.scrollTo(BUTTON)
+    await baseTest.waitFor(BUTTON)
+    await baseTest.hover(BUTTON)
+    await baseTest.press(BUTTON, "Enter")
+    await expect(
+      baseTest.selectOption(BUTTON, ["one", "two"]),
+    ).resolves.toEqual(["one", "two"])
 
-    expect(page.locator).toHaveBeenCalledWith(String.raw`[data-testid="a\"b"]`)
+    expect(element.scrolled).toBe(true)
+    expect(element.waited).toBe(true)
+    expect(element.hovered).toBe(true)
+    expect(element.pressedKey).toBe("Enter")
+    expect(element.selectedValues).toEqual(["one", "two"])
   })
 
-  it("delegates click and fill by test id", async () => {
-    const { locator, page } = createFakePage()
+  it("reads ordered elements and visibility", async () => {
+    const page = new FakePage()
+    const first = createElement({ text: "first", visible: false })
+    const second = createElement({ text: "second" })
+    page.set(LIST, first, second)
     const baseTest = new BaseTest(page)
-    const clickOptions = { force: true }
 
-    await baseTest.clickTestId(TEST_ID, clickOptions)
-    await baseTest.fillTestId(TEST_ID, "value")
-
-    expect(locator.click).toHaveBeenCalledWith(clickOptions)
-    expect(locator.fill).toHaveBeenCalledWith("value")
+    await expect(baseTest.textAt(LIST, ELEMENT_INDEX)).resolves.toBe("second")
+    const firstLocator = page.locator(LIST).nth(FIRST_INDEX)
+    const secondLocator = page.locator(LIST).nth(ELEMENT_INDEX)
+    await expect(baseTest.isVisible(secondLocator)).resolves.toBe(true)
+    await expect(baseTest.isVisible(firstLocator)).resolves.toBe(false)
   })
 
-  it("reads text and visibility by test id", async () => {
-    const { page } = createFakePage()
+  it("drags a target onto another target", async () => {
+    const page = new FakePage()
+    const source = createElement()
+    const target = createElement()
+    page.set(SOURCE, source)
+    page.set(TARGET, target)
     const baseTest = new BaseTest(page)
 
-    await expect(baseTest.textTestId(TEST_ID)).resolves.toBe(DEFAULT_TEXT)
-    await expect(baseTest.isVisibleTestId(TEST_ID)).resolves.toBe(true)
+    await baseTest.dragTo(SOURCE, TARGET)
+
+    expect(source.draggedTo).toBe(target)
   })
 
-  it("waits for and scrolls to a test id", async () => {
-    const { locator, page } = createFakePage()
-    const baseTest = new BaseTest(page)
-    const waitOptions = { state: "visible" as const }
-
-    await baseTest.waitForTestId(TEST_ID, waitOptions)
-    await baseTest.scrollToTestId(TEST_ID)
-
-    expect(locator.waitFor).toHaveBeenCalledWith(waitOptions)
-    expect(locator.scrollIntoViewIfNeeded).toHaveBeenCalledTimes(1)
-  })
-
-  it("exposes generic locator helpers", async () => {
-    const { locator, page } = createFakePage()
+  it("drags between page coordinates with the mouse", async () => {
+    const page = new FakePage()
     const baseTest = new BaseTest(page)
 
-    await baseTest.click(".button")
-    await baseTest.fill(".input", "value")
-    await expect(baseTest.text(".label")).resolves.toBe(DEFAULT_TEXT)
+    await baseTest.dragTo(START_POINT, END_POINT)
 
-    expect(page.locator).toHaveBeenCalledWith(".button")
-    expect(page.locator).toHaveBeenCalledWith(".input")
-    expect(page.locator).toHaveBeenCalledWith(".label")
-    expect(locator.click).toHaveBeenCalledTimes(1)
-    expect(locator.fill).toHaveBeenCalledWith("value")
-    expect(locator.textContent).toHaveBeenCalledTimes(1)
+    expect(page.mouseActions).toEqual([
+      { positionX: START_POINT.x, positionY: START_POINT.y, type: "move" },
+      { type: "down" },
+      { positionX: END_POINT.x, positionY: END_POINT.y, type: "move" },
+      { type: "up" },
+    ])
   })
 })

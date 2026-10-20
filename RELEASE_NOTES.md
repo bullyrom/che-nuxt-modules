@@ -1,6 +1,6 @@
 # Release notes
 
-- feat: framework-agnostic `BaseTest` with page-like interfaces, test-id helpers and the `@bullyrom/che-nuxt-modules/testing` subpath (unit-tested)
+- feat: framework-agnostic `BaseTest` with a generic selector/locator API (`goto`, `find`/`locator`, `click`, `fill`, `text`, `contains`, `scrollTo`, `waitFor`, `dragTo`, `hover`, `selectOption`, `press`, ordered text and selector checks) exported from `@bullyrom/che-nuxt-modules/testing`, with fake-DOM unit tests
 - fix: admin list filters work again on every entity — the `searchQuery`/`queryValues` watchers are registered in the store's own effect scope instead of `onMounted`, so they survive entity switches and component remounts (a memoized store no longer loses its watchers)
 - fix: `searchQuery`/`queryValues` are marked `skipHydrate`, so Pinia restoring the store no longer looks like a filter change — no false reload on hydration
 - test: added a scope-lifecycle regression test (`entityWatchers.test.ts`) reproducing why the watchers must live in the store scope
