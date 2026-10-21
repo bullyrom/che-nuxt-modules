@@ -60,6 +60,10 @@ export function usePaginatedListApi<
   const nextPageUrl = ref<null | string>()
   const previousPageUrl = ref<null | string>()
   const requestUrl = ref<string>()
+  // Query used for the current first page. DRF usually repeats it in `next`,
+  // but a custom/relative pagination link may omit it; keep it so pagination
+  // does not silently drop search or filters.
+  const pageQuery = ref<Query>()
 
   const showNextPageLoader = computed(
     () => fetchDataStatus.value !== "success" || isString(nextPageUrl.value),
@@ -76,6 +80,7 @@ export function usePaginatedListApi<
     fetchParameters: Parameters<typeof fetchDataBase>[0],
   ) {
     requestUrl.value = fetchParameters?.url ?? parameters.url
+    pageQuery.value = fetchParameters?.query
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -86,7 +91,10 @@ export function usePaginatedListApi<
   async function fetchNextPage() {
     if (nextPageUrl.value && fetchDataStatus.value !== "pending") {
       requestUrl.value = nextPageUrl.value
-      await fetchDataBase({ url: nextPageUrl.value })
+      await fetchDataBase({
+        query: pageQuery.value,
+        url: nextPageUrl.value,
+      })
       setDataFromResponse(true)
     }
   }
@@ -132,6 +140,7 @@ export function usePaginatedListApi<
   }
 
   function reset() {
+    pageQuery.value = undefined
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined

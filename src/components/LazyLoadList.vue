@@ -85,7 +85,17 @@ async function onElementVisibility(state: boolean) {
 }
 
 onMounted(() => {
-  watch(triggerIsVisible, onElementVisibility)
-  watch(loaderIsVisible, onElementVisibility)
+  // React to visibility changes and to appended records. A trigger that is
+  // already visible when the list mounts must load the next page too, and the
+  // next trigger may still be visible after a page is appended.
+  watch(
+    [triggerIsVisible, loaderIsVisible, () => properties.items?.length],
+    () => {
+      if (triggerIsVisible.value || loaderIsVisible.value) {
+        onElementVisibility(true).catch(() => undefined)
+      }
+    },
+    { immediate: true },
+  )
 })
 </script>
