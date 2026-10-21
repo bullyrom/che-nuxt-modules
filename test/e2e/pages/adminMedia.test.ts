@@ -16,11 +16,13 @@ test.describe("admin media overrides", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openList(TRACKS_ENTITY)
-    await admin.expectListAudio(TRACK_AUDIO_SRC_PATTERN)
+    await admin.expectListAudioCollapsed()
+    await admin.playListAudio(TRACK_AUDIO_SRC_PATTERN)
 
     await admin.openFirstRecord()
     await admin.expectDetail(TRACKS_ENTITY)
-    await admin.expectDetailAudio(TRACK_AUDIO_SRC_PATTERN)
+    await admin.expectDetailAudioCollapsed()
+    await admin.playDetailAudio(TRACK_AUDIO_SRC_PATTERN)
   })
 
   test("project file list and detail render download links", async ({

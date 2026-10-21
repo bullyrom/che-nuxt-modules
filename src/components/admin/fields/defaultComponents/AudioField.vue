@@ -10,6 +10,8 @@ import type { FieldDescriptor } from "../types"
 interface Properties {
   accept?: string
   field?: FieldDescriptor
+  /** Visible label for the current audio; defaults to the field key. */
+  label?: string
 }
 
 const properties = defineProps<Properties>()
@@ -24,7 +26,11 @@ const currentUrl = computed(() =>
 
 <template>
   <div class="space-y-2">
-    <AudioValue v-if="currentUrl" :src="currentUrl" />
+    <AudioValue
+      v-if="currentUrl"
+      :label="properties.label ?? properties.field?.key"
+      :src="currentUrl"
+    />
     <FileField
       v-model="model"
       :accept="properties.accept ?? 'audio/*'"

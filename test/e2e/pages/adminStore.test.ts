@@ -4,7 +4,6 @@ import {
   FRONTEND_URL,
   PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
   PROJECT_FILES_ENTITY,
-  TRACK_AUDIO_SRC_PATTERN,
   TRACK_DETAIL_HREF_PATTERN,
   TRACKS_ENTITY,
 } from "../constants"
@@ -33,7 +32,7 @@ test.describe("admin stores and embedding", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openList(TRACKS_ENTITY)
-    await admin.expectListAudio(TRACK_AUDIO_SRC_PATTERN)
+    await admin.expectListAudioCollapsed()
 
     await admin.selectEntity(PROJECT_FILES_ENTITY)
     await admin.expectListUrl(PROJECT_FILES_ENTITY)
@@ -41,6 +40,6 @@ test.describe("admin stores and embedding", () => {
 
     await admin.selectEntity(TRACKS_ENTITY)
     await admin.expectListUrl(TRACKS_ENTITY)
-    await admin.expectListAudio(TRACK_AUDIO_SRC_PATTERN)
+    await admin.expectListAudioCollapsed()
   })
 })

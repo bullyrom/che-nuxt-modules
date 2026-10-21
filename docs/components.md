@@ -98,12 +98,14 @@ Plain display components, reusable anywhere (detail cards, custom views):
 
 ```tsx
 <ImageValue src={record.image} alt="Cover" />   // link + hover preview
-<AudioValue src={record.audio} />               // audio player
+<AudioValue src={record.audio} label="Track 1" /> // play button + track name
 <VideoValue src={record.video} />               // video player
 ```
 
 `ImageValue` renders a clickable link and shows the image on hover
-(`group-hover`); `href` overrides the link target.
+(`group-hover`); `href` overrides the link target. `AudioValue` stays collapsed
+as a play button plus a track name (falling back to the file name); the
+`<audio>` element is created only after the button is pressed.
 
 ## Field components (admin field API)
 
@@ -114,7 +116,8 @@ mapped in the admin config.
 - `FileField` — file upload on top of `FileInput` (`accept`, `multiple`).
 - `ImageField` / `AudioField` / `VideoField` — show the current media (via the
   value components above) **and** a file input to replace it. Default `accept`
-  is `image/*`, `audio/*`, `video/*`.
+  is `image/*`, `audio/*`, `video/*`. `AudioField` also accepts `label`
+  (defaults to the field key) for the collapsed track caption.
 - `DateField` / `DateTimeField` — `date` / `datetime-local` inputs that
   read/write ISO strings (timezone-safe conversion helpers in `dateInput.ts`).
 

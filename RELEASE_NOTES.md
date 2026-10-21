@@ -1,5 +1,6 @@
 # Release notes
 
+- fix(components): audio values stay collapsed behind a play button with a track label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
 - fix: admin list fetches its first page on mount again (the keyed-store refactor dropped the initial load, leaving the panel empty until a filter or reload)
 - fix: list realtime channel follows the entity switch even though the admin reuses one instance key
 - fix: remote selects use the unwrapped options store values and forward the search term, so options render and search requests carry `search`

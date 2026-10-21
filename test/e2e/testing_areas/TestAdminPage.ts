@@ -12,6 +12,7 @@ import {
   CUSTOM_HEADER_TEXT_PREFIX,
   EXPECT_TIMEOUT_MS,
   INDEX_PLACEHOLDER,
+  PLAY_AUDIO_BUTTON_PATTERN,
   SHORT_TIMEOUT_MS,
   VIEW_ACTION,
 } from "../constants"
@@ -89,12 +90,13 @@ class TestAdminPage {
     ).toBeVisible()
   }
 
-  /** Asserts that the detail renders an audio element with the given source. */
-  async expectDetailAudio(sourcePattern: RegExp): Promise<void> {
-    await expectMedia(
-      this.page.locator(DETAIL_ROOT).locator("audio"),
-      sourcePattern,
-    )
+  /** Asserts that the detail shows an audio control but no player yet. */
+  async expectDetailAudioCollapsed(): Promise<void> {
+    const detail = this.page.locator(DETAIL_ROOT)
+    await expect(
+      detail.getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN }).first(),
+    ).toBeVisible()
+    await expect(detail.locator("audio")).toHaveCount(0)
   }
 
   /** Asserts that the detail renders a download link with the given href. */
@@ -110,9 +112,14 @@ class TestAdminPage {
     await expect.poll(() => this.gridColumnCount()).toBe(count)
   }
 
-  /** Asserts that the list renders an audio element with the given source. */
-  async expectListAudio(sourcePattern: RegExp): Promise<void> {
-    await expectMedia(this.page.locator("audio"), sourcePattern)
+  /** Asserts that the list shows an audio control but no player yet. */
+  async expectListAudioCollapsed(): Promise<void> {
+    await expect(
+      this.page
+        .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
+        .first(),
+    ).toBeVisible()
+    await expect(this.page.locator("audio")).toHaveCount(0)
   }
 
   /** Asserts that the list renders a download link with the given href. */
@@ -206,6 +213,25 @@ class TestAdminPage {
   async openPath(path: string): Promise<void> {
     await this.baseTest.goToPath(path)
     await waitForAdminHydration(this.page)
+  }
+
+  /** Clicks the detail play button and asserts the created player source. */
+  async playDetailAudio(sourcePattern: RegExp): Promise<void> {
+    const detail = this.page.locator(DETAIL_ROOT)
+    await detail
+      .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
+      .first()
+      .click()
+    await expectMedia(detail.locator("audio"), sourcePattern)
+  }
+
+  /** Clicks the list play button and asserts the created player source. */
+  async playListAudio(sourcePattern: RegExp): Promise<void> {
+    await this.page
+      .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
+      .first()
+      .click()
+    await expectMedia(this.page.locator("audio"), sourcePattern)
   }
 
   /**
