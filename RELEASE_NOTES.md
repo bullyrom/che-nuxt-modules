@@ -1,5 +1,6 @@
 # Release notes
 
+- fix(admin): treat the server-idle list state as loading so SSR and hydration render the same loader (no hydration mismatch on the measurements page)
 - fix(admin): create forms for request schemas without writable fields render no fields (just the Create action) and POST an empty body instead of the raw-schema fallback
 - fix(components): audio values stay collapsed behind a play button with a track label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
 - fix: admin list fetches its first page on mount again (the keyed-store refactor dropped the initial load, leaving the panel empty until a filter or reload)

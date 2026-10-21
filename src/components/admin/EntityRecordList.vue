@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed } from "vue"
 
@@ -110,6 +109,15 @@ const gridColumns = computed(
 )
 const listGridClass = computed(() => buildListGridClass(gridColumns.value))
 
+// The database-backed list starts loading in `onMounted`, after the server has
+// already rendered the shell. Treat `idle` (SSR) and `pending` (first client
+// fetch) as the same loading state so hydration sees identical markup.
+const isInitialLoading = computed(
+  () =>
+    entityRecords.value === undefined &&
+    (fetchDataStatus.value === "idle" || fetchDataStatus.value === "pending"),
+)
+
 const customListProperties = computed<AdminListComponentProperties>(() => ({
   count: count.value,
   detailHref: detailHref.value,
@@ -203,7 +211,7 @@ function itemHref(item: unknown): string | undefined {
         />
 
         <div
-          v-if="entityRecords === undefined && fetchDataStatus === 'pending'"
+          v-if="isInitialLoading"
           class="flex h-64 items-center justify-center"
         >
           <MainLoader :wh="40" />
