@@ -1,5 +1,3 @@
-import { test } from "@playwright/test"
-
 import {
   AUDIO_ACCEPT,
   DATE_FIELD_KEY,
@@ -19,6 +17,7 @@ import {
   TRACK_TYPE_SELECT_PLACEHOLDER,
   TRACKS_ENTITY,
 } from "../constants"
+import { test } from "../fixtures"
 import { TestAdminForm } from "../testing_areas/TestAdminForm"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
 import {

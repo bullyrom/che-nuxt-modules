@@ -1,5 +1,3 @@
-import { test } from "@playwright/test"
-
 import {
   CUSTOM_GRID_COLUMNS,
   FRONTEND_URL,
@@ -7,6 +5,7 @@ import {
   TRACKS_BASE_PATH,
   TRACKS_ENTITY,
 } from "../constants"
+import { test } from "../fixtures"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
 import { installAdminConfigOverrides } from "../utils/adminConfig"
 

@@ -1,5 +1,3 @@
-import { test } from "@playwright/test"
-
 import {
   FRONTEND_URL,
   PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
@@ -7,6 +5,7 @@ import {
   TRACK_AUDIO_SRC_PATTERN,
   TRACKS_ENTITY,
 } from "../constants"
+import { test } from "../fixtures"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
 
 test.describe("admin media overrides", () => {
