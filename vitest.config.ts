@@ -18,6 +18,7 @@ export default defineConfig({
     exclude: [
       "./src/composables/api/types.test.ts",
       "./src/composables/api/crud-examples.test.ts",
+      "./test/e2e/**",
       "node_modules",
     ],
   },
