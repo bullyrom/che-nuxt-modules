@@ -2,47 +2,49 @@
 
 ## Layers
 
-- **Behavior tests (`test/unit`)** — external tests. They import only the
-  public package API (`src/index.ts`), mount the real components with Vue +
-  Pinia in a `happy-dom` environment and assert rendered output, emitted values
-  and store side effects. They intentionally do not import private helpers.
-- **Focused tests (`src/**/\*.test.ts`)\*\* — small unit tests for pure helpers
-  (config converters, date conversion, realtime pool, query parameters).
+The library has no unit-test layer. Behavior is verified end-to-end through the
+admin panel of the consuming frontend with Playwright.
 
-Run everything:
+- **E2E (`test/e2e`)** — a remote Chromium session drives the running frontend
+  at `PW_TEST_FRONTEND_URL` (default `https://dev.87anch.local`) and asserts
+  user-visible behavior. Pages that need library features the frontend does not
+  configure (custom header/grid, date and multi-select fields) receive small
+  test-only config/schema fragments through Playwright route interception; the
+  frontend sources are never modified.
+
+Run:
 
 ```bash
-yarn test          # vitest run
-yarn test:watch    # watch mode
+NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt yarn test:e2e
 ```
 
-## External coverage
+The config connects to the shared remote browser
+(`PW_TEST_CONNECT_WS_ENDPOINT`, default `ws://playwright.87anch.local/`) with
+`workers: 1` and `fullyParallel: false`. It never starts a local browser or a
+`webServer`. Environment values:
 
-| Area                                                                                                               | File                                         |
-| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
-| Form override (`hiddenFields`, typed `onChange`), `fields.formats`, `defaultComponents`, `fields.overrides`        | `test/unit/admin-form-customization.test.ts` |
-| List item override, `views.list`/`listHeader`/`listFooter`, header override, grid columns                          | `test/unit/admin-list-customization.test.ts` |
-| Detail override (including all fields hidden), `views.detail`, `menu.hiddenEntities`/`extraLinks`, `views.sidebar` | `test/unit/admin-detail-menu.test.ts`        |
-| Keyed list/detail/form stores, config fragments, `detailHref`/`showDetail`, realtime list/detail wiring            | `test/unit/admin-keyed-stores.test.ts`       |
-| `Select`/`MultiSelect`, `RemoteSelect`/`RemoteMultiSelect` (flat array, paginated envelope, search)                | `test/unit/field-selects.test.ts`            |
-| Media values/fields and `DateField`/`DateTimeField`                                                                | `test/unit/field-media-date.test.ts`         |
+- `PW_TEST_CONNECT_WS_ENDPOINT` — remote Playwright WebSocket endpoint;
+- `PW_TEST_FRONTEND_URL` — target frontend origin.
+
+## Coverage
+
+| Area                                                                 | File                                       |
+| -------------------------------------------------------------------- | ------------------------------------------ |
+| Default sidebar/header, config header override and grid columns      | `test/e2e/pages/adminAreas.test.ts`        |
+| `detailHref` links, direct record routes, keyed list entity switch   | `test/e2e/pages/adminStore.test.ts`        |
+| Track/project-file list and detail overrides (audio, download links) | `test/e2e/pages/adminMedia.test.ts`        |
+| Remote/static selects, search, audio input, date and multi-select    | `test/e2e/pages/adminFields.test.ts`       |
+| List/detail realtime subscriptions, changes badge, entity switches   | `test/e2e/pages/adminRealtime.test.ts`     |
 
 ## Helpers
 
-- `test/unit/helpers/mount.ts` — fresh Pinia + mount/unmount, `click`,
-  `typeInto`, `flush`, `waitFor`.
-- `test/unit/helpers/adminFixtures.ts` — small OpenAPI document, parsed entity,
-  records and a `fetch` stub that returns paginated and detail responses.
-- `test/unit/helpers/customComponents.ts` — the override components used by the
-  admin tests (`CapturedGroup`, `ListGroup`, `CustomSidebar`, ...).
-
-The fetch stub replaces `globalThis.fetch` (the admin data layer uses `ofetch`),
-so tests assert real request URLs and query parameters without a server.
-
-## Playwright
+- `test/e2e/testing_areas/TestAdminPage.ts` — navigation, list header/detail
+  and media assertions.
+- `test/e2e/testing_areas/TestAdminForm.ts` — create/edit form field actions.
+- `test/e2e/utils/adminConfig.ts` — test-only config/schema injection.
+- `test/e2e/utils/adminApi.ts` — throwaway records and cleanup.
+- `test/e2e/utils/hydration.ts` — waits until Pinia stores exist so clicks are
+  not lost before hydration.
 
 `@bullyrom/che-nuxt-modules/testing` exports the Playwright `BaseTest` used by
-host applications for e2e tests. It connects to the shared remote Chromium
-server and is documented in the project rules (`playwright.md`). The library
-itself has no application to drive, so its own behavior tests run through
-Vitest; `BaseTest` is exercised by the consuming project's e2e suite.
+the page objects. It is composed, never inherited.

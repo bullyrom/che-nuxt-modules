@@ -1,0 +1,92 @@
+const DEFAULT_FRONTEND_URL = "https://dev.87anch.local"
+const FRONTEND_URL = (
+  process.env.PW_TEST_FRONTEND_URL ?? DEFAULT_FRONTEND_URL
+).replace(/\/$/v, "")
+
+const ADMIN_INDEX_PATH = "/admin/endpoints/"
+const ADMIN_LIST_PATH = "/admin/endpoints"
+const ADMIN_RECORD_PATH_PATTERN = /\/admin\/endpoints\/[^\/]+\/\d+$/v
+
+const TRACKS_ENTITY = "tracks"
+const PROJECT_FILES_ENTITY = "project-files"
+const RECORD_NAMESPACE = "api/v1/record"
+const TRACKS_BASE_PATH = "/api/v1/record/tracks/"
+const TRACK_DETAIL_HREF_PATTERN = /^\/admin\/endpoints\/tracks\/\d+$/v
+const TRACK_AUDIO_SRC_PATTERN = /\/api\/v1\/record\/tracks\/\d+\/file\/$/v
+const PROJECT_FILE_DOWNLOAD_HREF_PATTERN =
+  /\/api\/v1\/record\/project-files\/\d+\/download\/$/v
+
+const SEARCH_PLACEHOLDER = "Search..."
+const VIEW_ACTION = "View"
+const CREATE_ACTION = "+ New"
+const BACK_ACTION = "← All endpoints"
+const INDEX_PLACEHOLDER = "Select an endpoint"
+const CANCEL_ACTION = "Cancel"
+
+const CUSTOM_HEADER_TEST_ID = "custom-header"
+const CUSTOM_HEADER_TEXT_PREFIX = "header:"
+const CUSTOM_GRID_COLUMNS = 2
+
+const DATE_FIELD_KEY = "release_date"
+const DATE_TIME_FIELD_KEY = "release_at"
+const MULTISELECT_FIELD_KEY = "tags"
+const MULTISELECT_PLACEHOLDER = "Select tags"
+const MULTISELECT_OPTION_LABEL = "two"
+
+const PROJECT_SELECT_PLACEHOLDER = "Select a project"
+const PARENT_SELECT_PLACEHOLDER = "Select a parent track"
+const TRACK_TYPE_SELECT_PLACEHOLDER = "Select a track type"
+const TRACK_TYPE_OPTION_LABEL = "Vocal"
+const NO_MATCH_SEARCH_TERM = "zz-no-match"
+
+const AUDIO_ACCEPT = "audio/*"
+const TEST_AUDIO_NAME = "e2e.wav"
+const TEST_AUDIO_TYPE = "audio/wav"
+const TEST_AUDIO_CONTENT = "e2e-audio"
+
+const TEST_DATE_VALUE = "2026-10-20"
+const TEST_DATE_TIME_VALUE = "2026-10-20T12:30"
+
+const EXPECT_TIMEOUT_MS = 20_000
+const SHORT_TIMEOUT_MS = 5000
+
+export {
+  ADMIN_INDEX_PATH,
+  ADMIN_LIST_PATH,
+  ADMIN_RECORD_PATH_PATTERN,
+  AUDIO_ACCEPT,
+  BACK_ACTION,
+  CANCEL_ACTION,
+  CREATE_ACTION,
+  CUSTOM_GRID_COLUMNS,
+  CUSTOM_HEADER_TEST_ID,
+  CUSTOM_HEADER_TEXT_PREFIX,
+  DATE_FIELD_KEY,
+  DATE_TIME_FIELD_KEY,
+  EXPECT_TIMEOUT_MS,
+  FRONTEND_URL,
+  INDEX_PLACEHOLDER,
+  MULTISELECT_FIELD_KEY,
+  MULTISELECT_OPTION_LABEL,
+  MULTISELECT_PLACEHOLDER,
+  NO_MATCH_SEARCH_TERM,
+  PARENT_SELECT_PLACEHOLDER,
+  PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
+  PROJECT_FILES_ENTITY,
+  PROJECT_SELECT_PLACEHOLDER,
+  RECORD_NAMESPACE,
+  SEARCH_PLACEHOLDER,
+  SHORT_TIMEOUT_MS,
+  TEST_AUDIO_CONTENT,
+  TEST_AUDIO_NAME,
+  TEST_AUDIO_TYPE,
+  TEST_DATE_TIME_VALUE,
+  TEST_DATE_VALUE,
+  TRACK_AUDIO_SRC_PATTERN,
+  TRACK_DETAIL_HREF_PATTERN,
+  TRACK_TYPE_OPTION_LABEL,
+  TRACK_TYPE_SELECT_PLACEHOLDER,
+  TRACKS_BASE_PATH,
+  TRACKS_ENTITY,
+  VIEW_ACTION,
+}

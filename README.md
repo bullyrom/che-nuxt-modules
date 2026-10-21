@@ -18,6 +18,6 @@ field components and their admin field-API integration are documented in
 
 ## Testing
 
-Behavior-level tests mount the public components (Vue + Pinia + happy-dom) and
-cover customization, keyed stores, realtime wiring and the reusable field
-components. See [docs/testing.md](docs/testing.md).
+External Playwright e2e tests drive the running admin frontend through the
+shared remote Chromium browser (no local browser). See
+[docs/testing.md](docs/testing.md).
