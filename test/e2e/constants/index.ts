@@ -8,11 +8,14 @@ const ADMIN_LIST_PATH = "/admin/endpoints"
 const ADMIN_RECORD_PATH_PATTERN = /\/admin\/endpoints\/[^\/]+\/\d+$/v
 
 const TRACKS_ENTITY = "tracks"
+const MEASUREMENTS_ENTITY = "measurements"
 const PROJECT_FILES_ENTITY = "project-files"
 const RECORD_NAMESPACE = "api/v1/record"
 const TRACKS_BASE_PATH = "/api/v1/record/tracks/"
 const TRACK_DETAIL_HREF_PATTERN = /^\/admin\/endpoints\/tracks\/\d+$/v
 const TRACK_AUDIO_SRC_PATTERN = /\/api\/v1\/record\/tracks\/\d+\/file\/$/v
+const MEASUREMENTS_ROUTE = "**/room-climate/measurements**"
+const MOCK_MEASUREMENT_ID = 999_999
 const PROJECT_FILE_DOWNLOAD_HREF_PATTERN =
   /\/api\/v1\/record\/project-files\/\d+\/download\/$/v
 
@@ -69,6 +72,9 @@ export {
   FRONTEND_URL,
   INDEX_PLACEHOLDER,
   LIST_CONTENT_TIMEOUT_MS,
+  MEASUREMENTS_ENTITY,
+  MEASUREMENTS_ROUTE,
+  MOCK_MEASUREMENT_ID,
   MULTISELECT_FIELD_KEY,
   MULTISELECT_OPTION_LABEL,
   MULTISELECT_PLACEHOLDER,

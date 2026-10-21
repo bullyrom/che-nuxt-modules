@@ -17,9 +17,10 @@ import {
   SHORT_TIMEOUT_MS,
   VIEW_ACTION,
 } from "../constants"
+import { expectDownload, expectMedia } from "../utils/assertMedia"
 import { waitForAdminHydration } from "../utils/hydration"
 
-import type { Locator, Page } from "@playwright/test"
+import type { Page } from "@playwright/test"
 
 interface TestAdminPageOptions {
   baseUrl: string
@@ -156,6 +157,13 @@ class TestAdminPage {
     )
   }
 
+  /** Asserts that the list shows the card with the given record id. */
+  async expectRecordIdVisible(recordId: number): Promise<void> {
+    await expect(
+      this.page.getByText(`ID: ${recordId}`, { exact: true }),
+    ).toBeVisible({ timeout: LIST_CONTENT_TIMEOUT_MS })
+  }
+
   /** Asserts that the sidebar contains a namespace group. */
   async expectSidebarGroup(namespace: string): Promise<void> {
     await expect(
@@ -224,6 +232,7 @@ class TestAdminPage {
 
   /** Clicks the detail play button and asserts the created player source. */
   async playDetailAudio(sourcePattern: RegExp): Promise<void> {
+    await waitForAdminHydration(this.page)
     const detail = this.page.locator(DETAIL_ROOT)
     await detail
       .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
@@ -234,6 +243,7 @@ class TestAdminPage {
 
   /** Clicks the list play button and asserts the created player source. */
   async playListAudio(sourcePattern: RegExp): Promise<void> {
+    await waitForAdminHydration(this.page)
     await this.page
       .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
       .first()
@@ -268,30 +278,6 @@ class TestAdminPage {
     }
     if (options.customHeader !== true) await this.expectListReady(entityName)
   }
-}
-
-/** Asserts that the first link is a download whose href matches the pattern. */
-async function expectDownload(
-  links: Locator,
-  hrefPattern: RegExp,
-  timeout = EXPECT_TIMEOUT_MS,
-): Promise<void> {
-  await expect(links.first()).toBeVisible({ timeout })
-  await expect(links.first()).toHaveAttribute("href", hrefPattern, {
-    timeout,
-  })
-}
-
-/** Asserts that the first media element matches the source pattern. */
-async function expectMedia(
-  media: Locator,
-  sourcePattern: RegExp,
-  timeout = EXPECT_TIMEOUT_MS,
-): Promise<void> {
-  await expect(media.first()).toBeVisible({ timeout })
-  await expect(media.first()).toHaveAttribute("src", sourcePattern, {
-    timeout,
-  })
 }
 
 export { TestAdminPage }

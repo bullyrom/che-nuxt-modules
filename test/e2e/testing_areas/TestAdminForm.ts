@@ -58,6 +58,13 @@ class TestAdminForm {
     await expect(this.form().locator("label")).toHaveText(labels)
   }
 
+  /** Asserts that the raw-schema fallback is not rendered. */
+  async expectNoRawFallback(): Promise<void> {
+    await expect(
+      this.page.getByText("This schema cannot be rendered as a form."),
+    ).toHaveCount(0)
+  }
+
   /** Fills a `date` field and asserts the stored input value. */
   async fillDateField(key: string, value: string): Promise<void> {
     const input = this.fieldRoot(key).locator('input[type="date"]')
@@ -162,6 +169,14 @@ class TestAdminForm {
     await expect(
       this.form().getByRole("button", { name: optionLabel }).first(),
     ).toBeVisible()
+  }
+
+  /** Submits the create form and waits for it to close. */
+  async submitCreate(): Promise<void> {
+    await this.form()
+      .getByRole("button", { exact: true, name: "Create" })
+      .click()
+    await expect(this.form()).toHaveCount(0)
   }
 
   private fieldRoot(key: string): Locator {
