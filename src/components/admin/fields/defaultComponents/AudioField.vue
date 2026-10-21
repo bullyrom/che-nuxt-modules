@@ -10,6 +10,8 @@ import type { FieldDescriptor } from "../types"
 interface Properties {
   accept?: string
   field?: FieldDescriptor
+  /** Optional field heading rendered above the current media. */
+  heading?: string
   /** Visible label for the current audio; defaults to the field key. */
   label?: string
 }
@@ -28,6 +30,7 @@ const currentUrl = computed(() =>
   <div class="space-y-2">
     <AudioValue
       v-if="currentUrl"
+      :heading="properties.heading"
       :label="properties.label ?? properties.field?.key"
       :src="currentUrl"
     />

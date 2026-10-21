@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue"
 
+import FieldLabel from "./FieldLabel.vue"
+
 interface Properties {
+  /** Optional field heading rendered above the player. */
+  heading?: string
   /** Visible track name; falls back to the file name from `src`. */
   label?: string
   src?: string
@@ -54,6 +58,7 @@ watch(
 
 <template>
   <div v-if="properties.src" class="space-y-2">
+    <FieldLabel v-if="properties.heading" :label="properties.heading" />
     <div class="flex items-center gap-2">
       <button
         :aria-label="`Play ${trackLabel}`"

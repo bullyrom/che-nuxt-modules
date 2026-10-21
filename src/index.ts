@@ -67,6 +67,7 @@ export {
   DEFAULT_LIST_GRID_CLASS,
   GRID_COLUMNS_CLASS,
 } from "@/components/admin/grid"
+export { default as ListChangesButton } from "@/components/admin/ListChangesButton.vue"
 export { default as ListElementByCurrentDevice } from "@/components/admin/ListElementByCurrentDevice.vue"
 export { default as MasterDetail } from "@/components/admin/MasterDetail.vue"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
@@ -105,7 +106,9 @@ export {
 export { default as DroppingBase } from "@/components/DroppingBase.vue"
 export { default as DroppingBody } from "@/components/DroppingBody.vue"
 export { default as ErrorsList } from "@/components/ErrorsList.vue"
+export { default as FieldLabel } from "@/components/FieldLabel.vue"
 export { default as FileInput } from "@/components/FileInput.vue"
+export { default as FileValue } from "@/components/FileValue.vue"
 export { default as ImageValue } from "@/components/ImageValue.vue"
 export { default as InputWithUnits } from "@/components/InputWithUnits.vue"
 export { default as LazyLoadList } from "@/components/LazyLoadList.vue"
@@ -117,6 +120,7 @@ export { default as PasswordInput } from "@/components/PasswordInput.vue"
 export { default as RemoteMultiSelect } from "@/components/RemoteMultiSelect.vue"
 export { default as RemoteSelect } from "@/components/RemoteSelect.vue"
 export { default as RollDown } from "@/components/RollDown.vue"
+export { default as ScrollToTopButton } from "@/components/ScrollToTopButton.vue"
 export {
   SELECT_FIELD_CLASS,
   SELECT_PANEL_CLASS,

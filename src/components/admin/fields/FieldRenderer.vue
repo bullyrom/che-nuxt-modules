@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, provide } from "vue"
 
+import FieldLabel from "../../FieldLabel.vue"
 import RollDown from "../../RollDown.vue"
 
 import {
@@ -101,12 +102,7 @@ function updateValue(value: unknown) {
       />
     </template>
 
-    <label
-      v-if="!isObject"
-      class="mb-1 block text-xs font-medium tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
-    >
-      {{ properties.field.key }}
-    </label>
+    <FieldLabel v-if="!isObject" :label="properties.field.key" />
 
     <component
       :is="resolvedComponent"

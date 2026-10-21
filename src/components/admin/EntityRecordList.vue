@@ -2,18 +2,22 @@
 import { storeToRefs } from "pinia"
 import { computed } from "vue"
 
+import { useScrollToTop } from "../../composables/useScrollToTop"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import { resolveEntityConfig } from "../../stores/adminPanel/instance"
 import { useAdminPanelListStore } from "../../stores/adminPanel/list"
 import LazyLoadList from "../LazyLoadList.vue"
 import MainLoader from "../MainLoader.vue"
+import ScrollToTopButton from "../ScrollToTopButton.vue"
 
 import { listConfigToPanelConfig } from "./config"
 import EntityDeleteModal from "./EntityDeleteModal.vue"
 import EntityListHeader from "./EntityListHeader.vue"
 import EntityRecordCard from "./EntityRecordCard.vue"
 import { buildListGridClass } from "./grid"
-import QueryParametersMenu from "./QueryParametersMenu.vue"
+import { ADMIN_FLOATING_ACTIONS_CLASSES } from "./layout"
+import ListChangesButton from "./ListChangesButton.vue"
+import ListFilters from "./ListFilters.vue"
 import RawValue from "./RawValue.vue"
 
 import type {
@@ -68,6 +72,9 @@ const {
 } = storeToRefs(store)
 
 const { doDelete, fetchNextPage, patchRecord, reload } = store
+
+const { containerRef, isScrolledDown, scrollToTop, updateIsScrolledDown } =
+  useScrollToTop()
 
 const currentEntity = computed(
   () => properties.entity ?? adminPanelStore.activeEntity,
@@ -160,7 +167,7 @@ function itemHref(item: unknown): string | undefined {
 
 <template>
   <div
-    class="flex h-full flex-1 flex-col overflow-x-hidden overflow-y-auto rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
+    class="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
   >
     <component
       :is="customHeader"
@@ -173,13 +180,15 @@ function itemHref(item: unknown): string | undefined {
       :can-create="Boolean(currentEntity?.createOperation)"
       :entity-name="currentEntity?.entityName"
       :full-base-path="currentEntity?.fullBasePath"
-      :list-changes-count="listChangesCount"
       @back="adminPanelStore.clearEntity()"
       @create="emit('create')"
-      @reload="reload()"
     />
 
-    <div class="flex-1 overflow-y-auto p-4">
+    <div
+      ref="containerRef"
+      class="flex-1 overflow-y-auto p-4"
+      @scroll="updateIsScrolledDown"
+    >
       <component
         :is="customList"
         v-if="customList"
@@ -187,22 +196,15 @@ function itemHref(item: unknown): string | undefined {
       />
 
       <div v-else class="w-full">
-        <div class="mb-4 space-y-3">
-          <input
-            v-if="!usesSchemaSearch"
-            v-model="searchQuery"
-            class="w-full rounded border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-3 py-1.5 text-sm text-[var(--ch-admin-text)] transition-colors outline-none placeholder:text-[var(--ch-admin-text-muted)] focus:border-[var(--ch-admin-accent)]"
-            placeholder="Search..."
-            type="text"
-          />
-          <QueryParametersMenu
-            v-model="queryValues"
-            :components="instanceConfig?.fields?.defaultComponents"
-            :filters="listQueryParameters.filters"
-            :formats="instanceConfig?.fields?.formats"
-            :sorts="listQueryParameters.sorts"
-          />
-        </div>
+        <ListFilters
+          v-model:query-values="queryValues"
+          v-model:search-query="searchQuery"
+          :components="instanceConfig?.fields?.defaultComponents"
+          :filters="listQueryParameters.filters"
+          :formats="instanceConfig?.fields?.formats"
+          :sorts="listQueryParameters.sorts"
+          :uses-schema-search="usesSchemaSearch"
+        />
 
         <component
           :is="customListHeader"
@@ -276,6 +278,14 @@ function itemHref(item: unknown): string | undefined {
           v-bind="customListProperties"
         />
       </div>
+    </div>
+
+    <div :class="ADMIN_FLOATING_ACTIONS_CLASSES">
+      <ListChangesButton :count="listChangesCount" @reload="reload()" />
+      <ScrollToTopButton
+        :visible="isScrolledDown"
+        @scroll-to-top="scrollToTop"
+      />
     </div>
   </div>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue"
 
+import FieldLabel from "../../../FieldLabel.vue"
 import FileInput from "../../../FileInput.vue"
 
 import type { FieldDescriptor } from "../types"
@@ -8,6 +9,8 @@ import type { FieldDescriptor } from "../types"
 interface Properties {
   accept?: string
   field?: FieldDescriptor
+  /** Optional field heading rendered above the input. */
+  heading?: string
   multiple?: boolean
 }
 
@@ -34,6 +37,7 @@ function handleChange(files: File[]) {
 
 <template>
   <div class="space-y-1">
+    <FieldLabel v-if="properties.heading" :label="properties.heading" />
     <FileInput
       :accept="properties.accept"
       :multiple="properties.multiple"

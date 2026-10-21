@@ -228,7 +228,10 @@ Supported values are `1..6`; unset keeps the default responsive layout.
 
 ## Level 4 — header
 
-Replace the list header (title, back button, "New changes" badge, `+ New`).
+Replace the list header (title, back button, `+ New`). Realtime changes are no
+longer shown in the default header: the list renders a floating "N new" button
+in its bottom-right corner (only while changes are pending). The override still
+receives `listChangesCount` and `reload` if it wants to render its own control.
 The component receives the handlers and calls them itself:
 
 ```tsx

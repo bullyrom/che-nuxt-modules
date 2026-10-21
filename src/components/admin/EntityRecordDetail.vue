@@ -9,6 +9,7 @@ import MainLoader from "../MainLoader.vue"
 
 import { detailConfigToPanelConfig } from "./config"
 import FieldGroupRenderer from "./FieldGroupRenderer.vue"
+import { ADMIN_AREA_HEADER_CLASSES, ADMIN_BACK_BUTTON_CLASSES } from "./layout"
 import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
 import RecordEntry from "./RecordEntry.vue"
@@ -118,11 +119,8 @@ onMounted(() => {
   />
 
   <div v-else class="w-full space-y-4">
-    <div class="flex items-center justify-between gap-3">
-      <button
-        class="rounded border border-[var(--ch-admin-border)] px-3 py-1.5 text-sm text-[var(--ch-admin-text-muted)] transition-colors hover:text-[var(--ch-admin-text)]"
-        @click="handleClose"
-      >
+    <div :class="ADMIN_AREA_HEADER_CLASSES">
+      <button :class="ADMIN_BACK_BUTTON_CLASSES" @click="handleClose">
         &larr; Back to list
       </button>
       <div class="text-right">

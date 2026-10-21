@@ -10,6 +10,8 @@ import type { FieldDescriptor } from "../types"
 interface Properties {
   accept?: string
   field?: FieldDescriptor
+  /** Optional field heading rendered above the current media. */
+  heading?: string
 }
 
 const properties = defineProps<Properties>()
@@ -24,7 +26,11 @@ const currentUrl = computed(() =>
 
 <template>
   <div class="space-y-2">
-    <VideoValue v-if="currentUrl" :src="currentUrl" />
+    <VideoValue
+      v-if="currentUrl"
+      :heading="properties.heading"
+      :src="currentUrl"
+    />
     <FileField
       v-model="model"
       :accept="properties.accept ?? 'video/*'"

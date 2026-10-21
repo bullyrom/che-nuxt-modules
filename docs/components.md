@@ -97,15 +97,24 @@ current value).
 Plain display components, reusable anywhere (detail cards, custom views):
 
 ```tsx
-<ImageValue src={record.image} alt="Cover" />   // link + hover preview
-<AudioValue src={record.audio} label="Track 1" /> // play button + track name
-<VideoValue src={record.video} />               // video player
+<ImageValue src={record.image} alt="Cover" heading="cover" /> // heading + link + hover preview
+<AudioValue src={record.audio} heading="file" label="Track 1" /> // heading + play button + track name
+<VideoValue src={record.video} heading="video" />               // heading + video player
+<FileValue src={record.file} heading="file" label="Report.pdf" /> // heading + download link
 ```
 
 `ImageValue` renders a clickable link and shows the image on hover
 (`group-hover`); `href` overrides the link target. `AudioValue` stays collapsed
 as a play button plus a track name (falling back to the file name); the
-`<audio>` element is created only after the button is pressed.
+`<audio>` element is created only after the button is pressed. `FileValue`
+renders a download link with the file name (falling back to the last URL
+segment).
+
+All four accept an optional `heading`, rendered with the library `FieldLabel`
+(the same label style and spacing as the admin form fields) — use it when a
+value is shown in a custom list/detail group so the overridden field keeps its
+title. Media headings and `FieldRenderer` labels share that component, so
+the markup stays consistent.
 
 ## Field components (admin field API)
 
@@ -117,7 +126,9 @@ mapped in the admin config.
 - `ImageField` / `AudioField` / `VideoField` — show the current media (via the
   value components above) **and** a file input to replace it. Default `accept`
   is `image/*`, `audio/*`, `video/*`. `AudioField` also accepts `label`
-  (defaults to the field key) for the collapsed track caption.
+  (defaults to the field key) for the collapsed track caption. All four accept
+  an optional `heading` for custom layouts; inside the admin form the heading is
+  already rendered by `FieldRenderer`, so leave it unset there.
 - `DateField` / `DateTimeField` — `date` / `datetime-local` inputs that
   read/write ISO strings (timezone-safe conversion helpers in `dateInput.ts`).
 

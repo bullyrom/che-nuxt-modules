@@ -10,6 +10,8 @@ import type { FieldDescriptor } from "../types"
 interface Properties {
   accept?: string
   field?: FieldDescriptor
+  /** Optional field heading rendered above the current media. */
+  heading?: string
 }
 
 const properties = defineProps<Properties>()
@@ -26,6 +28,7 @@ const currentUrl = computed(() =>
   <div class="space-y-2">
     <ImageValue
       v-if="currentUrl"
+      :heading="properties.heading"
       :alt="properties.field?.key"
       :src="currentUrl"
     />
