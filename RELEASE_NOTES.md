@@ -3,7 +3,8 @@
 - feat(components): shared `FieldLabel` (used by `FieldRenderer`) and optional `heading` on `ImageValue`/`AudioValue`/`VideoValue`, so overridden media fields keep the standard field title; added `FileValue` for download links
 - feat(admin): realtime changes are a floating bottom-right button over the list (shown only while changes are pending) instead of a header badge
 - feat(admin): floating scroll-to-top button in the list (uses `useScrollToTop`, animates on scroll); exported reusable `ScrollToTopButton`
-- fix(admin): the detail header uses the same bordered/surface stripe as the list header
+- fix(admin): the list header matches the detail header — no separator stripe or surface color
+- docs(components): list the package-root imports for every reusable override field (selects, media field/value, dates)
 - fix(admin): treat the server-idle list state as loading so SSR and hydration render the same loader (no hydration mismatch on the measurements page)
 - fix(admin): create forms for request schemas without writable fields render no fields (just the Create action) and POST an empty body instead of the raw-schema fallback
 - fix(components): audio values stay collapsed behind a play button with a track label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media

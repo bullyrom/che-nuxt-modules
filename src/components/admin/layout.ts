@@ -1,6 +1,8 @@
-/** Header row shared by the admin list and detail areas. */
-const ADMIN_AREA_HEADER_CLASSES =
-  "flex items-center justify-between gap-3 border-b border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] px-4 py-3"
+/** Header row shared by the admin list and detail areas (no separator stripe). */
+const ADMIN_AREA_HEADER_CLASSES = "flex items-center justify-between gap-3"
+
+/** List header keeps the area padding while sharing the detail header style. */
+const ADMIN_LIST_HEADER_CLASSES = `${ADMIN_AREA_HEADER_CLASSES} px-4 py-3`
 
 /** Subtle bordered action used for the "back" controls. */
 const ADMIN_BACK_BUTTON_CLASSES =
@@ -14,4 +16,5 @@ export {
   ADMIN_AREA_HEADER_CLASSES,
   ADMIN_BACK_BUTTON_CLASSES,
   ADMIN_FLOATING_ACTIONS_CLASSES,
+  ADMIN_LIST_HEADER_CLASSES,
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ADMIN_AREA_HEADER_CLASSES, ADMIN_BACK_BUTTON_CLASSES } from "./layout"
+import { ADMIN_BACK_BUTTON_CLASSES, ADMIN_LIST_HEADER_CLASSES } from "./layout"
 
 interface Properties {
   canCreate?: boolean
@@ -12,7 +12,7 @@ const emit = defineEmits<(event: "back" | "create") => void>()
 </script>
 
 <template>
-  <div :class="ADMIN_AREA_HEADER_CLASSES">
+  <div :class="ADMIN_LIST_HEADER_CLASSES">
     <button :class="ADMIN_BACK_BUTTON_CLASSES" @click="emit('back')">
       &larr; All endpoints
     </button>

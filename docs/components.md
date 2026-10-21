@@ -132,6 +132,40 @@ mapped in the admin config.
 - `DateField` / `DateTimeField` — `date` / `datetime-local` inputs that
   read/write ISO strings (timezone-safe conversion helpers in `dateInput.ts`).
 
+## Override-ready fields (package root)
+
+Every reusable field/value component used by admin overrides is exported from
+the package root — no deep imports or project wrappers are needed:
+
+```ts
+import {
+  Select,
+  MultiSelect,
+  RemoteSelect,
+  RemoteMultiSelect,
+  AudioField,
+  FileField,
+  ImageField,
+  VideoField,
+  AudioValue,
+  FileValue,
+  ImageValue,
+  VideoValue,
+  DateField,
+  DateTimeField,
+} from "@bullyrom/che-nuxt-modules"
+```
+
+- `Select` / `MultiSelect` are presentational; `RemoteSelect` /
+  `RemoteMultiSelect` load options from an endpoint.
+- `AudioField` / `FileField` / `ImageField` / `VideoField` implement the field
+  contract (`field`, `modelValue`, `onUpdate:modelValue`) for `fields.formats`,
+  `fields.overrides` and `defaultComponents`.
+- `AudioValue` / `FileValue` / `ImageValue` / `VideoValue` are display-only and
+  fit whole-object `formOverride` / `listItemOverride` / `detailOverride`
+  components; pass `heading` there to keep the standard field title.
+- `DateField` / `DateTimeField` are the built-in `date` / `date-time` formats.
+
 ## Wiring fields into the admin config
 
 Format-driven mapping (most specific), then kind (`defaultComponents`), then
