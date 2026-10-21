@@ -17,7 +17,12 @@ const IMAGE_IMPORT = "import { ImageField }"
 const IMAGE_AND_MULTISELECT_IMPORT = "import { ImageField, MultiSelect }"
 const CONFIG_DECLARATION = "const adminPanelConfig = {"
 const TRACK_OVERRIDE_PATTERN = /Track: \{\s*file:/v
-const TRACK_SCHEMA_PATTERN = '"Track":{"type":"object","properties":{'
+const COMPONENTS_EXPORT_MARKER = "export const components"
+const TRACK_SCHEMA_MARKER = '"Track":{"type":"object"'
+const ESCAPED_TRACK_SCHEMA_MARKER = String.raw`\"Track\":{\"type\":\"object\"`
+const SCHEMA_PROPERTIES_MARKER = '"properties":{'
+const ESCAPED_SCHEMA_PROPERTIES_MARKER = String.raw`\"properties\":{`
+const NOT_FOUND_INDEX = -1
 
 const TEST_HEADER_DECLARATION = `const TestHeader = {
   props: { entity: { type: Object, default: undefined } },
@@ -50,7 +55,12 @@ const TEST_TAGS_FIELD_DECLARATION = `const TagsField = {
   },
 }`
 
-const TRACK_SCHEMA_EXTENSION = `${TRACK_SCHEMA_PATTERN}"release_date":{"type":"string","format":"date"},"release_at":{"type":"string","format":"date-time"},"tags":{"type":"array","items":{"type":"string"}},`
+const TRACK_SCHEMA_FIELDS =
+  '"release_date":{"type":"string","format":"date"},"release_at":{"type":"string","format":"date-time"},"tags":{"type":"array","items":{"type":"string"}},'
+const ESCAPED_TRACK_SCHEMA_FIELDS = TRACK_SCHEMA_FIELDS.replaceAll(
+  '"',
+  String.raw`\"`,
+)
 
 interface AdminConfigOverrides {
   customHeader?: boolean
@@ -58,15 +68,41 @@ interface AdminConfigOverrides {
   multiselectTags?: boolean
 }
 
+/** Inserts extra editable properties into the Track schema object. */
+function extendTrackSchema(body: string): string {
+  const componentsIndex = body.indexOf(COMPONENTS_EXPORT_MARKER)
+  if (componentsIndex === NOT_FOUND_INDEX) return body
+
+  const escapedTrackIndex = body.indexOf(
+    ESCAPED_TRACK_SCHEMA_MARKER,
+    componentsIndex,
+  )
+  if (escapedTrackIndex !== NOT_FOUND_INDEX) {
+    const escapedPropertiesIndex = body.indexOf(
+      ESCAPED_SCHEMA_PROPERTIES_MARKER,
+      escapedTrackIndex,
+    )
+    if (escapedPropertiesIndex !== NOT_FOUND_INDEX) {
+      const insertAt =
+        escapedPropertiesIndex + ESCAPED_SCHEMA_PROPERTIES_MARKER.length
+      return `${body.slice(0, insertAt)}${ESCAPED_TRACK_SCHEMA_FIELDS}${body.slice(insertAt)}`
+    }
+  }
+
+  const trackIndex = body.indexOf(TRACK_SCHEMA_MARKER, componentsIndex)
+  if (trackIndex === NOT_FOUND_INDEX) return body
+  const propertiesIndex = body.indexOf(SCHEMA_PROPERTIES_MARKER, trackIndex)
+  if (propertiesIndex === NOT_FOUND_INDEX) return body
+  const insertAt = propertiesIndex + SCHEMA_PROPERTIES_MARKER.length
+  return `${body.slice(0, insertAt)}${TRACK_SCHEMA_FIELDS}${body.slice(insertAt)}`
+}
+
 /** Extends the Track schema with date, date-time and array fields. */
 async function installTrackSchemaExtras(page: Page): Promise<void> {
   await page.route(SCHEMA_ROUTE, async (route) => {
     const response = await route.fetch()
     const body = await response.text()
-    const extendedBody = body.includes("export const components")
-      ? body.replace(TRACK_SCHEMA_PATTERN, TRACK_SCHEMA_EXTENSION)
-      : body
-    await route.fulfill({ body: extendedBody, response })
+    await route.fulfill({ body: extendTrackSchema(body), response })
   })
 }
 

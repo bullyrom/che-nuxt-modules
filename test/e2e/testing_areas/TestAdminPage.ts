@@ -12,6 +12,7 @@ import {
   CUSTOM_HEADER_TEXT_PREFIX,
   EXPECT_TIMEOUT_MS,
   INDEX_PLACEHOLDER,
+  LIST_CONTENT_TIMEOUT_MS,
   PLAY_AUDIO_BUTTON_PATTERN,
   SHORT_TIMEOUT_MS,
   VIEW_ACTION,
@@ -118,13 +119,19 @@ class TestAdminPage {
       this.page
         .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
         .first(),
-    ).toBeVisible()
-    await expect(this.page.locator("audio")).toHaveCount(0)
+    ).toBeVisible({ timeout: LIST_CONTENT_TIMEOUT_MS })
+    await expect(this.page.locator("audio")).toHaveCount(0, {
+      timeout: LIST_CONTENT_TIMEOUT_MS,
+    })
   }
 
   /** Asserts that the list renders a download link with the given href. */
   async expectListDownload(hrefPattern: RegExp): Promise<void> {
-    await expectDownload(this.page.locator("a[download]"), hrefPattern)
+    await expectDownload(
+      this.page.locator("a[download]"),
+      hrefPattern,
+      LIST_CONTENT_TIMEOUT_MS,
+    )
   }
 
   /** Waits until the list header and its records area are rendered. */
@@ -230,8 +237,12 @@ class TestAdminPage {
     await this.page
       .getByRole("button", { name: PLAY_AUDIO_BUTTON_PATTERN })
       .first()
-      .click()
-    await expectMedia(this.page.locator("audio"), sourcePattern)
+      .click({ timeout: LIST_CONTENT_TIMEOUT_MS })
+    await expectMedia(
+      this.page.locator("audio"),
+      sourcePattern,
+      LIST_CONTENT_TIMEOUT_MS,
+    )
   }
 
   /**
@@ -263,18 +274,24 @@ class TestAdminPage {
 async function expectDownload(
   links: Locator,
   hrefPattern: RegExp,
+  timeout = EXPECT_TIMEOUT_MS,
 ): Promise<void> {
-  await expect(links.first()).toBeVisible()
-  await expect(links.first()).toHaveAttribute("href", hrefPattern)
+  await expect(links.first()).toBeVisible({ timeout })
+  await expect(links.first()).toHaveAttribute("href", hrefPattern, {
+    timeout,
+  })
 }
 
 /** Asserts that the first media element matches the source pattern. */
 async function expectMedia(
   media: Locator,
   sourcePattern: RegExp,
+  timeout = EXPECT_TIMEOUT_MS,
 ): Promise<void> {
-  await expect(media.first()).toBeVisible()
-  await expect(media.first()).toHaveAttribute("src", sourcePattern)
+  await expect(media.first()).toBeVisible({ timeout })
+  await expect(media.first()).toHaveAttribute("src", sourcePattern, {
+    timeout,
+  })
 }
 
 export { TestAdminPage }
