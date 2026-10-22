@@ -1,5 +1,6 @@
 # Release notes
 
+- docs: added `docs/admin-fields.md` (critical/non-critical field priorities, component catalog and `AdminPanelConfig` example), linked it from the README and admin customization guide, and exported `EnumField`/`TextareaField` from the package root
 - feat(components): shared `FieldLabel` (used by `FieldRenderer`) and optional `heading` on `ImageValue`/`AudioValue`/`VideoValue`, so overridden media fields keep the standard field title; added `FileValue` for download links
 - feat(admin): realtime changes are a floating bottom-right button over the list (shown only while changes are pending) instead of a header badge
 - feat(admin): floating scroll-to-top button in the list (uses `useScrollToTop`, animates on scroll); exported reusable `ScrollToTopButton`

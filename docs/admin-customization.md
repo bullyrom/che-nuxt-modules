@@ -5,6 +5,9 @@ The admin panel is an OpenAPI-driven CRUD UI. It can be used as a whole
 (`EntityRecordList`, `EntityRecordDetail`, `EntityCreateForm`,
 `SidebarEndpointsMenu`) embedded anywhere in a site.
 
+Field priorities and the ready component catalog are in
+[admin-fields.md](admin-fields.md).
+
 Two ideas make the customization composable:
 
 - **Instance keys** — every data area (list / detail / form) is registered in a

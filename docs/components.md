@@ -131,6 +131,9 @@ mapped in the admin config.
   already rendered by `FieldRenderer`, so leave it unset there.
 - `DateField` / `DateTimeField` — `date` / `datetime-local` inputs that
   read/write ISO strings (timezone-safe conversion helpers in `dateInput.ts`).
+- `EnumField` — `<select>` over the schema `enum` (also chosen automatically).
+- `TextareaField` — multi-line text input (also chosen automatically for
+  multiline/long strings).
 
 ## Override-ready fields (package root)
 
@@ -153,6 +156,8 @@ import {
   VideoValue,
   DateField,
   DateTimeField,
+  EnumField,
+  TextareaField,
 } from "@bullyrom/che-nuxt-modules"
 ```
 

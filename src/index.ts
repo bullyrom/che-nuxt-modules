@@ -15,8 +15,10 @@ export { default as FieldGroupRenderer } from "@/components/admin/FieldGroupRend
 export { default as AudioField } from "@/components/admin/fields/defaultComponents/AudioField.vue"
 export { default as DateField } from "@/components/admin/fields/defaultComponents/DateField.vue"
 export { default as DateTimeField } from "@/components/admin/fields/defaultComponents/DateTimeField.vue"
+export { default as EnumField } from "@/components/admin/fields/defaultComponents/EnumField.vue"
 export { default as FileField } from "@/components/admin/fields/defaultComponents/FileField.vue"
 export { default as ImageField } from "@/components/admin/fields/defaultComponents/ImageField.vue"
+export { default as TextareaField } from "@/components/admin/fields/defaultComponents/TextareaField.vue"
 export { default as VideoField } from "@/components/admin/fields/defaultComponents/VideoField.vue"
 export {
   DEFAULT_FIELD_COMPONENTS,
