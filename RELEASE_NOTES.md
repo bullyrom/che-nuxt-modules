@@ -1,5 +1,8 @@
 # Release notes
 
+- feat(admin): `menu.showInAdmin` (default `true`) hides the built-in endpoints menu inside the admin so the host can render its own navigation
+- feat(admin): split the menu into the framed `SidebarEndpointsMenu` and the bare `SidebarEndpointsList` (items only, no frame/header/padding) for embedding; rows are overridable with an `itemComponent` component (or `menu.itemComponent`) receiving `item`, `isActive` and `onSelect`
+- docs: documented embedding the endpoint menu anywhere in the site, custom links, the item-component override and the four adoption stages
 - feat(admin): `SidebarEndpointsMenu` can be embedded outside the admin — it now accepts `config` (menu links/visibility fallback), explicit `extraLinks`/`hiddenEntities`, an `instanceKey` and reads groups from the shared admin store
 - docs: clarify that enum fields are rendered automatically by `EnumField`; enum is not a manual customization step
 - docs: added `docs/admin-fields.md` (critical/non-critical field priorities, component catalog and `AdminPanelConfig` example), linked it from the README and admin customization guide, and exported `EnumField`/`TextareaField` from the package root

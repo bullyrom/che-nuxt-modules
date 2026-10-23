@@ -3,7 +3,8 @@
 The admin panel is an OpenAPI-driven CRUD UI. It can be used as a whole
 (`Crud`), as a per-entity workspace (`EntityWorkspace`) or as separate pieces
 (`EntityRecordList`, `EntityRecordDetail`, `EntityCreateForm`,
-`SidebarEndpointsMenu`) embedded anywhere in a site.
+`SidebarEndpointsMenu` / bare `SidebarEndpointsList`) embedded anywhere in a
+site.
 
 Field priorities and the ready component catalog are in
 [admin-fields.md](admin-fields.md).
@@ -20,17 +21,31 @@ Two ideas make the customization composable:
   fragment** with just the part they need (`AdminListConfig`,
   `AdminDetailConfig`, `AdminFormConfig`).
 
+## Adoption stages
+
+1. **Deploy from OpenAPI** — render `Crud` (or the routed pieces) with the
+   schema and base URL.
+2. **Customize fields** — wire the critical fields first (selects, files,
+   enums); see [admin-fields.md](admin-fields.md).
+3. **Extract/reuse the menu by instance ID** — hide the internal menu with
+   `menu.showInAdmin: false` and render the bare `SidebarEndpointsList` in the
+   site sidebar with the same `instanceKey`, `extraLinks` and
+   `hiddenEntities`.
+4. **Future — any pages/pieces by ID** — reuse other keyed admin pieces from
+   the store (lists, details, forms) anywhere in the site.
+
 ## Table of contents
 
-1. [Config overview](#config-overview)
-2. [Typing](#typing)
-3. [Level 1 — whole-object field group (form / list / detail)](#level-1--whole-object-field-group-form--list--detail)
-4. [Level 2 — whole list / detail override (+ before/after)](#level-2--whole-list--detail-override--beforeafter)
-5. [Level 3 — grid columns](#level-3--grid-columns)
-6. [Level 4 — header](#level-4--header)
-7. [Level 5 — sidebar](#level-5--sidebar)
-8. [Embedding pieces outside the admin](#embedding-pieces-outside-the-admin)
-9. [Store structure](#store-structure)
+1. [Adoption stages](#adoption-stages)
+2. [Config overview](#config-overview)
+3. [Typing](#typing)
+4. [Level 1 — whole-object field group (form / list / detail)](#level-1--whole-object-field-group-form--list--detail)
+5. [Level 2 — whole list / detail override (+ before/after)](#level-2--whole-list--detail-override--beforeafter)
+6. [Level 3 — grid columns](#level-3--grid-columns)
+7. [Level 4 — header](#level-4--header)
+8. [Level 5 — sidebar](#level-5--sidebar)
+9. [Embedding pieces outside the admin](#embedding-pieces-outside-the-admin)
+10. [Store structure](#store-structure)
 
 ## Config overview
 
@@ -51,6 +66,8 @@ const config: AdminPanelConfig = {
   menu: {
     hiddenEntities: ["internal-logs"],
     extraLinks: [{ label: "Dashboard", href: "/admin" }],
+    // Show the built-in endpoints menu inside the admin (default true).
+    showInAdmin: true,
   },
   views: {
     list: MyList,
@@ -258,8 +275,39 @@ const config = { views: { header: MyHeader } }
 
 ## Level 5 — sidebar
 
-Replace the endpoints menu entirely; it receives the grouped entity list and a
-`selectEntity` handler:
+The built-in endpoints menu is shown inside the admin by default. Set
+`menu.showInAdmin: false` when the host renders its own navigation (for example
+the main site sidebar); the workspace then takes the full width. The framed
+`SidebarEndpointsMenu` is the default admin wrapper, and the bare
+`SidebarEndpointsList` has no frame/header/padding for embedding.
+
+Custom rows are **components**, not slots: pass `itemComponent` (or
+`config.menu.itemComponent`). The component receives the entity item, the active
+flag and an `onSelect` callback:
+
+```tsx
+import type { AdminSidebarItemProperties } from "@bullyrom/che-nuxt-modules"
+
+function MyMenuItem(props: AdminSidebarItemProperties) {
+  return (
+    <button
+      class={props.isActive ? "font-medium" : ""}
+      onClick={() => props.onSelect(props.item)}
+    >
+      {props.item.entityName}
+    </button>
+  )
+}
+
+;<SidebarEndpointsList
+  config={config}
+  instanceKey="admin-1"
+  itemComponent={MyMenuItem}
+/>
+```
+
+To replace the menu entirely inside the admin, use `views.sidebar`; it receives
+the grouped entity list and a `selectEntity` handler:
 
 ```tsx
 import type { AdminSidebarComponentProperties } from "@bullyrom/che-nuxt-modules"
@@ -352,24 +400,36 @@ untouched.
 
 ### Sidebar menu only
 
-`SidebarEndpointsMenu` is exported from the package root and can be rendered in
-the main site sidebar. Pass the admin instance key and config so it uses the
-same active entity and menu settings as the admin:
+Use the bare `SidebarEndpointsList` in the main site sidebar: it renders only
+the endpoint items and links (no frame, header or padding). It is exported from
+the package root together with the framed `SidebarEndpointsMenu`:
 
 ```tsx
-import { SidebarEndpointsMenu } from "@bullyrom/che-nuxt-modules"
+import {
+  SidebarEndpointsList,
+  type AdminSidebarItemProperties,
+} from "@bullyrom/che-nuxt-modules"
 
 const adminPanelStore = useAdminPanelStore()
 adminPanelStore.setSchema(schema)
 adminPanelStore.setConfig(config)
 
+function MyMenuItem(props: AdminSidebarItemProperties) {
+  return (
+    <button onClick={() => props.onSelect(props.item)}>
+      {props.item.entityName}
+    </button>
+  )
+}
+
 function SiteSidebar() {
   return (
-    <SidebarEndpointsMenu
+    <SidebarEndpointsList
       config={config}
       extraLinks={[{ label: "Dashboard", href: "/admin" }]}
       hiddenEntities={["internal-logs"]}
       instanceKey="admin-1"
+      itemComponent={MyMenuItem}
       onSelectEntity={(entity) =>
         navigateTo(`/admin/endpoints/${entity.entityName}`)
       }
@@ -378,13 +438,16 @@ function SiteSidebar() {
 }
 ```
 
-- `instanceKey` is the admin instance key; selecting an entity closes that
+- Use the same `instanceKey` as the admin; selecting an entity closes that
   instance's open record, exactly like the admin sidebar.
-- `config.menu.extraLinks` / `config.menu.hiddenEntities` are used when the
-  same-named props are omitted; the props win when both are passed.
+- `config.menu.extraLinks` / `config.menu.hiddenEntities` /
+  `config.menu.itemComponent` are used when the same-named props are omitted;
+  the props win when both are passed.
 - Groups are read from the shared `useAdminPanelStore` by default (load the
   schema there first). Pass `filteredEntitiesByNamespace` when the host has
   already prepared its own groups.
+- Set `menu.showInAdmin: false` on the admin config when the site sidebar is the
+  only menu, so the admin does not render its internal one.
 
 ### Config fragments
 

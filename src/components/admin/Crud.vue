@@ -72,6 +72,9 @@ const instanceConfig = computed(
 )
 const customSidebar = computed(() => instanceConfig.value?.views?.sidebar)
 const extraLinks = computed(() => instanceConfig.value?.menu?.extraLinks ?? [])
+const showInternalMenu = computed(
+  () => instanceConfig.value?.menu?.showInAdmin ?? true,
+)
 
 // Hidden entities (by name or full path) are dropped from the default menu.
 const visibleGroups = computed(() =>
@@ -94,6 +97,18 @@ const sidebarProperties = computed<AdminSidebarComponentProperties>(() => ({
   selectEntity,
 }))
 
+function renderWorkspace(isMobile: boolean) {
+  return (
+    <ListElementByCurrentDevice
+      baseUrl={properties.baseUrl}
+      config={properties.config}
+      instanceKey={instanceKey.value}
+      isMobile={isMobile}
+      key={activeEntity.value?.fullBasePath ?? "none"}
+    />
+  )
+}
+
 useRender(() => {
   if (!isReady.value) return undefined
 
@@ -105,39 +120,37 @@ useRender(() => {
       data-ch-admin-theme={activeTheme.value}
       style={themeStyle.value}
     >
-      <MasterDetail
-        detailIsOpen={activeEntity.value !== undefined}
-        isMobile={isMobileLayout.value}
-      >
-        {{
-          detail: ({ isMobile }: { isMobile: boolean }) => (
-            <ListElementByCurrentDevice
-              baseUrl={properties.baseUrl}
-              config={properties.config}
-              instanceKey={instanceKey.value}
-              isMobile={isMobile}
-              key={activeEntity.value?.fullBasePath ?? "none"}
-            />
-          ),
-          master: ({ isMobile }: { isMobile: boolean }) =>
-            CustomSidebar ? (
-              <CustomSidebar
-                activeEntity={sidebarProperties.value.activeEntity}
-                extraLinks={sidebarProperties.value.extraLinks}
-                groups={sidebarProperties.value.groups}
-                isMobile={sidebarProperties.value.isMobile}
-                selectEntity={sidebarProperties.value.selectEntity}
-              />
-            ) : (
-              <SidebarEndpointsMenu
-                extraLinks={extraLinks.value}
-                filteredEntitiesByNamespace={visibleGroups.value}
-                instanceKey={instanceKey.value}
-                isMobile={isMobile}
-              />
-            ),
-        }}
-      </MasterDetail>
+      {showInternalMenu.value ? (
+        <MasterDetail
+          detailIsOpen={activeEntity.value !== undefined}
+          isMobile={isMobileLayout.value}
+        >
+          {{
+            detail: ({ isMobile }: { isMobile: boolean }) =>
+              renderWorkspace(isMobile),
+            master: ({ isMobile }: { isMobile: boolean }) =>
+              CustomSidebar ? (
+                <CustomSidebar
+                  activeEntity={sidebarProperties.value.activeEntity}
+                  extraLinks={sidebarProperties.value.extraLinks}
+                  groups={sidebarProperties.value.groups}
+                  isMobile={sidebarProperties.value.isMobile}
+                  selectEntity={sidebarProperties.value.selectEntity}
+                />
+              ) : (
+                <SidebarEndpointsMenu
+                  config={instanceConfig.value}
+                  extraLinks={extraLinks.value}
+                  filteredEntitiesByNamespace={visibleGroups.value}
+                  instanceKey={instanceKey.value}
+                  isMobile={isMobile}
+                />
+              ),
+          }}
+        </MasterDetail>
+      ) : (
+        renderWorkspace(isMobileLayout.value)
+      )}
     </div>
   )
 })

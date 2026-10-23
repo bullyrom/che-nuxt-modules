@@ -116,7 +116,20 @@ interface AdminPanelMenuConfig {
   extraLinks?: AdminPanelMenuLink[]
   /** Names or full paths of entities that must not be listed. */
   hiddenEntities?: string[]
+  /** Component used for each entity row in the endpoints menu. */
+  itemComponent?: AdminSidebarItemComponent
+  /** Show the built-in endpoints menu inside the admin (default `true`). */
+  showInAdmin?: boolean
 }
+
+/** Props handed to a custom endpoint-menu item component. */
+interface AdminSidebarItemProperties {
+  isActive: boolean
+  item: ParsedEntity
+  onSelect: (item: ParsedEntity) => void
+}
+
+type AdminSidebarItemComponent = Component<AdminSidebarItemProperties>
 
 /**
  * Config fragment for an embedded list: only what the list needs (grid, its
@@ -322,6 +335,8 @@ export type {
   AdminPanelViewsConfig,
   AdminSidebarComponentProperties,
   AdminSidebarGroup,
+  AdminSidebarItemComponent,
+  AdminSidebarItemProperties,
   FieldComponent,
   FieldComponentProperties,
   FieldComponentRegistry,
