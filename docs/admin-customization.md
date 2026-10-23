@@ -350,6 +350,42 @@ untouched.
 />
 ```
 
+### Sidebar menu only
+
+`SidebarEndpointsMenu` is exported from the package root and can be rendered in
+the main site sidebar. Pass the admin instance key and config so it uses the
+same active entity and menu settings as the admin:
+
+```tsx
+import { SidebarEndpointsMenu } from "@bullyrom/che-nuxt-modules"
+
+const adminPanelStore = useAdminPanelStore()
+adminPanelStore.setSchema(schema)
+adminPanelStore.setConfig(config)
+
+function SiteSidebar() {
+  return (
+    <SidebarEndpointsMenu
+      config={config}
+      extraLinks={[{ label: "Dashboard", href: "/admin" }]}
+      hiddenEntities={["internal-logs"]}
+      instanceKey="admin-1"
+      onSelectEntity={(entity) =>
+        navigateTo(`/admin/endpoints/${entity.entityName}`)
+      }
+    />
+  )
+}
+```
+
+- `instanceKey` is the admin instance key; selecting an entity closes that
+  instance's open record, exactly like the admin sidebar.
+- `config.menu.extraLinks` / `config.menu.hiddenEntities` are used when the
+  same-named props are omitted; the props win when both are passed.
+- Groups are read from the shared `useAdminPanelStore` by default (load the
+  schema there first). Pass `filteredEntitiesByNamespace` when the host has
+  already prepared its own groups.
+
 ### Config fragments
 
 Embedded pieces accept only the fragment they need instead of the whole config:

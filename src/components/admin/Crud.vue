@@ -1,6 +1,5 @@
 <script setup lang="tsx">
 import { breakpointsTailwind, useBreakpoints } from "@vueuse/core"
-// eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed, onMounted, ref } from "vue"
 
@@ -10,6 +9,7 @@ import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
 import MasterDetail from "./MasterDetail.vue"
+import { visibleMenuGroups } from "./menu"
 import SidebarEndpointsMenu from "./SidebarEndpointsMenu.vue"
 import { buildAdminThemeStyle, resolveAdminTheme } from "./theme"
 
@@ -74,18 +74,12 @@ const customSidebar = computed(() => instanceConfig.value?.views?.sidebar)
 const extraLinks = computed(() => instanceConfig.value?.menu?.extraLinks ?? [])
 
 // Hidden entities (by name or full path) are dropped from the default menu.
-const visibleGroups = computed(() => {
-  const hidden = new Set(instanceConfig.value?.menu?.hiddenEntities)
-  return filteredEntitiesByNamespace.value
-    .map((group) => ({
-      entities: group.entities.filter(
-        (entity) =>
-          !hidden.has(entity.entityName) && !hidden.has(entity.fullBasePath),
-      ),
-      namespace: group.namespace,
-    }))
-    .filter((group) => group.entities.length > 0)
-})
+const visibleGroups = computed(() =>
+  visibleMenuGroups(
+    filteredEntitiesByNamespace.value,
+    instanceConfig.value?.menu?.hiddenEntities,
+  ),
+)
 
 function selectEntity(entity: ParsedEntity) {
   getAdminPanelDetailStore(instanceKey.value)?.closeView()

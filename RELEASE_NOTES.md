@@ -1,5 +1,7 @@
 # Release notes
 
+- feat(admin): `SidebarEndpointsMenu` can be embedded outside the admin — it now accepts `config` (menu links/visibility fallback), explicit `extraLinks`/`hiddenEntities`, an `instanceKey` and reads groups from the shared admin store
+- docs: clarify that enum fields are rendered automatically by `EnumField`; enum is not a manual customization step
 - docs: added `docs/admin-fields.md` (critical/non-critical field priorities, component catalog and `AdminPanelConfig` example), linked it from the README and admin customization guide, and exported `EnumField`/`TextareaField` from the package root
 - feat(components): shared `FieldLabel` (used by `FieldRenderer`) and optional `heading` on `ImageValue`/`AudioValue`/`VideoValue`, so overridden media fields keep the standard field title; added `FileValue` for download links
 - feat(admin): realtime changes are a floating bottom-right button over the list (shown only while changes are pending) instead of a header badge

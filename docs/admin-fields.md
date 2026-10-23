@@ -15,11 +15,15 @@ library component. For the override mechanics see
 | Files / uploads                                   | A raw `File` is not JSON; the request must be `multipart/form-data` | `FileField` (and `ImageField` / `AudioField` / `VideoField`) plus a `beforeCreate` / `beforeUpdate` hook that returns `FormData` |
 | Foreign keys (`project`, `parent`, `customer`, …) | A free-form id input sends the wrong or an invalid id               | `Select` or `RemoteSelect`                                                                                                       |
 | Many-to-many (`tags`, `executors`, …)             | Multiple ids must be sent as a list, not as one value               | `MultiSelect` or `RemoteMultiSelect`                                                                                             |
-| Enum / choices (`track_type`, `status`, …)        | A plain string accepts values outside the allowed set               | `EnumField`, or a `Select` with known options                                                                                    |
 
 **The baseline is selects/multi-selects + files.** Wire these before anything
 else: without them the create/edit form either cannot be submitted or sends a
 payload the backend rejects.
+
+**Enum/choices are already automatic.** When the OpenAPI schema declares
+`enum`, the registry selects `EnumField` (`<select>`) without any config — no
+manual `EnumField` mapping is needed. Only if a schema loses its choices (a
+backend/schema problem) do you need a custom `Select`/`EnumField` override.
 
 ### Non-critical — UX improvements
 
@@ -54,7 +58,7 @@ display-only.
 | `ImageValue` / `AudioValue` / `VideoValue` | Display-only media in custom list/detail groups                        | `entities.<name>.listItemOverride` / `detailOverride`                          |
 | `FileValue`                                | Display-only download link in custom groups                            | `entities.<name>.listItemOverride` / `detailOverride`                          |
 | `DateField` / `DateTimeField`              | ISO `date` / `date-time` inputs                                        | `fields.formats` (built-in defaults)                                           |
-| `EnumField`                                | `<select>` from the schema `enum`                                      | Automatic; map explicitly in `fields.overrides` if needed                      |
+| `EnumField`                                | `<select>` from the schema `enum`                                      | Automatic whenever `schema.enum` exists; no config needed                      |
 | `TextareaField`                            | Multi-line text                                                        | Automatic for multiline; map explicitly if needed                              |
 
 ## Passing components to `AdminPanelConfig`
@@ -66,7 +70,6 @@ import {
   AudioField,
   DateField,
   DateTimeField,
-  EnumField,
   FileField,
   ImageField,
   TextareaField,
@@ -101,7 +104,7 @@ const config: AdminPanelConfig = {
       Track: {
         description: { component: TextareaField, kind: "string" },
         file: { component: FileField, kind: "string" },
-        track_type: { component: EnumField, kind: "string" },
+        // `track_type` has schema `enum` -> EnumField is automatic.
       },
     },
   },
