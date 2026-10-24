@@ -107,7 +107,15 @@ interface FieldGroupOverride<
 /** A custom menu link appended to the default admin sidebar. */
 interface AdminPanelMenuLink {
   href: string
+  /** Stable id used by `parent`/`parentId`; defaults to `href`. */
+  id?: string
+  /** Zero-based position among siblings; out-of-range values are ignored. */
+  index?: number
   label: string
+  /** Parent item id/href/label; omit for a first-level item. */
+  parent?: string
+  /** Alias of `parent`. */
+  parentId?: string
 }
 
 /** Per-entity customization of the default sidebar menu. */
@@ -116,17 +124,32 @@ interface AdminPanelMenuConfig {
   extraLinks?: AdminPanelMenuLink[]
   /** Names or full paths of entities that must not be listed. */
   hiddenEntities?: string[]
-  /** Component used for each entity row in the endpoints menu. */
+  /** Component used for each menu row in the endpoints menu. */
   itemComponent?: AdminSidebarItemComponent
+  /** Group entities by API namespace (default `true` in the admin). */
+  showGroups?: boolean
   /** Show the built-in endpoints menu inside the admin (default `true`). */
   showInAdmin?: boolean
 }
 
-/** Props handed to a custom endpoint-menu item component. */
+/** A rendered menu item (endpoint row or custom/site link). */
+interface AdminSidebarMenuItem {
+  children: AdminSidebarMenuItem[]
+  entity?: ParsedEntity
+  href?: string
+  id: string
+  index?: number
+  isActive: boolean
+  label: string
+  level: number
+}
+
+/** Props handed to a custom menu-item component. */
 interface AdminSidebarItemProperties {
   isActive: boolean
-  item: ParsedEntity
-  onSelect: (item: ParsedEntity) => void
+  isExpanded: boolean
+  item: AdminSidebarMenuItem
+  onSelect: (item: AdminSidebarMenuItem) => void
 }
 
 type AdminSidebarItemComponent = Component<AdminSidebarItemProperties>
@@ -337,6 +360,7 @@ export type {
   AdminSidebarGroup,
   AdminSidebarItemComponent,
   AdminSidebarItemProperties,
+  AdminSidebarMenuItem,
   FieldComponent,
   FieldComponentProperties,
   FieldComponentRegistry,

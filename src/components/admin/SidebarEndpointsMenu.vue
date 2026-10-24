@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue"
+
 import SidebarEndpointsList from "./SidebarEndpointsList.vue"
 
 import type {
@@ -24,10 +26,16 @@ interface Properties {
   /** Custom row component; wins over `config.menu.itemComponent`. */
   itemComponent?: AdminSidebarItemComponent
   onSelectEntity?: (entity: ParsedEntity) => void
+  /** Group entities by API namespace; defaults to `true` here (admin menu). */
+  showGroups?: boolean
 }
 
 const properties = defineProps<Properties>()
 const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
+
+const showGroups = computed(
+  () => properties.showGroups ?? properties.config?.menu?.showGroups ?? true,
+)
 </script>
 
 <template>
@@ -35,7 +43,7 @@ const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
     class="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
     :class="properties.isMobile ? 'w-full' : 'w-64 shrink-0'"
   >
-    <div class="border-b border-[var(--ch-admin-border)] px-4 py-3">
+    <div class="border-b border-[var(--ch-admin-border)] px-3 py-3">
       <h2
         class="text-sm font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
       >
@@ -43,7 +51,7 @@ const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
       </h2>
     </div>
 
-    <div class="flex-1 overflow-y-auto p-3">
+    <div class="flex-1 overflow-y-auto py-2">
       <SidebarEndpointsList
         :config="properties.config"
         :extra-links="properties.extraLinks"
@@ -54,6 +62,7 @@ const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
         :instance-key="properties.instanceKey"
         :item-component="properties.itemComponent"
         :on-select-entity="properties.onSelectEntity"
+        :show-groups="showGroups"
         @select="emit('select', $event)"
       />
     </div>

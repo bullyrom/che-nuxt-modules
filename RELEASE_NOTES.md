@@ -1,5 +1,9 @@
 # Release notes
 
+- feat(admin): unify every menu row (endpoint items and `extraLinks`) under one item component with consistent sizing, full-width hover and padding; site links are ordinary list items
+- feat(admin): `showGroups` / `menu.showGroups` switches API namespace grouping (admin default `true`, bare site list default `false`)
+- feat(admin): menu links support nesting via `parent`/`parentId` (clickable, expandable parent rows) and sibling ordering via `index` (out-of-range values are ignored); added cycle protection
+- fix(admin): aligned menu headings with the panel header and fixed nested/hover/link offsets in both the admin and site menus
 - feat(admin): `menu.showInAdmin` (default `true`) hides the built-in endpoints menu inside the admin so the host can render its own navigation
 - feat(admin): split the menu into the framed `SidebarEndpointsMenu` and the bare `SidebarEndpointsList` (items only, no frame/header/padding) for embedding; rows are overridable with an `itemComponent` component (or `menu.itemComponent`) receiving `item`, `isActive` and `onSelect`
 - docs: documented embedding the endpoint menu anywhere in the site, custom links, the item-component override and the four adoption stages

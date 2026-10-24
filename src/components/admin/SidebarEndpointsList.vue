@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
-import { computed } from "vue"
-
 import { getAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
-import { visibleMenuGroups } from "./menu"
-import SidebarEndpointItem from "./SidebarEndpointItem.vue"
+import SidebarMenuNode from "./SidebarMenuNode.vue"
+import { useSidebarMenu } from "./useSidebarMenu"
 
 import type {
   AdminPanelConfig,
   AdminPanelMenuLink,
   AdminSidebarGroup,
   AdminSidebarItemComponent,
+  AdminSidebarMenuItem,
 } from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
@@ -30,52 +28,22 @@ interface Properties {
   /** Custom row component; wins over `config.menu.itemComponent`. */
   itemComponent?: AdminSidebarItemComponent
   onSelectEntity?: (entity: ParsedEntity) => void
+  /** Group entities by API namespace; defaults to `false` here (site menu). */
+  showGroups?: boolean
 }
 
 const properties = defineProps<Properties>()
 const emit = defineEmits<(event: "select", entity: ParsedEntity) => void>()
 
 const adminPanelStore = useAdminPanelStore()
-const { config: storeConfig, filteredEntitiesByNamespace: storeGroups } =
-  storeToRefs(adminPanelStore)
-
-const menuConfig = computed(() => properties.config?.menu)
-
-const groups = computed(
-  () => properties.filteredEntitiesByNamespace ?? storeGroups.value,
-)
-
-const visibleGroups = computed(() =>
-  visibleMenuGroups(
-    groups.value,
-    properties.hiddenEntities ??
-      menuConfig.value?.hiddenEntities ??
-      storeConfig.value?.menu?.hiddenEntities,
-  ),
-)
-
-const extraLinks = computed(
-  () =>
-    properties.extraLinks ??
-    menuConfig.value?.extraLinks ??
-    storeConfig.value?.menu?.extraLinks ??
-    [],
-)
-
-const itemComponent = computed<AdminSidebarItemComponent>(
-  () =>
-    properties.itemComponent ??
-    menuConfig.value?.itemComponent ??
-    storeConfig.value?.menu?.itemComponent ??
-    SidebarEndpointItem,
-)
-
-function isActive(entity: ParsedEntity) {
-  return (
-    adminPanelStore.activeEntity?.entityName === entity.entityName &&
-    adminPanelStore.activeEntity?.namespace === entity.namespace
-  )
-}
+const { expandedIds, itemComponent, sections, toggleItem } = useSidebarMenu({
+  config: properties.config,
+  extraLinks: properties.extraLinks,
+  filteredEntitiesByNamespace: properties.filteredEntitiesByNamespace,
+  hiddenEntities: properties.hiddenEntities,
+  itemComponent: properties.itemComponent,
+  showGroups: properties.showGroups,
+})
 
 // Selecting an entity also closes an open record view, so clicking the already
 // active entity returns from an open record to the list. A host-supplied
@@ -89,44 +57,32 @@ function selectEntity(entity: ParsedEntity) {
   adminPanelStore.activeEntity = entity
   emit("select", entity)
 }
+
+function handleSelect(item: AdminSidebarMenuItem) {
+  if (item.children.length > 0) toggleItem(item)
+  if (item.entity !== undefined) selectEntity(item.entity)
+}
 </script>
 
 <template>
-  <div class="space-y-5">
-    <section v-for="group in visibleGroups" :key="group.namespace">
+  <div class="space-y-3">
+    <section v-for="section in sections" :key="section.id">
       <h3
-        class="mb-2 px-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
+        v-if="section.title"
+        class="px-3 py-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
       >
-        {{ group.namespace || "No namespace" }}
+        {{ section.title }}
       </h3>
 
       <ul class="space-y-1">
-        <li v-for="item in group.entities" :key="item.entityName">
-          <component
-            :is="itemComponent"
-            :is-active="isActive(item)"
-            :item="item"
-            :on-select="selectEntity"
-          />
-        </li>
-      </ul>
-    </section>
-
-    <section v-if="extraLinks.length > 0">
-      <h3
-        class="mb-2 px-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
-      >
-        Links
-      </h3>
-      <ul class="space-y-1">
-        <li v-for="link in extraLinks" :key="link.href">
-          <a
-            class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm text-[var(--ch-admin-text)] transition-colors hover:bg-[var(--ch-admin-surface-hover)]"
-            :href="link.href"
-          >
-            <span class="truncate">{{ link.label }}</span>
-          </a>
-        </li>
+        <SidebarMenuNode
+          v-for="item in section.items"
+          :key="item.id"
+          :expanded-ids="expandedIds"
+          :item="item"
+          :item-component="itemComponent"
+          :on-select="handleSelect"
+        />
       </ul>
     </section>
   </div>

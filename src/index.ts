@@ -51,6 +51,7 @@ export type {
   AdminSidebarGroup,
   AdminSidebarItemComponent,
   AdminSidebarItemProperties,
+  AdminSidebarMenuItem,
   FieldComponent,
   FieldComponentProperties,
   FieldComponentRegistry,
@@ -93,9 +94,9 @@ export type {
   AdminRealtimeSubscriptions,
 } from "@/components/admin/realtime"
 export { getRecordId } from "@/components/admin/recordId"
-export { default as SidebarEndpointItem } from "@/components/admin/SidebarEndpointItem.vue"
 export { default as SidebarEndpointsList } from "@/components/admin/SidebarEndpointsList.vue"
 export { default as SidebarEndpointsMenu } from "@/components/admin/SidebarEndpointsMenu.vue"
+export { default as SidebarMenuItem } from "@/components/admin/SidebarMenuItem.vue"
 export type {
   AdminPanelTheme,
   AdminPanelThemeSource,

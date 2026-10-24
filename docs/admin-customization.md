@@ -65,7 +65,12 @@ const config: AdminPanelConfig = {
   },
   menu: {
     hiddenEntities: ["internal-logs"],
-    extraLinks: [{ label: "Dashboard", href: "/admin" }],
+    extraLinks: [
+      { label: "Dashboard", href: "/admin" },
+      { label: "Docs", href: "/admin/docs", parent: "Dashboard" },
+    ],
+    // Group API entities by namespace (default true in the admin).
+    showGroups: true,
     // Show the built-in endpoints menu inside the admin (default true).
     showInAdmin: true,
   },
@@ -277,34 +282,66 @@ const config = { views: { header: MyHeader } }
 
 The built-in endpoints menu is shown inside the admin by default. Set
 `menu.showInAdmin: false` when the host renders its own navigation (for example
-the main site sidebar); the workspace then takes the full width. The framed
-`SidebarEndpointsMenu` is the default admin wrapper, and the bare
-`SidebarEndpointsList` has no frame/header/padding for embedding.
+the main site sidebar); the workspace then takes the full width.
 
-Custom rows are **components**, not slots: pass `itemComponent` (or
-`config.menu.itemComponent`). The component receives the entity item, the active
-flag and an `onSelect` callback:
+Two renderers share one item system:
+
+- `SidebarEndpointsMenu` — framed admin wrapper (border, header, scroll area)
+  grouped by API namespace; `menu.showGroups` defaults to `true` here.
+- `SidebarEndpointsList` — bare list (no frame/header/padding), flat by default
+  (`showGroups` defaults to `false`) for site sidebars.
+
+All rows — endpoint items and `extraLinks` — are rendered by the same item
+component with the same size, full-width hover and padding. Custom rows are
+**components**, not slots: pass `itemComponent` (or
+`config.menu.itemComponent`). It receives the item (`label`, `href`, `entity`,
+`children`, `level`), `isActive`, `isExpanded` and `onSelect`:
 
 ```tsx
 import type { AdminSidebarItemProperties } from "@bullyrom/che-nuxt-modules"
 
 function MyMenuItem(props: AdminSidebarItemProperties) {
-  return (
-    <button
-      class={props.isActive ? "font-medium" : ""}
-      onClick={() => props.onSelect(props.item)}
-    >
-      {props.item.entityName}
+  return props.item.href === undefined ? (
+    <button onClick={() => props.onSelect(props.item)}>
+      {props.item.label}
     </button>
+  ) : (
+    <a href={props.item.href} onClick={() => props.onSelect(props.item)}>
+      {props.item.label}
+    </a>
   )
 }
 
-;<SidebarEndpointsList
-  config={config}
-  instanceKey="admin-1"
-  itemComponent={MyMenuItem}
-/>
+function AdminMenuExample() {
+  return (
+    <SidebarEndpointsMenu
+      config={config}
+      instanceKey="admin-1"
+      itemComponent={MyMenuItem}
+    />
+  )
+}
 ```
+
+Links use the same rows and support nesting and ordering:
+
+```ts
+const config = {
+  menu: {
+    extraLinks: [
+      { href: "/", id: "site", index: 2, label: "Site" },
+      { href: "/docs", index: 0, label: "Docs", parent: "site" },
+    ],
+  },
+}
+```
+
+- `parent` / `parentId` reference another item's `id` (or its `href`/label); an
+  item without a parent is level 1. Parent rows stay clickable and toggle their
+  children.
+- `index` moves an item among its siblings; an out-of-range index is ignored.
+- Grouping only changes headings/flatness; nesting and `index` work in both
+  grouped and flat modes.
 
 To replace the menu entirely inside the admin, use `views.sidebar`; it receives
 the grouped entity list and a `selectEntity` handler:
@@ -401,35 +438,27 @@ untouched.
 ### Sidebar menu only
 
 Use the bare `SidebarEndpointsList` in the main site sidebar: it renders only
-the endpoint items and links (no frame, header or padding). It is exported from
-the package root together with the framed `SidebarEndpointsMenu`:
+the unified items (no frame, header or padding) and is flat by default — API
+items and site links share one list. It is exported from the package root
+together with the framed `SidebarEndpointsMenu`:
 
 ```tsx
-import {
-  SidebarEndpointsList,
-  type AdminSidebarItemProperties,
-} from "@bullyrom/che-nuxt-modules"
+import { SidebarEndpointsList } from "@bullyrom/che-nuxt-modules"
 
 const adminPanelStore = useAdminPanelStore()
 adminPanelStore.setSchema(schema)
 adminPanelStore.setConfig(config)
 
-function MyMenuItem(props: AdminSidebarItemProperties) {
-  return (
-    <button onClick={() => props.onSelect(props.item)}>
-      {props.item.entityName}
-    </button>
-  )
-}
-
 function SiteSidebar() {
   return (
     <SidebarEndpointsList
       config={config}
-      extraLinks={[{ label: "Dashboard", href: "/admin" }]}
+      extraLinks={[
+        { href: "/", id: "site", label: "Site" },
+        { href: "/docs", label: "Docs", parent: "site", index: 0 },
+      ]}
       hiddenEntities={["internal-logs"]}
       instanceKey="admin-1"
-      itemComponent={MyMenuItem}
       onSelectEntity={(entity) =>
         navigateTo(`/admin/endpoints/${entity.entityName}`)
       }
@@ -441,13 +470,16 @@ function SiteSidebar() {
 - Use the same `instanceKey` as the admin; selecting an entity closes that
   instance's open record, exactly like the admin sidebar.
 - `config.menu.extraLinks` / `config.menu.hiddenEntities` /
-  `config.menu.itemComponent` are used when the same-named props are omitted;
-  the props win when both are passed.
+  `config.menu.itemComponent` / `config.menu.showGroups` are used when the
+  same-named props are omitted; the props win when both are passed.
+- Site links are ordinary items: they use the same row component, and support
+  `parent` / `parentId` and `index`.
 - Groups are read from the shared `useAdminPanelStore` by default (load the
   schema there first). Pass `filteredEntitiesByNamespace` when the host has
   already prepared its own groups.
 - Set `menu.showInAdmin: false` on the admin config when the site sidebar is the
-  only menu, so the admin does not render its internal one.
+  only menu, so the admin does not render its internal one. Pass
+  `showGroups`/`menu.showGroups: true` if the site menu should keep API groups.
 
 ### Config fragments
 
