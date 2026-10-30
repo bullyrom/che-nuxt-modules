@@ -5,7 +5,7 @@ import type { AdminSidebarItemProperties } from "./fields/types"
 
 const properties = defineProps<AdminSidebarItemProperties>()
 
-const TEXT_INSET_PX = 20
+const TEXT_INSET_PX = 8
 const INDENT_PX = 16
 
 const ITEM_CLASSES =

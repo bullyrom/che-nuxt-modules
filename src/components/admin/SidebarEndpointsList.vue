@@ -65,11 +65,11 @@ function handleSelect(item: AdminSidebarMenuItem) {
 </script>
 
 <template>
-  <div class="space-y-3">
+  <div class="space-y-3 px-3">
     <section v-for="section in sections" :key="section.id">
       <h3
         v-if="section.title"
-        class="px-3 py-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
+        class="py-2 text-xs font-semibold tracking-wider text-[var(--ch-admin-text-muted)] uppercase"
       >
         {{ section.title }}
       </h3>

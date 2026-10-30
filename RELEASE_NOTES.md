@@ -1,6 +1,6 @@
 # Release notes
 
-- style(admin): align hover/active backgrounds with section headings (full heading width) while keeping menu text indented
+- style(admin): align hover/active backgrounds to the section-heading left edge and width, keeping menu text indented
 - feat(admin): unify every menu row (endpoint items and `extraLinks`) under one item component with consistent sizing, full-width hover and padding; site links are ordinary list items
 - feat(admin): `showGroups` / `menu.showGroups` switches API namespace grouping (admin default `true`, bare site list default `false`)
 - feat(admin): menu links support nesting via `parent`/`parentId` (clickable, expandable parent rows) and sibling ordering via `index` (out-of-range values are ignored); added cycle protection
