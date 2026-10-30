@@ -9,7 +9,7 @@ const TEXT_INSET_PX = 8
 const INDENT_PX = 16
 
 const ITEM_CLASSES =
-  "flex w-full items-center gap-2 py-2 text-left text-sm transition-colors"
+  "flex w-full items-center gap-2 rounded py-2 text-left text-sm transition-colors"
 const ACTIVE_CLASSES = "bg-[var(--ch-admin-accent)] font-medium text-white"
 const INACTIVE_CLASSES =
   "text-[var(--ch-admin-text)] hover:bg-[var(--ch-admin-surface-hover)]"
