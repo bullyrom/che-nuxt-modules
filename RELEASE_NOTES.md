@@ -1,5 +1,6 @@
 # Release notes
 
+- style(admin): tighten menu rows to the section-heading inset — smaller left padding and a consistent inset hover background aligned to the menu width
 - feat(admin): unify every menu row (endpoint items and `extraLinks`) under one item component with consistent sizing, full-width hover and padding; site links are ordinary list items
 - feat(admin): `showGroups` / `menu.showGroups` switches API namespace grouping (admin default `true`, bare site list default `false`)
 - feat(admin): menu links support nesting via `parent`/`parentId` (clickable, expandable parent rows) and sibling ordering via `index` (out-of-range values are ignored); added cycle protection
