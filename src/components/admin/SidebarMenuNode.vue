@@ -18,13 +18,15 @@ const properties = defineProps<Properties>()
 
 <template>
   <li>
-    <component
-      :is="properties.itemComponent"
-      :is-active="properties.item.isActive"
-      :is-expanded="properties.expandedIds.has(properties.item.id)"
-      :item="properties.item"
-      :on-select="properties.onSelect"
-    />
+    <div class="px-3">
+      <component
+        :is="properties.itemComponent"
+        :is-active="properties.item.isActive"
+        :is-expanded="properties.expandedIds.has(properties.item.id)"
+        :item="properties.item"
+        :on-select="properties.onSelect"
+      />
+    </div>
 
     <ul
       v-if="

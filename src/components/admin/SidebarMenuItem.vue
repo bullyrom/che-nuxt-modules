@@ -5,7 +5,7 @@ import type { AdminSidebarItemProperties } from "./fields/types"
 
 const properties = defineProps<AdminSidebarItemProperties>()
 
-const BASE_PADDING_PX = 12
+const TEXT_INSET_PX = 4
 const INDENT_PX = 16
 
 const ITEM_CLASSES =
@@ -17,7 +17,7 @@ const INACTIVE_CLASSES =
 const hasChildren = computed(() => properties.item.children.length > 0)
 
 const paddingLeft = computed(
-  () => `${BASE_PADDING_PX + properties.item.level * INDENT_PX}px`,
+  () => `${TEXT_INSET_PX + properties.item.level * INDENT_PX}px`,
 )
 </script>
 
