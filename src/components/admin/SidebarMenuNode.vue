@@ -17,7 +17,7 @@ const properties = defineProps<Properties>()
 </script>
 
 <template>
-  <li class="px-3">
+  <li>
     <component
       :is="properties.itemComponent"
       :is-active="properties.item.isActive"
