@@ -481,6 +481,75 @@ function SiteSidebar() {
   only menu, so the admin does not render its internal one. Pass
   `showGroups`/`menu.showGroups: true` if the site menu should keep API groups.
 
+### Reading the endpoint menu data yourself
+
+`SidebarEndpointsMenu` and `SidebarEndpointsList` render the menu model from
+`useAdminMenuSections`. The same composable is exported from the package root,
+so a host can build its own navigation from exactly the data the built-in
+sidebar uses (groups, hidden entities, extra links, nesting and the active
+entity all come from `useAdminPanelStore` + the config).
+
+```tsx
+<script setup lang="tsx">
+import { useAdminMenuSections, useAdminPanelStore, useRender } from "@bullyrom/che-nuxt-modules"
+
+const adminPanelStore = useAdminPanelStore()
+adminPanelStore.setSchema(schema)
+adminPanelStore.setConfig(config)
+
+// Omitted args read the shared store and its config.
+const { sections } = useAdminMenuSections({ showGroups: true })
+
+function SiteNavigation() {
+  return (
+    <nav>
+      {sections.value.map((section) => (
+        <section key={section.id}>
+          {section.title && <h3>{section.title}</h3>}
+          <ul>
+            {section.items.map((item) => (
+              <li key={item.id}>
+                <a
+                  href={
+                    item.href ??
+                    (item.entity
+                      ? `/admin/endpoints/${item.entity.entityName}`
+                      : "#")
+                  }
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </nav>
+  )
+}
+
+useRender(() => <SiteNavigation />)
+</script>
+```
+
+- `sections` is a reactive `MenuSection[]`:
+  `{ id, title?, items }`, where each `AdminSidebarMenuItem` has
+  `id`, `label`, `href?`, `entity?` (the parsed endpoint), `children`,
+  `isActive` and `level`.
+- The composable accepts the same overrides as `SidebarEndpointsList`:
+  `config`, `extraLinks`, `filteredEntitiesByNamespace`, `hiddenEntities` and
+  `showGroups`; omitted values fall back to the store config.
+- Use `useAdminMenuSections({ showGroups: false })` for one flat list, then read
+  `section.items[].entity` for the endpoints you want to render.
+- If you only need the raw parsed data, the exported `useAdminPanelStore()`
+  already exposes `parsedEntities` (all entities) and
+  `filteredEntitiesByNamespace` (list entities grouped by namespace);
+  `useAdminMenuSections` is the layer that applies the config, hidden entities,
+  custom links, ordering and nesting on top of them.
+- If you also need the sidebar's expansion state, `useSidebarMenu` is exported
+  too and returns the same `sections` plus `expandedIds`, `itemComponent` and
+  `toggleItem`.
+
 ### Config fragments
 
 Embedded pieces accept only the fragment they need instead of the whole config:

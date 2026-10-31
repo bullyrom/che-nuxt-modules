@@ -1,5 +1,6 @@
 # Release notes
 
+- feat(admin): export `useAdminMenuSections` (and `useSidebarMenu`) so the host app can read the same endpoint/link menu data the sidebar uses and render its own navigation; documented with an example
 - style(admin): slightly round the menu hover/active row corners
 - style(admin): align hover/active backgrounds to the section-heading left edge and width, keeping menu text indented
 - feat(admin): unify every menu row (endpoint items and `extraLinks`) under one item component with consistent sizing, full-width hover and padding; site links are ordinary list items

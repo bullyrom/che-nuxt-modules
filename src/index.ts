@@ -75,6 +75,7 @@ export {
 export { default as ListChangesButton } from "@/components/admin/ListChangesButton.vue"
 export { default as ListElementByCurrentDevice } from "@/components/admin/ListElementByCurrentDevice.vue"
 export { default as MasterDetail } from "@/components/admin/MasterDetail.vue"
+export type { MenuSection } from "@/components/admin/menuSections"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
 export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
 export { default as RawValue } from "@/components/admin/RawValue.vue"
@@ -101,8 +102,12 @@ export type {
   AdminPanelTheme,
   AdminPanelThemeSource,
 } from "@/components/admin/theme"
+export { useAdminMenuSections } from "@/components/admin/useAdminMenuSections"
+export type { UseAdminMenuSectionsParameters } from "@/components/admin/useAdminMenuSections"
 export { useMasterDetail } from "@/components/admin/useMasterDetail"
 export type { UseMasterDetailOptions } from "@/components/admin/useMasterDetail"
+export { useSidebarMenu } from "@/components/admin/useSidebarMenu"
+export type { UseSidebarMenuParameters } from "@/components/admin/useSidebarMenu"
 export { default as AudioValue } from "@/components/AudioValue.vue"
 export { default as CheCheckbox } from "@/components/CheCheckbox.vue"
 export { default as ContainerMarginRight } from "@/components/ContainerMarginRight.vue"
