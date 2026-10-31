@@ -1,7 +1,6 @@
 import {
   CUSTOM_GRID_COLUMNS,
   FRONTEND_URL,
-  RECORD_NAMESPACE,
   TRACKS_BASE_PATH,
   TRACKS_ENTITY,
 } from "../constants"
@@ -10,13 +9,12 @@ import { TestAdminPage } from "../testing_areas/TestAdminPage"
 import { installAdminConfigOverrides } from "../utils/adminConfig"
 
 test.describe("admin areas", () => {
-  test("default sidebar and header drive the entity list", async ({
+  test("index placeholder and the site menu drive the entity list", async ({
     page,
   }) => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openEndpointsIndex()
-    await admin.expectSidebarGroup(RECORD_NAMESPACE)
     await admin.selectEntity(TRACKS_ENTITY)
     await admin.expectDefaultHeader(TRACKS_ENTITY, TRACKS_BASE_PATH)
     await admin.backToIndex()

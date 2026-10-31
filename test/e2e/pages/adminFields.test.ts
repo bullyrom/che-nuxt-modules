@@ -45,8 +45,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openEndpointsIndex()
-    await admin.selectEntity(TRACKS_ENTITY)
+    await admin.openList(TRACKS_ENTITY)
     await form.openCreate(TRACKS_ENTITY)
 
     await form.expectLabels(TRACK_FORM_LABELS)
@@ -77,8 +76,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openEndpointsIndex()
-    await admin.selectEntity(TRACKS_ENTITY)
+    await admin.openList(TRACKS_ENTITY)
     await form.openCreate(TRACKS_ENTITY)
 
     await form.fillDateField(DATE_FIELD_KEY, TEST_DATE_VALUE)

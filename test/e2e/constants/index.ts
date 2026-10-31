@@ -10,7 +10,6 @@ const ADMIN_RECORD_PATH_PATTERN = /\/admin\/endpoints\/[^\/]+\/\d+$/v
 const TRACKS_ENTITY = "tracks"
 const MEASUREMENTS_ENTITY = "measurements"
 const PROJECT_FILES_ENTITY = "project-files"
-const RECORD_NAMESPACE = "api/v1/record"
 const TRACKS_BASE_PATH = "/api/v1/record/tracks/"
 const TRACK_DETAIL_HREF_PATTERN = /^\/admin\/endpoints\/tracks\/\d+$/v
 const TRACK_AUDIO_SRC_PATTERN = /\/api\/v1\/record\/tracks\/\d+\/file\/$/v
@@ -23,6 +22,7 @@ const SEARCH_PLACEHOLDER = "Search..."
 const VIEW_ACTION = "View"
 const CREATE_ACTION = "+ New"
 const BACK_ACTION = "← All endpoints"
+const MENU_ACTION = "Menu"
 const INDEX_PLACEHOLDER = "Select an endpoint"
 const CANCEL_ACTION = "Cancel"
 
@@ -53,7 +53,6 @@ const TEST_DATE_TIME_VALUE = "2026-10-20T12:30"
 
 const EXPECT_TIMEOUT_MS = 20_000
 const LIST_CONTENT_TIMEOUT_MS = 60_000
-const SHORT_TIMEOUT_MS = 5000
 
 export {
   ADMIN_INDEX_PATH,
@@ -74,6 +73,7 @@ export {
   LIST_CONTENT_TIMEOUT_MS,
   MEASUREMENTS_ENTITY,
   MEASUREMENTS_ROUTE,
+  MENU_ACTION,
   MOCK_MEASUREMENT_ID,
   MULTISELECT_FIELD_KEY,
   MULTISELECT_OPTION_LABEL,
@@ -84,9 +84,7 @@ export {
   PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
   PROJECT_FILES_ENTITY,
   PROJECT_SELECT_PLACEHOLDER,
-  RECORD_NAMESPACE,
   SEARCH_PLACEHOLDER,
-  SHORT_TIMEOUT_MS,
   TEST_AUDIO_CONTENT,
   TEST_AUDIO_NAME,
   TEST_AUDIO_TYPE,

@@ -13,8 +13,8 @@ import {
   EXPECT_TIMEOUT_MS,
   INDEX_PLACEHOLDER,
   LIST_CONTENT_TIMEOUT_MS,
+  MENU_ACTION,
   PLAY_AUDIO_BUTTON_PATTERN,
-  SHORT_TIMEOUT_MS,
   VIEW_ACTION,
 } from "../constants"
 import { expectDownload, expectMedia } from "../utils/assertMedia"
@@ -164,13 +164,6 @@ class TestAdminPage {
     ).toBeVisible({ timeout: LIST_CONTENT_TIMEOUT_MS })
   }
 
-  /** Asserts that the sidebar contains a namespace group. */
-  async expectSidebarGroup(namespace: string): Promise<void> {
-    await expect(
-      this.page.getByRole("heading", { exact: true, name: namespace }),
-    ).toBeVisible()
-  }
-
   /** Returns the href of the first `View` link in the list. */
   async firstViewHref(): Promise<string> {
     const link = this.page.getByRole("link", { name: VIEW_ACTION }).first()
@@ -198,16 +191,16 @@ class TestAdminPage {
     })
   }
 
-  /** Opens the endpoints index with its entity sidebar. */
+  /**
+   * Opens the endpoints index. The front owns the index page and shows only a
+   * placeholder: entities are reached through the site navigation drawer.
+   */
   async openEndpointsIndex(): Promise<void> {
     await this.baseTest.goToPath(ADMIN_INDEX_PATH)
     await waitForAdminHydration(this.page)
     await expect(
       this.page.getByText(INDEX_PLACEHOLDER, { exact: true }),
     ).toBeVisible({ timeout: EXPECT_TIMEOUT_MS })
-    await expect(
-      this.page.getByRole("heading", { exact: true, name: "Endpoints" }),
-    ).toBeVisible()
   }
 
   /** Opens the first record through its `View` link. */
@@ -256,8 +249,8 @@ class TestAdminPage {
   }
 
   /**
-   * Selects an entity in the sidebar and waits for its list route. The first
-   * click can be lost before hydration finishes, so it is retried once.
+   * Selects an entity in the front's navigation drawer and waits for its list
+   * route. The drawer closes after a pick, so it is opened again on demand.
    */
   async selectEntity(
     entityName: string,
@@ -268,14 +261,14 @@ class TestAdminPage {
       exact: true,
       name: entityName,
     })
+    if (!(await button.isVisible())) {
+      await this.page
+        .getByRole("button", { exact: true, name: MENU_ACTION })
+        .click()
+    }
     await expect(button).toBeVisible()
     await button.click()
-    try {
-      await this.expectListUrl(entityName, SHORT_TIMEOUT_MS)
-    } catch {
-      await button.click()
-      await this.expectListUrl(entityName)
-    }
+    await this.expectListUrl(entityName)
     if (options.customHeader !== true) await this.expectListReady(entityName)
   }
 }

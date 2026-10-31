@@ -151,3 +151,4 @@
 - style: OpenAPI admin working area and entity sidebar are now bordered, rounded panels floating on the page background
 - style: admin action buttons use the neutral dark-surface style (border + page surface) instead of the blue accent, matching the front sidebar menu
 - style: drop the redundant `GET` badge from the admin entity sidebar rows
+- test(e2e): follow the current front navigation (site menu drawer and index placeholder) instead of the disabled internal admin sidebar
