@@ -65,6 +65,7 @@ const ESCAPED_TRACK_SCHEMA_FIELDS = TRACK_SCHEMA_FIELDS.replaceAll(
 interface AdminConfigOverrides {
   customHeader?: boolean
   gridColumns?: number
+  hideInternalMenu?: boolean
   multiselectTags?: boolean
 }
 
@@ -147,6 +148,10 @@ async function installAdminConfigOverrides(
 
     if (overrides.gridColumns !== undefined) {
       configEntries.push(`gridColumns: ${overrides.gridColumns}`)
+    }
+
+    if (overrides.hideInternalMenu === true) {
+      configEntries.push("menu: { showInAdmin: false }")
     }
 
     if (declarations.length === 0 && configEntries.length === 0) {

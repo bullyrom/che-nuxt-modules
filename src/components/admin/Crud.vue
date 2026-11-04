@@ -7,6 +7,7 @@ import useRender from "../../composables/useRender"
 import { getAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
+import { isAdminInternalMenuEnabled } from "./config"
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
 import MasterDetail from "./MasterDetail.vue"
 import { visibleMenuGroups } from "./menu"
@@ -72,8 +73,8 @@ const instanceConfig = computed(
 )
 const customSidebar = computed(() => instanceConfig.value?.views?.sidebar)
 const extraLinks = computed(() => instanceConfig.value?.menu?.extraLinks ?? [])
-const showInternalMenu = computed(
-  () => instanceConfig.value?.menu?.showInAdmin ?? true,
+const showInternalMenu = computed(() =>
+  isAdminInternalMenuEnabled(instanceConfig.value),
 )
 
 // Hidden entities (by name or full path) are dropped from the default menu.

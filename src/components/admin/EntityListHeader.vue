@@ -5,6 +5,8 @@ interface Properties {
   canCreate?: boolean
   entityName?: string
   fullBasePath?: string
+  /** Show the back action; hidden when the built-in menu is disabled. */
+  showBack?: boolean
 }
 
 const properties = defineProps<Properties>()
@@ -13,7 +15,11 @@ const emit = defineEmits<(event: "back" | "create") => void>()
 
 <template>
   <div :class="ADMIN_LIST_HEADER_CLASSES">
-    <button :class="ADMIN_BACK_BUTTON_CLASSES" @click="emit('back')">
+    <button
+      v-if="properties.showBack !== false"
+      :class="ADMIN_BACK_BUTTON_CLASSES"
+      @click="emit('back')"
+    >
       &larr; All endpoints
     </button>
     <div class="flex items-center gap-3">

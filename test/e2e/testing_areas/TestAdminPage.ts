@@ -55,6 +55,13 @@ class TestAdminPage {
     ).toBeVisible()
   }
 
+  /** Asserts that the default header has no back action. */
+  async expectBackActionHidden(): Promise<void> {
+    await expect(
+      this.page.getByRole("button", { exact: true, name: BACK_ACTION }),
+    ).toHaveCount(0)
+  }
+
   /** Asserts that the configured custom header replaced the default one. */
   async expectCustomHeader(entityName: string): Promise<void> {
     await expect(this.page.getByTestId(CUSTOM_HEADER_TEST_ID)).toHaveText(

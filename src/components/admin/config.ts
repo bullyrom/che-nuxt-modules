@@ -6,6 +6,17 @@ import type {
 } from "./fields/types"
 
 /**
+ * Reports whether the built-in endpoints menu is rendered inside the admin.
+ * `menu.showInAdmin` defaults to `true`, so only an explicit `false` disables
+ * the internal navigation (the host then renders its own menu).
+ */
+function isAdminInternalMenuEnabled(
+  config: AdminPanelConfig | undefined,
+): boolean {
+  return config?.menu?.showInAdmin ?? true
+}
+
+/**
  * Converts an embedded-list config fragment into the full config shape the
  * list store consumes. Only the fields the list needs are populated, so an
  * embedded list never has to carry the whole admin config.
@@ -69,5 +80,6 @@ function formConfigToPanelConfig(
 export {
   detailConfigToPanelConfig,
   formConfigToPanelConfig,
+  isAdminInternalMenuEnabled,
   listConfigToPanelConfig,
 }

@@ -10,7 +10,7 @@ import LazyLoadList from "../LazyLoadList.vue"
 import MainLoader from "../MainLoader.vue"
 import ScrollToTopButton from "../ScrollToTopButton.vue"
 
-import { listConfigToPanelConfig } from "./config"
+import { isAdminInternalMenuEnabled, listConfigToPanelConfig } from "./config"
 import EntityDeleteModal from "./EntityDeleteModal.vue"
 import EntityListHeader from "./EntityListHeader.vue"
 import EntityRecordCard from "./EntityRecordCard.vue"
@@ -180,6 +180,7 @@ function itemHref(item: unknown): string | undefined {
       :can-create="Boolean(currentEntity?.createOperation)"
       :entity-name="currentEntity?.entityName"
       :full-base-path="currentEntity?.fullBasePath"
+      :show-back="isAdminInternalMenuEnabled(instanceConfig)"
       @back="adminPanelStore.clearEntity()"
       @create="emit('create')"
     />

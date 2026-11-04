@@ -1,5 +1,6 @@
 # Release notes
 
+- fix(admin): hide the `All endpoints` back action when the built-in endpoints menu is disabled (`menu.showInAdmin: false`), so it no longer links to an empty page
 - feat(admin): export `useAdminMenuSections` (and `useSidebarMenu`) so the host app can read the same endpoint/link menu data the sidebar uses and render its own navigation; documented with an example
 - style(admin): slightly round the menu hover/active row corners
 - style(admin): align hover/active backgrounds to the section-heading left edge and width, keeping menu text indented

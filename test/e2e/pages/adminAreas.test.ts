@@ -20,6 +20,16 @@ test.describe("admin areas", () => {
     await admin.backToIndex()
   })
 
+  test("hides the back action when the internal menu is disabled", async ({
+    page,
+  }) => {
+    await installAdminConfigOverrides(page, { hideInternalMenu: true })
+    const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
+
+    await admin.openList(TRACKS_ENTITY)
+    await admin.expectBackActionHidden()
+  })
+
   test("config replaces the list header and grid columns", async ({
     page,
   }) => {

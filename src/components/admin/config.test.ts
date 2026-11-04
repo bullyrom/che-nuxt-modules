@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 import {
   detailConfigToPanelConfig,
   formConfigToPanelConfig,
+  isAdminInternalMenuEnabled,
   listConfigToPanelConfig,
 } from "./config"
 
@@ -39,5 +40,17 @@ describe("config fragments", () => {
     expect(detail.views?.detail).toBe(Custom)
     expect(form.fields?.overrides).toEqual({})
     expect(form.entities?.records).toBeDefined()
+  })
+
+  it("treats the internal admin menu as enabled unless disabled", () => {
+    expect(isAdminInternalMenuEnabled(undefined)).toBe(true)
+    expect(isAdminInternalMenuEnabled({})).toBe(true)
+    expect(isAdminInternalMenuEnabled({ menu: {} })).toBe(true)
+    expect(isAdminInternalMenuEnabled({ menu: { showInAdmin: true } })).toBe(
+      true,
+    )
+    expect(isAdminInternalMenuEnabled({ menu: { showInAdmin: false } })).toBe(
+      false,
+    )
   })
 })
