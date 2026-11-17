@@ -7,7 +7,9 @@ The admin panel is an OpenAPI-driven CRUD UI. It can be used as a whole
 site.
 
 Field priorities and the ready component catalog are in
-[admin-fields.md](admin-fields.md).
+[admin-fields.md](admin-fields.md). Connecting several OpenAPI documents
+(service keys, store/menu isolation, short-name rules) is covered in
+[admin-multi-openapi.md](admin-multi-openapi.md).
 
 Two ideas make the customization composable:
 

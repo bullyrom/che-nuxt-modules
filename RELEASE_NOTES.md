@@ -1,5 +1,13 @@
 # Release notes
 
+- feat(admin): support several OpenAPI specs through a spec registry (`id`, `label`, `url`/`baseUrl`, inline schema) with schema loading and merged entities
+- feat(admin): internal entity keys are `service:entity`; public resolvers accept a full key always and a short name only when it is unique, otherwise they list the variants
+- feat(admin): per-spec API origins and isolated list/detail/form store instances; single-spec pages keep the existing `apiSchema`/`baseUrl` contract and bare-name config keys
+- feat(admin): menu groups by service with `service:entity` labels only on conflicts (or via `menu.entityLabel`/`menu.entityLabelPrefix`); `hiddenEntities` accepts full keys
+- feat(admin): `useAdminEntity` overloads for full keys and short names, plus exported spec/entity-key types and helpers
+- test: unit coverage for spec merging, entity reference resolution, labels, config lookup, store isolation and the multi-spec menu
+- docs: added `docs/admin-multi-openapi.md` with generic examples for the registry, keys, config, menu and backward compatibility
+
 - chore: replaced the remaining app-specific entity names in docs, source comments, unit tests, e2e constants/helpers and the generated OpenAPI test fixture with generic books/chapters/categories examples
 - feat(admin): list grid defaults to 3 objects per row on desktop and 1 on phone; `gridColumns` controls the desktop count and `1` keeps a single column on every screen
 - feat(admin): standardized `hiddenFilters` config (global `fields.hiddenFilters`, per-entity `entities.<name>.hiddenFilters` and embedded `AdminListConfig.hiddenFilters`) hides filter parameters without touching sorts

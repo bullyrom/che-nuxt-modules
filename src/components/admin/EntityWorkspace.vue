@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// eslint-disable-next-line import/no-unresolved
 import { storeToRefs } from "pinia"
 import { computed } from "vue"
 
 import { useAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelFormStore } from "../../stores/adminPanel/form"
+import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import { useAdminPanelListStore } from "../../stores/adminPanel/list"
 
 import EntityCreateForm from "./EntityCreateForm.vue"
@@ -25,12 +25,17 @@ interface Properties {
 
 const properties = defineProps<Properties>()
 
+const adminPanelStore = useAdminPanelStore()
 const instanceKey = computed(() => properties.instanceKey ?? "admin-1")
+const currentEntity = computed(
+  () => properties.entity ?? adminPanelStore.activeEntity,
+)
 const instanceParameters = computed(() => ({
   baseUrl: properties.baseUrl,
   config: properties.config,
-  entity: () => properties.entity,
+  entity: () => currentEntity.value,
   instanceKey: instanceKey.value,
+  scope: currentEntity.value?.service,
 }))
 
 const listStore = useAdminPanelListStore(instanceParameters.value)

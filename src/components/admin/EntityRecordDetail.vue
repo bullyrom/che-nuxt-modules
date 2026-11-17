@@ -36,8 +36,9 @@ const adminPanelStore = useAdminPanelStore()
 const store = useAdminPanelDetailStore({
   baseUrl: properties.baseUrl,
   config: properties.config,
-  entity: () => properties.entity,
+  entity: () => properties.entity ?? adminPanelStore.activeEntity,
   instanceKey: properties.instanceKey ?? "admin-1",
+  scope: (properties.entity ?? adminPanelStore.activeEntity)?.service,
 })
 
 const { detailRecord, detailStatus, hasDetailEndpoint, viewingRecord } =

@@ -1,10 +1,20 @@
-// eslint-disable-next-line import/no-unresolved
 import { defineStore, getActivePinia } from "pinia"
 
 type InstanceStoreFactory<StoreType> = () => StoreType
 
+interface ScopedInstanceParameters {
+  instanceKey: string
+  /** Optional isolation scope (the OpenAPI service id). */
+  scope?: string
+}
+
+/** Builds the dictionary key; the service scope isolates specs. */
+function storeKey(instanceKey: string, scope?: string): string {
+  return scope ? `${scope}:${instanceKey}` : instanceKey
+}
+
 interface CreateInstanceRegistryOptions<
-  Parameters extends { instanceKey: string },
+  Parameters extends ScopedInstanceParameters,
   StoreType,
 > {
   /**
@@ -25,7 +35,7 @@ interface CreateInstanceRegistryOptions<
  * config stays shared.
  */
 function createInstanceRegistry<
-  Parameters extends { instanceKey: string },
+  Parameters extends ScopedInstanceParameters,
   StoreType,
 >(options: CreateInstanceRegistryOptions<Parameters, StoreType>) {
   const registries = new WeakMap<
@@ -50,25 +60,31 @@ function createInstanceRegistry<
   /** Returns (creating on first use) the store for the given instance key. */
   function use(parameters: Parameters): StoreType {
     const storeRegistry = registry()
-    const { instanceKey } = parameters
-    const existing = storeRegistry?.get(instanceKey)
+    const key = storeKey(parameters.instanceKey, parameters.scope)
+    const existing = storeRegistry?.get(key)
     if (existing !== undefined) return existing()
 
-    const useStore = defineStore(`${options.idPrefix}:${instanceKey}`, () =>
+    const useStore = defineStore(`${options.idPrefix}:${key}`, () =>
       options.setup(parameters),
     )
-    storeRegistry?.set(instanceKey, useStore)
-    return useStore()
+    storeRegistry?.set(
+      key,
+      useStore as unknown as InstanceStoreFactory<StoreType>,
+    )
+    return useStore() as StoreType
   }
 
   /** Returns an already-created store, or `undefined` when none exists. */
-  function get(instanceKey: string | undefined): StoreType | undefined {
+  function get(
+    instanceKey: string | undefined,
+    scope?: string,
+  ): StoreType | undefined {
     if (instanceKey === undefined) return undefined
-    return registry()?.get(instanceKey)?.()
+    return registry()?.get(storeKey(instanceKey, scope))?.()
   }
 
   return { get, use }
 }
 
 export { createInstanceRegistry }
-export type { CreateInstanceRegistryOptions }
+export type { CreateInstanceRegistryOptions, ScopedInstanceParameters }

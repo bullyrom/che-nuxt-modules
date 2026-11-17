@@ -11,7 +11,7 @@ import { useEntityRecordRealtime } from "../../components/admin/useEntityRecordR
 import { useDetailApi } from "../../composables/api"
 import { createInstanceRegistry } from "../instanceRegistry"
 
-import { resolveConfig, resolveEntity } from "./instance"
+import { resolveConfig, resolveEntity, resolveEntityBaseUrl } from "./instance"
 
 import { useAdminPanelStore } from "./index"
 
@@ -68,7 +68,7 @@ function createAdminPanelDetail(parameters: AdminInstanceParameters) {
     if (recordId === undefined) return
 
     const url = buildEntityDetailUrl(
-      parameters.baseUrl,
+      resolveEntityBaseUrl(entity, parameters.baseUrl),
       entity,
       String(recordId),
     )
@@ -143,8 +143,9 @@ function useAdminPanelDetailStore(
 /** Returns an already-created detail store, or `undefined`. */
 function getAdminPanelDetailStore(
   instanceKey: string | undefined,
+  scope?: string,
 ): AdminPanelDetailStore | undefined {
-  return detailRegistry.get(instanceKey)
+  return detailRegistry.get(instanceKey, scope)
 }
 
 export {

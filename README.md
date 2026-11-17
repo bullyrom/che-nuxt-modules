@@ -11,7 +11,8 @@ custom pages, `useAdminEntity` exposes the typed list/detail/form stores by
 entity name + instance key, and `EntityRecordList` accepts a typed custom
 records array with per-field slots.
 
-See [docs/admin-customization.md](docs/admin-customization.md).
+See [docs/admin-customization.md](docs/admin-customization.md). To connect more
+than one OpenAPI document, see [docs/admin-multi-openapi.md](docs/admin-multi-openapi.md).
 
 ## Базовая настройка админки
 

@@ -41,8 +41,9 @@ const adminPanelStore = useAdminPanelStore()
 const store = useAdminPanelFormStore({
   baseUrl: properties.baseUrl,
   config: properties.config,
-  entity: () => properties.entity,
+  entity: () => properties.entity ?? adminPanelStore.activeEntity,
   instanceKey: properties.instanceKey ?? "admin-1",
+  scope: (properties.entity ?? adminPanelStore.activeEntity)?.service,
 })
 
 const {
@@ -83,7 +84,8 @@ const createRequestSchema = computed(() =>
 const schemaFields = computed(() =>
   buildFieldDescriptors(
     adminPanelStore.resolveSchema(createRequestSchema.value),
-    adminPanelStore.schema?.components?.schemas,
+    adminPanelStore.getSpecSchema(currentEntity.value?.service)?.components
+      ?.schemas,
   ),
 )
 

@@ -6,7 +6,7 @@ import { getRecordId } from "../../components/admin/recordId"
 import { useFormApi } from "../../composables/api"
 import { createInstanceRegistry } from "../instanceRegistry"
 
-import { resolveConfig, resolveEntity } from "./instance"
+import { resolveConfig, resolveEntity, resolveEntityBaseUrl } from "./instance"
 
 import { useAdminPanelStore } from "./index"
 
@@ -73,10 +73,11 @@ function createAdminPanelForm(parameters: AdminInstanceParameters) {
     const recordId = editingRecord.value
       ? getRecordId(editingRecord.value)
       : undefined
+    const baseUrl = resolveEntityBaseUrl(entity, parameters.baseUrl)
     if (isEditMode.value && recordId !== undefined) {
-      return `${parameters.baseUrl}${entity.fullBasePath}${String(recordId)}/`
+      return `${baseUrl}${entity.fullBasePath}${String(recordId)}/`
     }
-    return `${parameters.baseUrl}${entity.fullBasePath}`
+    return `${baseUrl}${entity.fullBasePath}`
   }
 
   async function applyBeforeHook(payload: Record<string, unknown>) {
@@ -156,8 +157,9 @@ function useAdminPanelFormStore(
 /** Returns an already-created form store, or `undefined`. */
 function getAdminPanelFormStore(
   instanceKey: string | undefined,
+  scope?: string,
 ): AdminPanelFormStore | undefined {
-  return formRegistry.get(instanceKey)
+  return formRegistry.get(instanceKey, scope)
 }
 
 export { createAdminPanelForm, getAdminPanelFormStore, useAdminPanelFormStore }
