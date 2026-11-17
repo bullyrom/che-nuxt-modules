@@ -1,5 +1,6 @@
 # Release notes
 
+- test(e2e): domain names, API paths and schema/config markers are read from environment variables with generic books/chapters defaults; added a git-ignored local `.env.development` and a committable `.env.development.template`, and documented every key in `docs/testing.md`
 - chore: replaced the remaining app-specific entity names in docs, source comments, unit tests, e2e constants/helpers and the generated OpenAPI test fixture with generic books/chapters/categories examples
 - feat(admin): list grid defaults to 3 objects per row on desktop and 1 on phone; `gridColumns` controls the desktop count and `1` keeps a single column on every screen
 - feat(admin): standardized `hiddenFilters` config (global `fields.hiddenFilters`, per-entity `entities.<name>.hiddenFilters` and embedded `AdminListConfig.hiddenFilters`) hides filter parameters without touching sorts

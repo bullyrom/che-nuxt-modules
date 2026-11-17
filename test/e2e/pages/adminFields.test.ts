@@ -1,6 +1,7 @@
 import {
   AUDIO_ACCEPT,
   BOOK_SELECT_PLACEHOLDER,
+  CHAPTER_FORM_LABELS,
   CHAPTER_KIND_OPTION_LABEL,
   CHAPTER_KIND_SELECT_PLACEHOLDER,
   CHAPTERS_ENTITY,
@@ -11,6 +12,7 @@ import {
   MULTISELECT_OPTION_LABEL,
   NO_MATCH_SEARCH_TERM,
   PARENT_SELECT_PLACEHOLDER,
+  READ_ONLY_CHAPTER_FIELDS,
   TEST_AUDIO_CONTENT,
   TEST_AUDIO_NAME,
   TEST_AUDIO_TYPE,
@@ -24,19 +26,6 @@ import {
   installAdminConfigOverrides,
   installChapterSchemaExtras,
 } from "../utils/adminConfig"
-
-const CHAPTER_FORM_LABELS = [
-  "book",
-  "parent",
-  "name",
-  "kind",
-  "is_published",
-  "pages",
-  "order",
-  "rating",
-  "attachment",
-]
-const READ_ONLY_CHAPTER_FIELDS = ["id", "created_at", "user_id", "children"]
 
 test.describe("admin field components", () => {
   test("chapter form uses remote selects, a static select and an audio input", async ({
