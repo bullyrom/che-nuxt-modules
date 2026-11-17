@@ -23,6 +23,7 @@ const MEASUREMENTS_ENTITY = readEnvironment(
   "measurements",
 )
 const BOOKS_ENTITY = readEnvironment("PW_TEST_SECOND_ENTITY", "books")
+const GRID_ENTITY = readEnvironment("PW_TEST_GRID_ENTITY", "categories")
 const CHAPTERS_BASE_PATH = readEnvironment(
   "PW_TEST_MAIN_ENTITY_BASE_PATH",
   "/api/v1/catalog/chapters/",
@@ -48,6 +49,10 @@ const SCHEMA_ROUTE = readEnvironment(
   "PW_TEST_SCHEMA_ROUTE",
   "**/data/api_schema.json*",
 )
+const EXPOSE_HIDDEN_PAGES =
+  readEnvironment("PW_TEST_EXPOSE_HIDDEN_PAGES", "false") === "true"
+const INTERNAL_MENU_ENABLED =
+  readEnvironment("PW_TEST_INTERNAL_MENU_ENABLED", "true") === "true"
 // eslint-disable-next-line security/detect-non-literal-regexp
 const CHAPTER_DETAIL_HREF_PATTERN = new RegExp(
   String.raw`^/admin/endpoints/${escapeRegExp(CHAPTERS_ENTITY)}/\d+$`,
@@ -56,6 +61,11 @@ const CHAPTER_DETAIL_HREF_PATTERN = new RegExp(
 // eslint-disable-next-line security/detect-non-literal-regexp
 const CHAPTER_AUDIO_SRC_PATTERN = new RegExp(
   String.raw`${escapeRegExp(CHAPTERS_BASE_PATH)}\d+/${escapeRegExp(ATTACHMENT_FIELD)}/$`,
+  "v",
+)
+// eslint-disable-next-line security/detect-non-literal-regexp
+const GRID_DETAIL_HREF_PATTERN = new RegExp(
+  String.raw`^/admin/endpoints/${escapeRegExp(GRID_ENTITY)}/\d+$`,
   "v",
 )
 // eslint-disable-next-line security/detect-non-literal-regexp
@@ -173,8 +183,12 @@ export {
   DATE_TIME_FIELD_KEY,
   DOWNLOAD_SEGMENT,
   EXPECT_TIMEOUT_MS,
+  EXPOSE_HIDDEN_PAGES,
   FRONTEND_URL,
+  GRID_DETAIL_HREF_PATTERN,
+  GRID_ENTITY,
   INDEX_PLACEHOLDER,
+  INTERNAL_MENU_ENABLED,
   LIST_CONTENT_TIMEOUT_MS,
   MEASUREMENTS_ENTITY,
   MEASUREMENTS_ROUTE,

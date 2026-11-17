@@ -3,6 +3,7 @@ import {
   CHAPTERS_ENTITY,
   CUSTOM_GRID_COLUMNS,
   FRONTEND_URL,
+  GRID_ENTITY,
 } from "../constants"
 import { test } from "../fixtures"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
@@ -26,7 +27,7 @@ test.describe("admin areas", () => {
     await installAdminConfigOverrides(page, { hideInternalMenu: true })
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openList(GRID_ENTITY)
     await admin.expectBackActionHidden()
   })
 
@@ -40,8 +41,8 @@ test.describe("admin areas", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openEndpointsIndex()
-    await admin.selectEntity(CHAPTERS_ENTITY, { customHeader: true })
-    await admin.expectCustomHeader(CHAPTERS_ENTITY)
+    await admin.selectEntity(GRID_ENTITY, { customHeader: true })
+    await admin.expectCustomHeader(GRID_ENTITY)
     await admin.expectGridColumns(CUSTOM_GRID_COLUMNS)
   })
 })

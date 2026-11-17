@@ -33,7 +33,7 @@ class TestAdminForm {
     content: string,
   ): Promise<void> {
     await this.form()
-      .locator('input[type="attachment"]')
+      .locator('input[type="file"]')
       .setInputFiles({ buffer: Buffer.from(content), mimeType: type, name })
     await expect(this.form()).toContainText(name)
   }
@@ -47,9 +47,10 @@ class TestAdminForm {
 
   /** Asserts the accepted file type of the form file input. */
   async expectFileAccept(accept: string): Promise<void> {
-    await expect(
-      this.form().locator('input[type="attachment"]'),
-    ).toHaveAttribute("accept", accept)
+    await expect(this.form().locator('input[type="file"]')).toHaveAttribute(
+      "accept",
+      accept,
+    )
   }
 
   /** Asserts the rendered form field labels in order. */
@@ -87,7 +88,7 @@ class TestAdminForm {
     })
     const heading = this.page.getByRole("heading", {
       exact: true,
-      name: `Create ${entityName}`,
+      name: `Create ${entityName.split(":").at(-1) ?? entityName}`,
     })
     await expect(button).toBeVisible({ timeout: EXPECT_TIMEOUT_MS })
     await expect

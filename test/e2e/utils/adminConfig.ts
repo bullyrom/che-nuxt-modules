@@ -1,6 +1,7 @@
 import {
   ADMIN_CONFIG_ROUTE,
   ATTACHMENT_FIELD,
+  EXPOSE_HIDDEN_PAGES,
   SCHEMA_ENTITY,
   SCHEMA_ROUTE,
 } from "../constants"
@@ -179,7 +180,10 @@ async function installAdminConfigOverrides(
       CONFIG_DECLARATION,
       `${prefix}${CONFIG_DECLARATION}${entries}`,
     )
-    await route.fulfill({ body, response })
+    await route.fulfill({
+      body: applyHiddenPagesExposure(body),
+      response,
+    })
   })
 }
 
@@ -199,5 +203,27 @@ async function readVueImportUrl(
   return vueUrl
 }
 
-export { installAdminConfigOverrides, installChapterSchemaExtras }
+const HIDDEN_PAGES_PATTERN = /hiddenPages:\s*\[[^\]]*\]/v
+
+/** Test-only: expose entities the app hides from standalone admin pages. */
+function applyHiddenPagesExposure(body: string): string {
+  if (!EXPOSE_HIDDEN_PAGES) return body
+  return body.replace(HIDDEN_PAGES_PATTERN, "hiddenPages: []")
+}
+
+/** Applies environment-driven config changes shared by every e2e test. */
+async function installAdminEnvironmentOverrides(page: Page): Promise<void> {
+  if (!EXPOSE_HIDDEN_PAGES) return
+  await page.route(ADMIN_CONFIG_ROUTE, async (route) => {
+    const response = await route.fetch()
+    const body = applyHiddenPagesExposure(await response.text())
+    await route.fulfill({ body, response })
+  })
+}
+
+export {
+  installAdminConfigOverrides,
+  installAdminEnvironmentOverrides,
+  installChapterSchemaExtras,
+}
 export type { AdminConfigOverrides }

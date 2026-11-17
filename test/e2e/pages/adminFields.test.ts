@@ -34,7 +34,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openHiddenList(CHAPTERS_ENTITY)
     await form.openCreate(CHAPTERS_ENTITY)
 
     await form.expectLabels(CHAPTER_FORM_LABELS)
@@ -65,7 +65,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openHiddenList(CHAPTERS_ENTITY)
     await form.openCreate(CHAPTERS_ENTITY)
 
     await form.fillDateField(DATE_FIELD_KEY, TEST_DATE_VALUE)
