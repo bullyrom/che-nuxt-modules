@@ -487,7 +487,7 @@ export type components = {
       /** Format: uri */
       attachment?: string
       readonly user_id?: number
-      is_melody?: boolean
+      is_published?: boolean
     }
     PatchedWordsLearning: {
       readonly id?: number
@@ -514,7 +514,7 @@ export type components = {
       /** Format: uri */
       attachment: string
       readonly user_id: number
-      is_melody: boolean
+      is_published: boolean
     }
     User: {
       readonly id: number
