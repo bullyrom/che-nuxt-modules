@@ -6,6 +6,7 @@ import {
   getSchemaNameFromRef as getSchemaNameFromReference,
   isReferenceObject,
 } from "../stores/adminPanel/apiTypes"
+import { isPaginatedListSchema } from "../stores/adminPanel/pagination"
 import { parseEntities } from "../stores/adminPanel/parser"
 import { extractListQueryParameters } from "../stores/adminPanel/queryParameters"
 
@@ -25,9 +26,14 @@ const emptyParseResult = {
 export function useAdminPanel() {
   const schema = ref<MyOpenAPIDocument>()
   const activeEntity = ref<ParsedEntity>()
+  const baseUrl = ref<string>()
 
   function setSchema(schemaValue: MyOpenAPIDocument) {
     schema.value = schemaValue
+  }
+
+  function setBaseUrl(value: string | undefined) {
+    baseUrl.value = value
   }
 
   const showListModal = computed(() => activeEntity.value !== undefined)
@@ -119,19 +125,9 @@ export function useAdminPanel() {
   })
 
   // Checks whether the list response is paginated (django-style)
-  const isActiveEntityListPaginated = computed(() => {
-    const listSchema = activeEntityListSchema.value
-    if (!listSchema || !("properties" in listSchema)) return false
-    const { properties } = listSchema
-    if (!properties || typeof properties !== "object") return false
-    const keys = Object.keys(properties)
-    return (
-      keys.includes("count") &&
-      keys.includes("next") &&
-      keys.includes("previous") &&
-      keys.includes("results")
-    )
-  })
+  const isActiveEntityListPaginated = computed(() =>
+    isPaginatedListSchema(activeEntityListSchema.value),
+  )
 
   // Getter for active entity detail response schema
   const activeEntityDetailSchema = computed(() => {
@@ -193,6 +189,7 @@ export function useAdminPanel() {
     activeEntityListSchemaName,
     activeEntityOperationTypes,
     activeEntityUpdateSchema,
+    baseUrl,
     clearEntity,
     closeModal,
     filteredEntitiesByNamespace,
@@ -202,6 +199,7 @@ export function useAdminPanel() {
     parsedEntities,
     resolveSchema,
     schema,
+    setBaseUrl,
     setSchema,
     showListModal,
   }

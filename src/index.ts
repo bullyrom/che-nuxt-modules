@@ -6,6 +6,19 @@ export {
 export { default as Crud } from "@/components/admin/Crud.vue"
 export { default as EntityCreateForm } from "@/components/admin/EntityCreateForm.vue"
 export { default as EntityDeleteModal } from "@/components/admin/EntityDeleteModal.vue"
+export {
+  getAdminListFieldSlotKeys,
+  isAdminListFieldOverridden,
+} from "@/components/admin/entityList"
+export type {
+  AdminListCompatible,
+  AdminListCompatibleItems,
+  AdminListFieldSlotProperties,
+  AdminListFieldSlots,
+  AdminListIncompatibleKeys,
+  AdminListItemSlotProperties,
+  AdminListSlots,
+} from "@/components/admin/entityList"
 export { default as EntityListHeader } from "@/components/admin/EntityListHeader.vue"
 export { default as EntityRecordCard } from "@/components/admin/EntityRecordCard.vue"
 export { default as EntityRecordDetail } from "@/components/admin/EntityRecordDetail.vue"
@@ -75,6 +88,10 @@ export {
 export { default as ListChangesButton } from "@/components/admin/ListChangesButton.vue"
 export { default as ListElementByCurrentDevice } from "@/components/admin/ListElementByCurrentDevice.vue"
 export { default as MasterDetail } from "@/components/admin/MasterDetail.vue"
+export {
+  isAdminEntityPageHidden,
+  resolveHiddenEntityKeys,
+} from "@/components/admin/menu"
 export type { MenuSection } from "@/components/admin/menuSections"
 export { default as QueryParametersMenu } from "@/components/admin/QueryParametersMenu.vue"
 export { formatRawValue, isRecordValue } from "@/components/admin/rawValue"
@@ -104,6 +121,7 @@ export type {
 } from "@/components/admin/theme"
 export { useAdminMenuSections } from "@/components/admin/useAdminMenuSections"
 export type { UseAdminMenuSectionsParameters } from "@/components/admin/useAdminMenuSections"
+export type { AdminRecordListProperties } from "@/components/admin/useEntityRecordList"
 export { useMasterDetail } from "@/components/admin/useMasterDetail"
 export type { UseMasterDetailOptions } from "@/components/admin/useMasterDetail"
 export { useSidebarMenu } from "@/components/admin/useSidebarMenu"
@@ -178,6 +196,15 @@ export type {
   PageLifecycleCallback,
   PageLifecycleCallbackSource,
 } from "@/composables/stores"
+export { useAdminEntity } from "@/composables/useAdminEntity"
+export type {
+  AdminEntityAccess,
+  AdminEntityDetailAccess,
+  AdminEntityFormAccess,
+  AdminEntityListAccess,
+  AdminEntityMutationAccess,
+  UseAdminEntityParameters,
+} from "@/composables/useAdminEntity"
 export { useAdminPanel } from "@/composables/useAdminPanel"
 export { useCalendar } from "@/composables/useCalendar"
 export { useCaptcha } from "@/composables/useCaptcha"
@@ -196,6 +223,7 @@ export {
   useAdminPanelDetailStore,
 } from "@/stores/adminPanel/detail"
 export type { AdminPanelDetailStore } from "@/stores/adminPanel/detail"
+export { findAdminEntity } from "@/stores/adminPanel/findEntity"
 export {
   getAdminPanelFormStore,
   useAdminPanelFormStore,
@@ -208,6 +236,7 @@ export {
   useAdminPanelListStore,
 } from "@/stores/adminPanel/list"
 export type { AdminPanelListStore } from "@/stores/adminPanel/list"
+export { isPaginatedListSchema } from "@/stores/adminPanel/pagination"
 export {
   buildQueryValues,
   extractListQueryParameters,

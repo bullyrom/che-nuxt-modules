@@ -1,168 +1,87 @@
-<script setup lang="ts">
-import { storeToRefs } from "pinia"
-import { computed } from "vue"
-
-import { useScrollToTop } from "../../composables/useScrollToTop"
-import { useAdminPanelStore } from "../../stores/adminPanel/index"
-import { resolveEntityConfig } from "../../stores/adminPanel/instance"
-import { useAdminPanelListStore } from "../../stores/adminPanel/list"
-import LazyLoadList from "../LazyLoadList.vue"
+<script
+  setup
+  lang="ts"
+  generic="
+    Base extends Record<string, unknown> = Record<string, unknown>,
+    Item extends Record<string, unknown> = Base,
+    Overridden extends string = never
+  "
+>
 import MainLoader from "../MainLoader.vue"
 import ScrollToTopButton from "../ScrollToTopButton.vue"
 
-import { isAdminInternalMenuEnabled, listConfigToPanelConfig } from "./config"
 import EntityDeleteModal from "./EntityDeleteModal.vue"
 import EntityListHeader from "./EntityListHeader.vue"
 import EntityRecordCard from "./EntityRecordCard.vue"
-import { buildListGridClass } from "./grid"
 import { ADMIN_FLOATING_ACTIONS_CLASSES } from "./layout"
 import ListChangesButton from "./ListChangesButton.vue"
 import ListFilters from "./ListFilters.vue"
 import RawValue from "./RawValue.vue"
+import { useEntityRecordList } from "./useEntityRecordList"
 
-import type {
-  AdminHeaderComponentProperties,
-  AdminListComponentProperties,
-  AdminListConfig,
-  AdminPanelConfig,
-} from "./fields/types"
-import type { ParsedEntity } from "../../stores/adminPanel/types"
+import type { AdminListSlots } from "./entityList"
+import type { AdminRecordListProperties } from "./useEntityRecordList"
 
-interface Properties {
-  baseUrl: string
-  config?: AdminPanelConfig
-  /** Detail URL builder; when set the View action becomes a link. */
-  detailHref?: (record: Record<string, unknown>) => string | undefined
-  entity?: ParsedEntity
-  instanceKey?: string
-  isMobile?: boolean
-  /** Embedded-list config fragment (used when `config` is not passed). */
-  listConfig?: AdminListConfig
-  /** Show an in-place detail action even without a URL builder. */
-  showDetail?: boolean
-}
-
-const properties = defineProps<Properties>()
-const emit =
-  defineEmits<(event: "create" | "edit" | "view", record?: unknown) => void>()
-
-const adminPanelStore = useAdminPanelStore()
-
-const store = useAdminPanelListStore({
-  baseUrl: properties.baseUrl,
-  config: properties.config,
-  entity: () => properties.entity,
-  instanceKey: properties.instanceKey ?? "admin-1",
-})
+const properties =
+  defineProps<AdminRecordListProperties<Base, Item, Overridden>>()
+const emit = defineEmits<{
+  create: []
+  delete: [record: Item]
+  edit: [record: Item]
+  fetchNextPage: []
+  view: [record: Item]
+}>()
+const slots = defineSlots<AdminListSlots<Item>>()
 
 const {
-  count,
+  canShowDetail,
+  clearEntity,
+  containerRef,
+  customHeader,
+  customList,
+  customListFooter,
+  customListHeader,
+  customListProperties,
   deletingRecord,
-  entityRecords,
+  displayedItems,
+  doDelete,
+  entityConfig,
   fallbackValue,
   fetchDataStatus,
+  fieldSlotKeys,
+  handleDelete,
+  handleEdit,
+  handleFetchNextPage,
+  handlePatch,
+  handleView,
+  headerProperties,
+  instanceConfig,
+  isInitialLoading,
+  isScrolledDown,
+  itemHref,
+  lazyShowLoader,
+  LIST_FETCH_VISIBLE_ITEM_NUMBER,
   listChangesCount,
+  listGridClass,
   listQueryParameters,
-  nextPageUrl,
-  previousPageUrl,
   queryValues,
-  searchQuery,
-  showNextPageLoader,
-  usesSchemaSearch,
-} = storeToRefs(store)
-
-const { doDelete, fetchNextPage, patchRecord, reload } = store
-
-const { containerRef, isScrolledDown, scrollToTop, updateIsScrolledDown } =
-  useScrollToTop()
-
-const currentEntity = computed(
-  () => properties.entity ?? adminPanelStore.activeEntity,
-)
-const listFragmentConfig = computed(() =>
-  properties.listConfig === undefined
-    ? undefined
-    : listConfigToPanelConfig(
-        properties.listConfig,
-        currentEntity.value?.entityName,
-      ),
-)
-const instanceConfig = computed(
-  () =>
-    properties.config ?? listFragmentConfig.value ?? adminPanelStore.config,
-)
-const entityConfig = computed(() =>
-  resolveEntityConfig(instanceConfig.value, currentEntity.value),
-)
-
-const detailHref = computed(
-  () => properties.detailHref ?? properties.listConfig?.detailHref,
-)
-const canShowDetail = computed(
-  () => properties.showDetail === true || detailHref.value !== undefined,
-)
-
-const customList = computed(() => instanceConfig.value?.views?.list)
-const customListHeader = computed(
-  () => instanceConfig.value?.views?.listHeader,
-)
-const customListFooter = computed(
-  () => instanceConfig.value?.views?.listFooter,
-)
-const customHeader = computed(() => instanceConfig.value?.views?.header)
-
-const gridColumns = computed(
-  () => entityConfig.value?.gridColumns ?? instanceConfig.value?.gridColumns,
-)
-const listGridClass = computed(() => buildListGridClass(gridColumns.value))
-
-// The database-backed list starts loading in `onMounted`, after the server has
-// already rendered the shell. Treat `idle` (SSR) and `pending` (first client
-// fetch) as the same loading state so hydration sees identical markup.
-const isInitialLoading = computed(
-  () =>
-    entityRecords.value === undefined &&
-    (fetchDataStatus.value === "idle" || fetchDataStatus.value === "pending"),
-)
-
-const customListProperties = computed<AdminListComponentProperties>(() => ({
-  count: count.value,
-  detailHref: detailHref.value,
-  entityName: currentEntity.value?.entityName,
-  fetchNextPage,
-  gridColumns: gridColumns.value,
-  nextPageUrl: nextPageUrl.value ?? undefined,
-  previousPageUrl: previousPageUrl.value ?? undefined,
-  records: entityRecords.value,
   reload,
-  showNextPageLoader: showNextPageLoader.value,
-  startCreate: () => emit("create"),
-  status: fetchDataStatus.value,
-}))
-
-const headerProperties = computed<AdminHeaderComponentProperties>(() => ({
-  canCreate: Boolean(currentEntity.value?.createOperation),
-  clearEntity: () => adminPanelStore.clearEntity(),
-  entity: currentEntity.value,
-  listChangesCount: listChangesCount.value,
-  reload: () => {
-    reload()
+  scrollToTop,
+  searchQuery,
+  showInternalMenu,
+  updateIsScrolledDown,
+  usesSchemaSearch,
+} = useEntityRecordList<Base, Item, Overridden>(
+  properties,
+  {
+    onCreate: () => emit("create"),
+    onDelete: (record) => emit("delete", record),
+    onEdit: (record) => emit("edit", record),
+    onFetchNextPage: () => emit("fetchNextPage"),
+    onView: (record) => emit("view", record),
   },
-  startCreate: () => emit("create"),
-}))
-
-function handlePatch(item: unknown, changed: Record<string, unknown>) {
-  if (item && typeof item === "object") {
-    patchRecord(item as Record<string, unknown>, changed)
-  }
-}
-
-function itemHref(item: unknown): string | undefined {
-  const buildHref = detailHref.value
-  if (buildHref === undefined) return undefined
-  if (item === null || typeof item !== "object") return undefined
-  return buildHref(item as Record<string, unknown>)
-}
+  Object.keys(slots),
+)
 </script>
 
 <template>
@@ -177,12 +96,12 @@ function itemHref(item: unknown): string | undefined {
 
     <EntityListHeader
       v-else
-      :can-create="Boolean(currentEntity?.createOperation)"
-      :entity-name="currentEntity?.entityName"
-      :full-base-path="currentEntity?.fullBasePath"
-      :show-back="isAdminInternalMenuEnabled(instanceConfig)"
-      @back="adminPanelStore.clearEntity()"
-      @create="emit('create')"
+      :can-create="headerProperties.canCreate"
+      :entity-name="headerProperties.entity?.entityName"
+      :full-base-path="headerProperties.entity?.fullBasePath"
+      :show-back="showInternalMenu"
+      @back="clearEntity()"
+      @create="headerProperties.startCreate()"
     />
 
     <div
@@ -234,9 +153,9 @@ function itemHref(item: unknown): string | undefined {
           <RawValue :value="fallbackValue" />
         </template>
 
-        <template v-else-if="entityRecords !== undefined">
+        <template v-else-if="displayedItems !== undefined">
           <div
-            v-if="entityRecords.length === 0"
+            v-if="displayedItems.length === 0"
             class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-text-muted)]"
           >
             No records found
@@ -245,13 +164,16 @@ function itemHref(item: unknown): string | undefined {
           <LazyLoadList
             v-else
             v-slot="{ item, index }"
-            :items="entityRecords"
-            :show-loader="showNextPageLoader"
-            :fetch-visible-item-number="4"
+            :items="displayedItems"
+            :show-loader="lazyShowLoader"
+            :fetch-visible-item-number="LIST_FETCH_VISIBLE_ITEM_NUMBER"
             :list-class="listGridClass"
-            @fetch-next-page="fetchNextPage()"
+            @fetch-next-page="handleFetchNextPage()"
           >
+            <slot v-if="$slots.default" :item="item" :index="index" />
+
             <EntityRecordCard
+              v-else
               :index="index"
               :item="item"
               :hidden-fields="entityConfig?.listItemOverride?.hiddenFields"
@@ -259,10 +181,19 @@ function itemHref(item: unknown): string | undefined {
               :on-change="(changed) => handlePatch(item, changed)"
               :show-view="canShowDetail"
               :view-href="itemHref(item)"
-              @delete="store.startDelete"
-              @edit="(record) => emit('edit', record)"
-              @view="(record) => emit('view', record)"
-            />
+              @delete="handleDelete"
+              @edit="handleEdit"
+              @view="handleView"
+            >
+              <template v-for="slotName in fieldSlotKeys" #[slotName]>
+                <slot
+                  :name="slotName"
+                  :index="index"
+                  :item="item as Item"
+                  :value="(item as Item)[slotName as keyof Item]"
+                />
+              </template>
+            </EntityRecordCard>
           </LazyLoadList>
         </template>
 
@@ -291,7 +222,7 @@ function itemHref(item: unknown): string | undefined {
   </div>
 
   <EntityDeleteModal
-    :entity-name="currentEntity?.entityName"
+    :entity-name="headerProperties.entity?.entityName"
     :record="deletingRecord"
     @cancel="deletingRecord = undefined"
     @confirm="doDelete()"

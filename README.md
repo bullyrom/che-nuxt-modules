@@ -6,7 +6,10 @@ Vue composables and TSX components library.
 
 The OpenAPI-driven admin panel is fully customizable (whole-object field groups,
 whole list/detail/header/sidebar overrides, grid, menu tweaks) and can be
-embedded outside the admin as separate list/detail/form pieces.
+embedded outside the admin as separate list/detail/form pieces. For fully
+custom pages, `useAdminEntity` exposes the typed list/detail/form stores by
+entity name + instance key, and `EntityRecordList` accepts a typed custom
+records array with per-field slots.
 
 See [docs/admin-customization.md](docs/admin-customization.md).
 

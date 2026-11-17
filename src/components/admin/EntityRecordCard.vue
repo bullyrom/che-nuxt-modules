@@ -98,12 +98,20 @@ function handleGroupChange(changed: Record<string, unknown>) {
     </div>
     <RawValue v-if="!recordItem" :value="properties.item" />
     <div v-else class="space-y-2">
-      <RecordEntry
-        v-for="key in getObjectKeys(properties.item)"
-        :key="key"
-        :field-key="key"
-        :value="getObjectValue(properties.item, key)"
-      />
+      <template v-for="key in getObjectKeys(properties.item)" :key="key">
+        <slot
+          v-if="$slots[key]"
+          :name="key"
+          :index="properties.index"
+          :item="properties.item"
+          :value="getObjectValue(properties.item, key)"
+        />
+        <RecordEntry
+          v-else
+          :field-key="key"
+          :value="getObjectValue(properties.item, key)"
+        />
+      </template>
 
       <FieldGroupRenderer
         v-if="properties.override"

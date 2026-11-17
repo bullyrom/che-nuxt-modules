@@ -124,6 +124,12 @@ interface AdminPanelMenuConfig {
   extraLinks?: AdminPanelMenuLink[]
   /** Names or full paths of entities that must not be listed. */
   hiddenEntities?: string[]
+  /**
+   * Names or full paths of entities whose standalone page must not be
+   * exposed. They are hidden from the menu together with `hiddenEntities`, but
+   * their list can still be embedded inside another entity page.
+   */
+  hiddenPages?: string[]
   /** Component used for each menu row in the endpoints menu. */
   itemComponent?: AdminSidebarItemComponent
   /** Group entities by API namespace (default `true` in the admin). */

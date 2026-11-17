@@ -3,7 +3,7 @@ import { computed } from "vue"
 
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
 
-import { visibleMenuGroups } from "./menu"
+import { resolveHiddenEntityKeys, visibleMenuGroups } from "./menu"
 import { buildMenuSections } from "./menuSections"
 
 import type {
@@ -54,8 +54,7 @@ function useAdminMenuSections(
     visibleMenuGroups(
       groups.value,
       parameters.hiddenEntities ??
-        menuConfig.value?.hiddenEntities ??
-        storeConfig.value?.menu?.hiddenEntities,
+        resolveHiddenEntityKeys(menuConfig.value ?? storeConfig.value?.menu),
     ),
   )
 

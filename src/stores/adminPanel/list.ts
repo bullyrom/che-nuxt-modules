@@ -182,11 +182,13 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     listChangesCount: realtime.listChangesCount,
     listQueryParameters: query.listQueryParameters,
     nextPageUrl: list.nextPageUrl,
+    page: list.page,
     patchRecord,
     previousPageUrl: list.previousPageUrl,
     queryValues: query.queryValues,
     reload,
     searchQuery: query.searchQuery,
+    showFooter: list.showFooter,
     showNextPageLoader: list.showNextPageLoader,
     usesSchemaSearch: query.usesSchemaSearch,
   }

@@ -10,7 +10,7 @@ import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import { isAdminInternalMenuEnabled } from "./config"
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
 import MasterDetail from "./MasterDetail.vue"
-import { visibleMenuGroups } from "./menu"
+import { resolveHiddenEntityKeys, visibleMenuGroups } from "./menu"
 import SidebarEndpointsMenu from "./SidebarEndpointsMenu.vue"
 import { buildAdminThemeStyle, resolveAdminTheme } from "./theme"
 
@@ -42,6 +42,7 @@ onMounted(() => {
 
 const adminPanelStore = useAdminPanelStore()
 adminPanelStore.setSchema(properties.apiSchema)
+adminPanelStore.setBaseUrl(properties.baseUrl)
 adminPanelStore.setConfig(properties.config)
 
 const { activeEntity, filteredEntitiesByNamespace } =
@@ -81,7 +82,7 @@ const showInternalMenu = computed(() =>
 const visibleGroups = computed(() =>
   visibleMenuGroups(
     filteredEntitiesByNamespace.value,
-    instanceConfig.value?.menu?.hiddenEntities,
+    resolveHiddenEntityKeys(instanceConfig.value?.menu),
   ),
 )
 

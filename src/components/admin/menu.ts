@@ -1,4 +1,8 @@
-import type { AdminSidebarGroup, AdminSidebarMenuItem } from "./fields/types"
+import type {
+  AdminPanelMenuConfig,
+  AdminSidebarGroup,
+  AdminSidebarMenuItem,
+} from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 /** Flat menu item before nesting, ordering and level calculation. */
@@ -11,6 +15,29 @@ interface AdminMenuSourceItem {
   label: string
   parent?: string
   parentId?: string
+}
+
+/**
+ * Every entity key hidden from the navigation. `hiddenPages` extends the
+ * existing `hiddenEntities` list: a page-only entity is dropped from the menu
+ * too, but its list can still be embedded inside a parent entity page.
+ */
+function resolveHiddenEntityKeys(
+  menu: AdminPanelMenuConfig | undefined,
+): string[] {
+  const hidden = menu?.hiddenEntities ?? []
+  const hiddenPages = menu?.hiddenPages ?? []
+  return [...new Set([...hidden, ...hiddenPages])]
+}
+
+/** Reports whether an entity's standalone page is hidden. */
+function isAdminEntityPageHidden(
+  entity: ParsedEntity | undefined,
+  menu: AdminPanelMenuConfig | undefined,
+): boolean {
+  if (entity === undefined) return false
+  const hidden = new Set(resolveHiddenEntityKeys(menu))
+  return hidden.has(entity.entityName) || hidden.has(entity.fullBasePath)
 }
 
 /** Drops hidden entities (by name or full path) from the endpoint menu groups. */
@@ -132,5 +159,10 @@ function buildMenuTree(items: AdminMenuSourceItem[]): AdminSidebarMenuItem[] {
   return applyIndexes(roots).map((item) => buildNode(item, 0))
 }
 
-export { buildMenuTree, visibleMenuGroups }
+export {
+  buildMenuTree,
+  isAdminEntityPageHidden,
+  resolveHiddenEntityKeys,
+  visibleMenuGroups,
+}
 export type { AdminMenuSourceItem }

@@ -31,8 +31,9 @@ Two ideas make the customization composable:
    `menu.showInAdmin: false` and render the bare `SidebarEndpointsList` in the
    site sidebar with the same `instanceKey`, `extraLinks` and
    `hiddenEntities`.
-4. **Future — any pages/pieces by ID** — reuse other keyed admin pieces from
-   the store (lists, details, forms) anywhere in the site.
+4. **Build custom pages by ID** — reuse the typed
+   [list/detail/form stores](#building-custom-pages-from-the-admin-store), the
+   generic list and its field slots anywhere in the site.
 
 ## Table of contents
 
@@ -45,7 +46,8 @@ Two ideas make the customization composable:
 7. [Level 4 — header](#level-4--header)
 8. [Level 5 — sidebar](#level-5--sidebar)
 9. [Embedding pieces outside the admin](#embedding-pieces-outside-the-admin)
-10. [Store structure](#store-structure)
+10. [Building custom pages from the admin store](#building-custom-pages-from-the-admin-store)
+11. [Store structure](#store-structure)
 
 ## Config overview
 
@@ -65,6 +67,7 @@ const config: AdminPanelConfig = {
   },
   menu: {
     hiddenEntities: ["internal-logs"],
+    hiddenPages: ["project-files"],
     extraLinks: [
       { label: "Dashboard", href: "/admin" },
       { label: "Docs", href: "/admin/docs", parent: "Dashboard" },
@@ -562,6 +565,191 @@ Embedded pieces accept only the fragment they need instead of the whole config:
 Helpers convert a fragment into the store config shape if you build admin
 pieces by hand: `listConfigToPanelConfig`, `detailConfigToPanelConfig`,
 `formConfigToPanelConfig`.
+
+## Building custom pages from the admin store
+
+The admin pieces are not a separate data layer: the same keyed list/detail/form
+stores can drive a completely custom page. There are two levels:
+
+1. **Typed `useAdminEntity`** — the ready-made getters, setters and actions for
+   one entity and one instance key. Write only the page-specific logic.
+2. **`EntityRecordList` with your own records** — keep the list chrome and the
+   store while supplying your own item type and field slots.
+
+### 1. Register the schema once
+
+`useAdminEntity` resolves the entity by name from the shared admin store and
+falls back to its base URL, so set both once (for example in a plugin or in the
+page setup):
+
+```ts
+const adminPanelStore = useAdminPanelStore()
+adminPanelStore.setSchema(schema)
+adminPanelStore.setBaseUrl(apiUrl)
+adminPanelStore.setConfig(config)
+```
+
+`Crud` does the same automatically when it is mounted; a custom page that uses
+no `Crud` must call these setters itself.
+
+### 2. Typed `useAdminEntity`
+
+Describe the entity map from the generated OpenAPI types and pass the entity
+name + an instance key:
+
+```ts
+import { useAdminEntity } from "@bullyrom/che-nuxt-modules"
+
+type Project =
+  paths["/api/v1/record/projects/"]["get"]["responses"][200]["content"]["application/json"]["results"][number]
+
+interface Entities {
+  projects: Project
+  "project-files": ProjectFile
+}
+
+const projects = useAdminEntity<Entities, "projects">({
+  entityName: "projects",
+  instanceKey: "custom-projects",
+})
+
+// Different key -> an independent copy of the same entity.
+const projectsSidebar = useAdminEntity<Entities, "projects">({
+  entityName: "projects",
+  instanceKey: "custom-projects-sidebar",
+})
+
+const { list, detail, form, mutations, showLoader } = projects
+
+list.records // Ref<Project[] | undefined>
+list.count // Ref<number | undefined>
+list.page // Ref<number | undefined>
+list.nextPageUrl // Ref<null | string | undefined>
+list.previousPageUrl // Ref<null | string | undefined>
+list.showFooter // ComputedRef<boolean>
+list.showNextPageLoader // ComputedRef<boolean>
+list.isPaginated // ComputedRef<boolean>
+list.fetchNextPage() // appends the next Django page
+list.reload()
+
+detail.record // ComputedRef<Project | undefined>
+detail.startView(project) // typed record
+detail.closeView()
+
+form.form // Ref<Partial<Project>>
+form.startCreate()
+form.startEdit(project)
+form.submitForm()
+
+mutations.startDelete(project)
+mutations.update({ id: String(project.id), data: { name: "New" } })
+```
+
+- `showLoader` merges the list, detail and form statuses (ignoring `idle`), so
+  the host does not rebuild the status chain.
+- Pass `baseUrl` / `config` in the parameters to override the values from the
+  shared store for this instance only.
+- `useAdminEntity` only casts and curries the keyed stores: all requests still go
+  through the Pinia stores, never through components.
+
+### 3. Custom records with `EntityRecordList`
+
+Pass `entityName` + `instanceKey` to fetch the store list, or `items` to render
+your own records array. The item type is checked against the base entity type;
+extra custom fields are allowed and fully typed inside slots.
+
+```tsx
+import type { ProjectCard } from "~/types/projectCard"
+
+interface Project {
+  id: number
+  name: string
+  status: string
+}
+
+// ProjectCard = Project & { meta: { tags: string[] } }
+const cards: ProjectCard[] = await loadCards()
+
+// Base = Project, Item = ProjectCard; "meta" is rendered by its own slot.
+<EntityRecordList<Project, ProjectCard, "meta">
+  items={cards}
+  instanceKey="project-cards"
+  detailHref={(card) => `/projects/${card.id}`}
+  v-slots={{
+    meta: ({ item }) => <TagList tags={item.meta.tags} />,
+    default: ({ item }) => <ProjectCardView project={item} />,
+  }}
+/>
+```
+
+- **No `items`** (or `items={undefined}`): the component fetches its own list via
+  the keyed store; the item type defaults to the base entity type.
+- **With `items`**: no fetch is started, pagination is delegated to the host
+  (`@fetch-next-page` / `v-slots` controls); `delete` is emitted and is not sent
+  to the API automatically.
+- `default` replaces the whole card. Named field slots override a single field
+  and receive `{ item, index, value }`; the item is typed by `Item`.
+- The third generic is the union of fields rendered by **field** slots. Those
+  fields are excluded from the compatibility check, so a slot may change a field
+  type or omit it. Without the slot, an incompatible field is a compile error.
+
+```tsx
+// Error: name is number in the item but string in the base entity
+<EntityRecordList<Project, { id: number; name: number; status: string }>
+  items={cards}
+  instanceKey="project-cards"
+/>
+
+// OK: name is rendered by its slot, so it is excluded from the check
+<EntityRecordList<
+  Project,
+  { id: number; name: number; status: string },
+  "name"
+>
+  items={cards}
+  instanceKey="project-cards"
+  v-slots={{ name: ({ item }) => <NameInput value={item.name} /> }}
+/>
+```
+
+Runtime slot keys are discoverable with `getAdminListFieldSlotKeys(
+Object.keys(slots))`; the same helper is exported for hosts that build their own
+list. **Type-level** slot keys cannot be inferred from Vue slots (slots are not
+part of a component's generic signature), so the overridden union is passed
+explicitly as the third generic. The compatibility type is exported as
+`AdminListCompatible<Base, Item, Overridden>` / `AdminListIncompatibleKeys` for
+building equivalent wrappers.
+
+### 4. Entities used only inside another page
+
+Mark a child entity with `menu.hiddenPages` when it has no standalone page and
+is rendered only inside a parent page. It is hidden from the menu exactly like
+`hiddenEntities`, but its list stays reusable:
+
+```ts
+const config = {
+  menu: {
+    // Existing option: hide from the menu only.
+    hiddenEntities: ["internal-logs"],
+    // Used only inside the projects page -> no standalone page and no menu row.
+    hiddenPages: ["project-files"],
+  },
+}
+```
+
+```tsx
+// Parent project page: reuse the child list with its own instance key.
+<EntityRecordList
+  entityName="project-files"
+  instanceKey="project-files"
+  detailHref={(file) => `/files/${file.id}`}
+/>
+```
+
+`resolveHiddenEntityKeys(menu)` merges `hiddenEntities` + `hiddenPages`, and
+`isAdminEntityPageHidden(entity, menu)` is exported so the host router can refuse
+a standalone route for a page-only entity. Both are also honoured by
+`useAdminMenuSections`, the built-in sidebar and `Crud`.
 
 ## Store structure
 
