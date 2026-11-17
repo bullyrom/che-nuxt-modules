@@ -72,7 +72,7 @@ describe("createRealtimeSubscriptions", () => {
     expect(client.unsubscribe).toHaveBeenCalledWith(["entity:categories"])
   })
 
-  it("releases channels it does not track without touching the client", () => {
+  it("releases channels it does not monitor without touching the client", () => {
     const { client } = createClient()
     const subscriptions = createRealtimeSubscriptions(client)
 
@@ -153,9 +153,9 @@ describe("resolveRealtimeEntityName", () => {
   })
 
   it("uses the host resolver for the backend model label", () => {
-    expect(
-      resolveRealtimeEntityName(entity, () => "record.recordproject"),
-    ).toBe("record.recordproject")
+    expect(resolveRealtimeEntityName(entity, () => "catalog.item")).toBe(
+      "catalog.item",
+    )
   })
 
   it("returns undefined without an entity", () => {

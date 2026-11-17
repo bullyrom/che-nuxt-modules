@@ -1,8 +1,8 @@
 import {
+  CHAPTERS_BASE_PATH,
+  CHAPTERS_ENTITY,
   CUSTOM_GRID_COLUMNS,
   FRONTEND_URL,
-  TRACKS_BASE_PATH,
-  TRACKS_ENTITY,
 } from "../constants"
 import { test } from "../fixtures"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
@@ -15,8 +15,8 @@ test.describe("admin areas", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openEndpointsIndex()
-    await admin.selectEntity(TRACKS_ENTITY)
-    await admin.expectDefaultHeader(TRACKS_ENTITY, TRACKS_BASE_PATH)
+    await admin.selectEntity(CHAPTERS_ENTITY)
+    await admin.expectDefaultHeader(CHAPTERS_ENTITY, CHAPTERS_BASE_PATH)
     await admin.backToIndex()
   })
 
@@ -26,7 +26,7 @@ test.describe("admin areas", () => {
     await installAdminConfigOverrides(page, { hideInternalMenu: true })
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(TRACKS_ENTITY)
+    await admin.openList(CHAPTERS_ENTITY)
     await admin.expectBackActionHidden()
   })
 
@@ -40,8 +40,8 @@ test.describe("admin areas", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
     await admin.openEndpointsIndex()
-    await admin.selectEntity(TRACKS_ENTITY, { customHeader: true })
-    await admin.expectCustomHeader(TRACKS_ENTITY)
+    await admin.selectEntity(CHAPTERS_ENTITY, { customHeader: true })
+    await admin.expectCustomHeader(CHAPTERS_ENTITY)
     await admin.expectGridColumns(CUSTOM_GRID_COLUMNS)
   })
 })

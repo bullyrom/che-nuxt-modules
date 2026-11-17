@@ -33,7 +33,7 @@ class TestAdminForm {
     content: string,
   ): Promise<void> {
     await this.form()
-      .locator('input[type="file"]')
+      .locator('input[type="attachment"]')
       .setInputFiles({ buffer: Buffer.from(content), mimeType: type, name })
     await expect(this.form()).toContainText(name)
   }
@@ -47,10 +47,9 @@ class TestAdminForm {
 
   /** Asserts the accepted file type of the form file input. */
   async expectFileAccept(accept: string): Promise<void> {
-    await expect(this.form().locator('input[type="file"]')).toHaveAttribute(
-      "accept",
-      accept,
-    )
+    await expect(
+      this.form().locator('input[type="attachment"]'),
+    ).toHaveAttribute("accept", accept)
   }
 
   /** Asserts the rendered form field labels in order. */
@@ -154,7 +153,7 @@ class TestAdminForm {
     await expect(trigger).toContainText(optionLabel)
   }
 
-  /** Selects a static option (for example a track type) by its label. */
+  /** Selects a static option (for example a chapter kind) by its label. */
   async selectStaticOption(
     placeholder: string,
     optionLabel: string,

@@ -16,7 +16,7 @@ function makeEntity(entityName: string, namespace: string): ParsedEntity {
 }
 
 const entities = [
-  makeEntity("projects", "record"),
+  makeEntity("books", "record"),
   makeEntity("tasks", "record"),
   makeEntity("tasks", "shop"),
 ]
@@ -27,7 +27,7 @@ describe("findAdminEntity", () => {
   })
 
   it("finds an entity by name", () => {
-    expect(findAdminEntity(entities, "projects")).toBe(entities[0])
+    expect(findAdminEntity(entities, "books")).toBe(entities[0])
   })
 
   it("narrows the lookup by namespace", () => {

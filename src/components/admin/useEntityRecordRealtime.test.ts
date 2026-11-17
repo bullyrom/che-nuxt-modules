@@ -8,7 +8,7 @@ import type {
   AdminRealtimeHandler,
 } from "./realtime"
 
-const ENTITY = "record.recordproject"
+const ENTITY = "catalog.item"
 const RECORD_ID = 7
 
 function createClient() {

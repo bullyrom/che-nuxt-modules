@@ -4,1749 +4,1849 @@
  */
 
 export type paths = {
-    "/api/v1/english-words/banned-words/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_banned_words_list"];
-        put?: never;
-        post: operations["english_words_banned_words_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/english-words/banned-words/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_banned_words_retrieve"];
-        put: operations["english_words_banned_words_update"];
-        post?: never;
-        delete: operations["english_words_banned_words_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["english_words_banned_words_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/english-words/word/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_word_list"];
-        put?: never;
-        post: operations["english_words_word_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/english-words/word/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_word_retrieve"];
-        put: operations["english_words_word_update"];
-        post?: never;
-        delete: operations["english_words_word_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["english_words_word_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/english-words/words-learning/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_words_learning_list"];
-        put?: never;
-        post: operations["english_words_words_learning_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/english-words/words-learning/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["english_words_words_learning_retrieve"];
-        put: operations["english_words_words_learning_update"];
-        post?: never;
-        delete: operations["english_words_words_learning_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["english_words_words_learning_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/free/api/customers/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_api_customers_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/free/api/freelanceorder/${number}`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_api_freelanceorder_retrieve"];
-        put: operations["free_api_freelanceorder_update"];
-        post?: never;
-        delete: operations["free_api_freelanceorder_destroy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/free/api/freelanceorders/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_api_freelanceorders_retrieve"];
-        put?: never;
-        post: operations["free_api_freelanceorders_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/free/api/programmingtools/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_api_programmingtools_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/free/api/resource/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_api_resource_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/free/test/${number}`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_test_retrieve"];
-        put: operations["free_test_update"];
-        post?: never;
-        delete: operations["free_test_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["free_test_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/free/tests/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["free_tests_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/music/artists/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description ArtistListView */
-        get: operations["music_artists_list"];
-        put?: never;
-        /** @description ArtistListView */
-        post: operations["music_artists_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/music/artists/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** @description ArtistDetailView */
-        get: operations["music_artists_retrieve"];
-        /** @description ArtistDetailView */
-        put: operations["music_artists_update"];
-        post?: never;
-        /** @description ArtistDetailView */
-        delete: operations["music_artists_destroy"];
-        options?: never;
-        head?: never;
-        /** @description ArtistDetailView */
-        patch: operations["music_artists_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/one/api/one/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["one_api_one_retrieve"];
-        put: operations["one_api_one_update"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/record/record-projects/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["record_record_projects_list"];
-        put?: never;
-        post: operations["record_record_projects_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/record/record-projects/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["record_record_projects_retrieve"];
-        put: operations["record_record_projects_update"];
-        post?: never;
-        delete: operations["record_record_projects_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["record_record_projects_partial_update"];
-        trace?: never;
-    };
-    "/api/v1/record/tracks/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["record_tracks_list"];
-        put?: never;
-        post: operations["record_tracks_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    [path: `/api/v1/record/tracks/${number}/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["record_tracks_retrieve"];
-        put: operations["record_tracks_update"];
-        post?: never;
-        delete: operations["record_tracks_destroy"];
-        options?: never;
-        head?: never;
-        patch: operations["record_tracks_partial_update"];
-        trace?: never;
-    };
-    [path: `/api/v1/record/tracks/${number}/file/`]: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["record_tracks_file_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/schema/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
-         *
-         *     - YAML: application/vnd.oai.openapi
-         *     - JSON: application/vnd.oai.openapi+json
-         */
-        get: operations["schema_retrieve"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-};
-export type webhooks = Record<string, never>;
+  "/api/v1/english-words/banned-words/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_banned_words_list"]
+    put?: never
+    post: operations["english_words_banned_words_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/english-words/banned-words/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_banned_words_retrieve"]
+    put: operations["english_words_banned_words_update"]
+    post?: never
+    delete: operations["english_words_banned_words_destroy"]
+    options?: never
+    head?: never
+    patch: operations["english_words_banned_words_partial_update"]
+    trace?: never
+  }
+  "/api/v1/english-words/word/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_word_list"]
+    put?: never
+    post: operations["english_words_word_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/english-words/word/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_word_retrieve"]
+    put: operations["english_words_word_update"]
+    post?: never
+    delete: operations["english_words_word_destroy"]
+    options?: never
+    head?: never
+    patch: operations["english_words_word_partial_update"]
+    trace?: never
+  }
+  "/api/v1/english-words/words-learning/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_words_learning_list"]
+    put?: never
+    post: operations["english_words_words_learning_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/english-words/words-learning/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["english_words_words_learning_retrieve"]
+    put: operations["english_words_words_learning_update"]
+    post?: never
+    delete: operations["english_words_words_learning_destroy"]
+    options?: never
+    head?: never
+    patch: operations["english_words_words_learning_partial_update"]
+    trace?: never
+  }
+  "/api/v1/free/api/customers/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_api_customers_retrieve"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/free/api/freelanceorder/${number}`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_api_freelanceorder_retrieve"]
+    put: operations["free_api_freelanceorder_update"]
+    post?: never
+    delete: operations["free_api_freelanceorder_destroy"]
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/free/api/freelanceorders/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_api_freelanceorders_retrieve"]
+    put?: never
+    post: operations["free_api_freelanceorders_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/free/api/programmingtools/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_api_programmingtools_list"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/free/api/resource/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_api_resource_retrieve"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/free/test/${number}`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_test_retrieve"]
+    put: operations["free_test_update"]
+    post?: never
+    delete: operations["free_test_destroy"]
+    options?: never
+    head?: never
+    patch: operations["free_test_partial_update"]
+    trace?: never
+  }
+  "/api/v1/free/tests/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["free_tests_list"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/music/artists/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description ArtistListView */
+    get: operations["music_artists_list"]
+    put?: never
+    /** @description ArtistListView */
+    post: operations["music_artists_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/music/artists/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** @description ArtistDetailView */
+    get: operations["music_artists_retrieve"]
+    /** @description ArtistDetailView */
+    put: operations["music_artists_update"]
+    post?: never
+    /** @description ArtistDetailView */
+    delete: operations["music_artists_destroy"]
+    options?: never
+    head?: never
+    /** @description ArtistDetailView */
+    patch: operations["music_artists_partial_update"]
+    trace?: never
+  }
+  "/api/v1/one/api/one/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["one_api_one_retrieve"]
+    put: operations["one_api_one_update"]
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/catalog/books/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["catalog_books_list"]
+    put?: never
+    post: operations["catalog_books_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/catalog/books/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["catalog_books_retrieve"]
+    put: operations["catalog_books_update"]
+    post?: never
+    delete: operations["catalog_books_destroy"]
+    options?: never
+    head?: never
+    patch: operations["catalog_books_partial_update"]
+    trace?: never
+  }
+  "/api/v1/catalog/chapters/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["catalog_chapters_list"]
+    put?: never
+    post: operations["catalog_chapters_create"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  [path: `/api/v1/catalog/chapters/${number}/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["catalog_chapters_retrieve"]
+    put: operations["catalog_chapters_update"]
+    post?: never
+    delete: operations["catalog_chapters_destroy"]
+    options?: never
+    head?: never
+    patch: operations["catalog_chapters_partial_update"]
+    trace?: never
+  }
+  [path: `/api/v1/catalog/chapters/${number}/file/`]: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["catalog_chapters_attachment_retrieve"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/v1/schema/": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * @description OpenApi3 schema for this API. Format can be selected via content negotiation.
+     *
+     *     - YAML: application/vnd.oai.openapi
+     *     - JSON: application/vnd.oai.openapi+json
+     */
+    get: operations["schema_retrieve"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+}
+export type webhooks = Record<string, never>
 export type components = {
-    schemas: {
-        /** @description ArtistGetSerializer */
-        Artist: {
-            readonly id: number;
-            name: string;
-        };
-        BannedWord: {
-            readonly id: number;
-            text: string;
-        };
-        Customer: {
-            readonly id: number;
-            name: string;
-        };
-        EnglishWorwdGet: {
-            readonly id: number;
-            text: string;
-            translate: string;
-            readonly user_id: number;
-            correct_answer_count?: number;
-        };
-        FreelanceOrder: {
-            readonly id: number;
-            name: string;
-            status: string;
-            lead_time?: number | null;
-            price?: number | null;
-            importance?: number | null;
-            /** Format: date-time */
-            readonly start_time: string;
-            /** Format: date-time */
-            end_time?: string | null;
-            readonly executors: components["schemas"]["User"][];
-            readonly customer: components["schemas"]["Customer"];
-            readonly resource: components["schemas"]["Resource"];
-            readonly tools: components["schemas"]["ProgrammingToolGet"][];
-            customer_id: number;
-            resource_id: number;
-            parent_id: number | null;
-        };
-        PaginatedFreelanceOrderList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["FreelanceOrder"][];
-        };
-        PaginatedProgrammingToolGetList: {
-            /** @example 123 */
-            count: number;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=4
-             */
-            next?: string | null;
-            /**
-             * Format: uri
-             * @example http://api.example.org/accounts/?page=2
-             */
-            previous?: string | null;
-            results: components["schemas"]["ProgrammingToolGet"][];
-        };
-        /** @description ArtistGetSerializer */
-        PatchedArtist: {
-            readonly id?: number;
-            name?: string;
-        };
-        PatchedBannedWord: {
-            readonly id?: number;
-            text?: string;
-        };
-        PatchedEnglishWorwdGet: {
-            readonly id?: number;
-            text?: string;
-            translate?: string;
-            readonly user_id?: number;
-            correct_answer_count?: number;
-        };
-        PatchedFreelanceOrder: {
-            readonly id?: number;
-            name?: string;
-            status?: string;
-            lead_time?: number | null;
-            price?: number | null;
-            importance?: number | null;
-            /** Format: date-time */
-            readonly start_time?: string;
-            /** Format: date-time */
-            end_time?: string | null;
-            readonly executors?: components["schemas"]["User"][];
-            readonly customer?: components["schemas"]["Customer"];
-            readonly resource?: components["schemas"]["Resource"];
-            readonly tools?: components["schemas"]["ProgrammingToolGet"][];
-            customer_id?: number;
-            resource_id?: number;
-            parent_id?: number | null;
-        };
-        PatchedRecordProject: {
-            readonly id?: number;
-            name?: string;
-            readonly user_id?: number;
-        };
-        PatchedTrack: {
-            readonly id?: number;
-            project?: number;
-            /** Format: uri */
-            file?: string;
-            readonly user_id?: number;
-            is_melody?: boolean;
-        };
-        PatchedWordsLearning: {
-            readonly id?: number;
-            learning_text?: string;
-            user_id?: number;
-            words_string?: string;
-        };
-        ProgrammingToolGet: {
-            readonly id: number;
-            name: string;
-        };
-        RecordProject: {
-            readonly id: number;
-            name: string;
-            readonly user_id: number;
-        };
-        Resource: {
-            readonly id: number;
-            name: string;
-        };
-        Track: {
-            readonly id: number;
-            project: number;
-            /** Format: uri */
-            file: string;
-            readonly user_id: number;
-            is_melody: boolean;
-        };
-        User: {
-            readonly id: number;
-            /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
-            username: string;
-        };
-        WordsLearning: {
-            readonly id: number;
-            learning_text?: string;
-            user_id: number;
-            words_string?: string;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
-};
-export type $defs = Record<string, never>;
+  schemas: {
+    /** @description ArtistGetSerializer */
+    Artist: {
+      readonly id: number
+      name: string
+    }
+    BannedWord: {
+      readonly id: number
+      text: string
+    }
+    Customer: {
+      readonly id: number
+      name: string
+    }
+    EnglishWorwdGet: {
+      readonly id: number
+      text: string
+      translate: string
+      readonly user_id: number
+      correct_answer_count?: number
+    }
+    FreelanceOrder: {
+      readonly id: number
+      name: string
+      status: string
+      lead_time?: number | null
+      price?: number | null
+      importance?: number | null
+      /** Format: date-time */
+      readonly start_time: string
+      /** Format: date-time */
+      end_time?: string | null
+      readonly executors: components["schemas"]["User"][]
+      readonly customer: components["schemas"]["Customer"]
+      readonly resource: components["schemas"]["Resource"]
+      readonly tools: components["schemas"]["ProgrammingToolGet"][]
+      customer_id: number
+      resource_id: number
+      parent_id: number | null
+    }
+    PaginatedFreelanceOrderList: {
+      /** @example 123 */
+      count: number
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?page=4
+       */
+      next?: string | null
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?page=2
+       */
+      previous?: string | null
+      results: components["schemas"]["FreelanceOrder"][]
+    }
+    PaginatedProgrammingToolGetList: {
+      /** @example 123 */
+      count: number
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?page=4
+       */
+      next?: string | null
+      /**
+       * Format: uri
+       * @example http://api.example.org/accounts/?page=2
+       */
+      previous?: string | null
+      results: components["schemas"]["ProgrammingToolGet"][]
+    }
+    /** @description ArtistGetSerializer */
+    PatchedArtist: {
+      readonly id?: number
+      name?: string
+    }
+    PatchedBannedWord: {
+      readonly id?: number
+      text?: string
+    }
+    PatchedEnglishWorwdGet: {
+      readonly id?: number
+      text?: string
+      translate?: string
+      readonly user_id?: number
+      correct_answer_count?: number
+    }
+    PatchedFreelanceOrder: {
+      readonly id?: number
+      name?: string
+      status?: string
+      lead_time?: number | null
+      price?: number | null
+      importance?: number | null
+      /** Format: date-time */
+      readonly start_time?: string
+      /** Format: date-time */
+      end_time?: string | null
+      readonly executors?: components["schemas"]["User"][]
+      readonly customer?: components["schemas"]["Customer"]
+      readonly resource?: components["schemas"]["Resource"]
+      readonly tools?: components["schemas"]["ProgrammingToolGet"][]
+      customer_id?: number
+      resource_id?: number
+      parent_id?: number | null
+    }
+    PatchedBook: {
+      readonly id?: number
+      name?: string
+      readonly user_id?: number
+    }
+    PatchedChapter: {
+      readonly id?: number
+      book?: number
+      /** Format: uri */
+      attachment?: string
+      readonly user_id?: number
+      is_melody?: boolean
+    }
+    PatchedWordsLearning: {
+      readonly id?: number
+      learning_text?: string
+      user_id?: number
+      words_string?: string
+    }
+    ProgrammingToolGet: {
+      readonly id: number
+      name: string
+    }
+    Book: {
+      readonly id: number
+      name: string
+      readonly user_id: number
+    }
+    Resource: {
+      readonly id: number
+      name: string
+    }
+    Chapter: {
+      readonly id: number
+      book: number
+      /** Format: uri */
+      attachment: string
+      readonly user_id: number
+      is_melody: boolean
+    }
+    User: {
+      readonly id: number
+      /** @description Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
+      username: string
+    }
+    WordsLearning: {
+      readonly id: number
+      learning_text?: string
+      user_id: number
+      words_string?: string
+    }
+  }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
+}
+export type $defs = Record<string, never>
 export interface operations {
-    english_words_banned_words_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannedWord"][];
-                };
-            };
-        };
-    };
-    english_words_banned_words_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BannedWord"];
-                "application/x-www-form-urlencoded": components["schemas"]["BannedWord"];
-                "multipart/form-data": components["schemas"]["BannedWord"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannedWord"];
-                };
-            };
-        };
-    };
-    english_words_banned_words_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannedWord"];
-                };
-            };
-        };
-    };
-    english_words_banned_words_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BannedWord"];
-                "application/x-www-form-urlencoded": components["schemas"]["BannedWord"];
-                "multipart/form-data": components["schemas"]["BannedWord"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannedWord"];
-                };
-            };
-        };
-    };
-    english_words_banned_words_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    english_words_banned_words_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedBannedWord"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedBannedWord"];
-                "multipart/form-data": components["schemas"]["PatchedBannedWord"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BannedWord"];
-                };
-            };
-        };
-    };
-    english_words_word_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnglishWorwdGet"][];
-                };
-            };
-        };
-    };
-    english_words_word_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EnglishWorwdGet"];
-                "application/x-www-form-urlencoded": components["schemas"]["EnglishWorwdGet"];
-                "multipart/form-data": components["schemas"]["EnglishWorwdGet"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnglishWorwdGet"];
-                };
-            };
-        };
-    };
-    english_words_word_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnglishWorwdGet"];
-                };
-            };
-        };
-    };
-    english_words_word_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["EnglishWorwdGet"];
-                "application/x-www-form-urlencoded": components["schemas"]["EnglishWorwdGet"];
-                "multipart/form-data": components["schemas"]["EnglishWorwdGet"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnglishWorwdGet"];
-                };
-            };
-        };
-    };
-    english_words_word_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    english_words_word_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedEnglishWorwdGet"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedEnglishWorwdGet"];
-                "multipart/form-data": components["schemas"]["PatchedEnglishWorwdGet"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EnglishWorwdGet"];
-                };
-            };
-        };
-    };
-    english_words_words_learning_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WordsLearning"][];
-                };
-            };
-        };
-    };
-    english_words_words_learning_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WordsLearning"];
-                "application/x-www-form-urlencoded": components["schemas"]["WordsLearning"];
-                "multipart/form-data": components["schemas"]["WordsLearning"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WordsLearning"];
-                };
-            };
-        };
-    };
-    english_words_words_learning_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WordsLearning"];
-                };
-            };
-        };
-    };
-    english_words_words_learning_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WordsLearning"];
-                "application/x-www-form-urlencoded": components["schemas"]["WordsLearning"];
-                "multipart/form-data": components["schemas"]["WordsLearning"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WordsLearning"];
-                };
-            };
-        };
-    };
-    english_words_words_learning_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    english_words_words_learning_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedWordsLearning"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedWordsLearning"];
-                "multipart/form-data": components["schemas"]["PatchedWordsLearning"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WordsLearning"];
-                };
-            };
-        };
-    };
-    free_api_customers_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_freelanceorder_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_freelanceorder_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_freelanceorder_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_freelanceorders_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_freelanceorders_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_api_programmingtools_list: {
-        parameters: {
-            query?: {
-                /** @description A page number within the paginated result set. */
-                page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedProgrammingToolGetList"];
-                };
-            };
-        };
-    };
-    free_api_resource_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_test_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FreelanceOrder"];
-                };
-            };
-        };
-    };
-    free_test_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FreelanceOrder"];
-                "application/x-www-form-urlencoded": components["schemas"]["FreelanceOrder"];
-                "multipart/form-data": components["schemas"]["FreelanceOrder"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FreelanceOrder"];
-                };
-            };
-        };
-    };
-    free_test_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    free_test_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedFreelanceOrder"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedFreelanceOrder"];
-                "multipart/form-data": components["schemas"]["PatchedFreelanceOrder"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FreelanceOrder"];
-                };
-            };
-        };
-    };
-    free_tests_list: {
-        parameters: {
-            query?: {
-                /** @description A page number within the paginated result set. */
-                page?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedFreelanceOrderList"];
-                };
-            };
-        };
-    };
-    music_artists_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"][];
-                };
-            };
-        };
-    };
-    music_artists_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Artist"];
-                "application/x-www-form-urlencoded": components["schemas"]["Artist"];
-                "multipart/form-data": components["schemas"]["Artist"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"];
-                };
-            };
-        };
-    };
-    music_artists_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"];
-                };
-            };
-        };
-    };
-    music_artists_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Artist"];
-                "application/x-www-form-urlencoded": components["schemas"]["Artist"];
-                "multipart/form-data": components["schemas"]["Artist"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"];
-                };
-            };
-        };
-    };
-    music_artists_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    music_artists_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedArtist"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedArtist"];
-                "multipart/form-data": components["schemas"]["PatchedArtist"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Artist"];
-                };
-            };
-        };
-    };
-    one_api_one_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    one_api_one_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    record_record_projects_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordProject"][];
-                };
-            };
-        };
-    };
-    record_record_projects_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["RecordProject"];
-                "multipart/form-data": components["schemas"]["RecordProject"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordProject"];
-                };
-            };
-        };
-    };
-    record_record_projects_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordProject"];
-                };
-            };
-        };
-    };
-    record_record_projects_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["RecordProject"];
-                "multipart/form-data": components["schemas"]["RecordProject"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordProject"];
-                };
-            };
-        };
-    };
-    record_record_projects_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    record_record_projects_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedRecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedRecordProject"];
-                "multipart/form-data": components["schemas"]["PatchedRecordProject"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RecordProject"];
-                };
-            };
-        };
-    };
-    record_tracks_list: {
-        parameters: {
-            query?: {
-                /** @description Which field to use when ordering the results. */
-                ordering?: string;
-                project?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Track"][];
-                };
-            };
-        };
-    };
-    record_tracks_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Track"];
-                "application/x-www-form-urlencoded": components["schemas"]["Track"];
-                "multipart/form-data": components["schemas"]["Track"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Track"];
-                };
-            };
-        };
-    };
-    record_tracks_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Track"];
-                };
-            };
-        };
-    };
-    record_tracks_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["Track"];
-                "application/x-www-form-urlencoded": components["schemas"]["Track"];
-                "multipart/form-data": components["schemas"]["Track"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Track"];
-                };
-            };
-        };
-    };
-    record_tracks_destroy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    record_tracks_partial_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["PatchedTrack"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedTrack"];
-                "multipart/form-data": components["schemas"]["PatchedTrack"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Track"];
-                };
-            };
-        };
-    };
-    record_tracks_file_retrieve: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description No response body */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    schema_retrieve: {
-        parameters: {
-            query?: {
-                format?: "json" | "yaml";
-                lang?: "af" | "ar" | "ar-dz" | "ast" | "az" | "be" | "bg" | "bn" | "br" | "bs" | "ca" | "ckb" | "cs" | "cy" | "da" | "de" | "dsb" | "el" | "en" | "en-au" | "en-gb" | "eo" | "es" | "es-ar" | "es-co" | "es-mx" | "es-ni" | "es-ve" | "et" | "eu" | "fa" | "fi" | "fr" | "fy" | "ga" | "gd" | "gl" | "he" | "hi" | "hr" | "hsb" | "ht" | "hu" | "hy" | "ia" | "id" | "ig" | "io" | "is" | "it" | "ja" | "ka" | "kab" | "kk" | "km" | "kn" | "ko" | "ky" | "lb" | "lt" | "lv" | "mk" | "ml" | "mn" | "mr" | "ms" | "my" | "nb" | "ne" | "nl" | "nn" | "os" | "pa" | "pl" | "pt" | "pt-br" | "ro" | "ru" | "sk" | "sl" | "sq" | "sr" | "sr-latn" | "sv" | "sw" | "ta" | "te" | "tg" | "th" | "tk" | "tr" | "tt" | "udm" | "ug" | "uk" | "ur" | "uz" | "vi" | "zh-hans" | "zh-hant";
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/vnd.oai.openapi": {
-                        [key: string]: unknown;
-                    };
-                    "application/yaml": {
-                        [key: string]: unknown;
-                    };
-                    "application/vnd.oai.openapi+json": {
-                        [key: string]: unknown;
-                    };
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-        };
-    };
+  english_words_banned_words_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["BannedWord"][]
+        }
+      }
+    }
+  }
+  english_words_banned_words_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BannedWord"]
+        "application/x-www-form-urlencoded": components["schemas"]["BannedWord"]
+        "multipart/form-data": components["schemas"]["BannedWord"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["BannedWord"]
+        }
+      }
+    }
+  }
+  english_words_banned_words_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["BannedWord"]
+        }
+      }
+    }
+  }
+  english_words_banned_words_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BannedWord"]
+        "application/x-www-form-urlencoded": components["schemas"]["BannedWord"]
+        "multipart/form-data": components["schemas"]["BannedWord"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["BannedWord"]
+        }
+      }
+    }
+  }
+  english_words_banned_words_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  english_words_banned_words_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedBannedWord"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedBannedWord"]
+        "multipart/form-data": components["schemas"]["PatchedBannedWord"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["BannedWord"]
+        }
+      }
+    }
+  }
+  english_words_word_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["EnglishWorwdGet"][]
+        }
+      }
+    }
+  }
+  english_words_word_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EnglishWorwdGet"]
+        "application/x-www-form-urlencoded": components["schemas"]["EnglishWorwdGet"]
+        "multipart/form-data": components["schemas"]["EnglishWorwdGet"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["EnglishWorwdGet"]
+        }
+      }
+    }
+  }
+  english_words_word_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["EnglishWorwdGet"]
+        }
+      }
+    }
+  }
+  english_words_word_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["EnglishWorwdGet"]
+        "application/x-www-form-urlencoded": components["schemas"]["EnglishWorwdGet"]
+        "multipart/form-data": components["schemas"]["EnglishWorwdGet"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["EnglishWorwdGet"]
+        }
+      }
+    }
+  }
+  english_words_word_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  english_words_word_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedEnglishWorwdGet"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedEnglishWorwdGet"]
+        "multipart/form-data": components["schemas"]["PatchedEnglishWorwdGet"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["EnglishWorwdGet"]
+        }
+      }
+    }
+  }
+  english_words_words_learning_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["WordsLearning"][]
+        }
+      }
+    }
+  }
+  english_words_words_learning_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WordsLearning"]
+        "application/x-www-form-urlencoded": components["schemas"]["WordsLearning"]
+        "multipart/form-data": components["schemas"]["WordsLearning"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["WordsLearning"]
+        }
+      }
+    }
+  }
+  english_words_words_learning_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["WordsLearning"]
+        }
+      }
+    }
+  }
+  english_words_words_learning_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["WordsLearning"]
+        "application/x-www-form-urlencoded": components["schemas"]["WordsLearning"]
+        "multipart/form-data": components["schemas"]["WordsLearning"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["WordsLearning"]
+        }
+      }
+    }
+  }
+  english_words_words_learning_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  english_words_words_learning_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedWordsLearning"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedWordsLearning"]
+        "multipart/form-data": components["schemas"]["PatchedWordsLearning"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["WordsLearning"]
+        }
+      }
+    }
+  }
+  free_api_customers_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_freelanceorder_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_freelanceorder_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_freelanceorder_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_freelanceorders_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_freelanceorders_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_api_programmingtools_list: {
+    parameters: {
+      query?: {
+        /** @description A page number within the paginated result set. */
+        page?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["PaginatedProgrammingToolGetList"]
+        }
+      }
+    }
+  }
+  free_api_resource_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_test_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["FreelanceOrder"]
+        }
+      }
+    }
+  }
+  free_test_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FreelanceOrder"]
+        "application/x-www-form-urlencoded": components["schemas"]["FreelanceOrder"]
+        "multipart/form-data": components["schemas"]["FreelanceOrder"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["FreelanceOrder"]
+        }
+      }
+    }
+  }
+  free_test_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  free_test_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedFreelanceOrder"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedFreelanceOrder"]
+        "multipart/form-data": components["schemas"]["PatchedFreelanceOrder"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["FreelanceOrder"]
+        }
+      }
+    }
+  }
+  free_tests_list: {
+    parameters: {
+      query?: {
+        /** @description A page number within the paginated result set. */
+        page?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["PaginatedFreelanceOrderList"]
+        }
+      }
+    }
+  }
+  music_artists_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Artist"][]
+        }
+      }
+    }
+  }
+  music_artists_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Artist"]
+        "application/x-www-form-urlencoded": components["schemas"]["Artist"]
+        "multipart/form-data": components["schemas"]["Artist"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Artist"]
+        }
+      }
+    }
+  }
+  music_artists_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Artist"]
+        }
+      }
+    }
+  }
+  music_artists_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Artist"]
+        "application/x-www-form-urlencoded": components["schemas"]["Artist"]
+        "multipart/form-data": components["schemas"]["Artist"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Artist"]
+        }
+      }
+    }
+  }
+  music_artists_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  music_artists_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedArtist"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedArtist"]
+        "multipart/form-data": components["schemas"]["PatchedArtist"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Artist"]
+        }
+      }
+    }
+  }
+  one_api_one_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  one_api_one_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  catalog_books_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Book"][]
+        }
+      }
+    }
+  }
+  catalog_books_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Book"]
+        "application/x-www-form-urlencoded": components["schemas"]["Book"]
+        "multipart/form-data": components["schemas"]["Book"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Book"]
+        }
+      }
+    }
+  }
+  catalog_books_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Book"]
+        }
+      }
+    }
+  }
+  catalog_books_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Book"]
+        "application/x-www-form-urlencoded": components["schemas"]["Book"]
+        "multipart/form-data": components["schemas"]["Book"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Book"]
+        }
+      }
+    }
+  }
+  catalog_books_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  catalog_books_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedBook"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedBook"]
+        "multipart/form-data": components["schemas"]["PatchedBook"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Book"]
+        }
+      }
+    }
+  }
+  catalog_chapters_list: {
+    parameters: {
+      query?: {
+        /** @description Which field to use when ordering the results. */
+        ordering?: string
+        book?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Chapter"][]
+        }
+      }
+    }
+  }
+  catalog_chapters_create: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Chapter"]
+        "application/x-www-form-urlencoded": components["schemas"]["Chapter"]
+        "multipart/form-data": components["schemas"]["Chapter"]
+      }
+    }
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Chapter"]
+        }
+      }
+    }
+  }
+  catalog_chapters_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Chapter"]
+        }
+      }
+    }
+  }
+  catalog_chapters_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Chapter"]
+        "application/x-www-form-urlencoded": components["schemas"]["Chapter"]
+        "multipart/form-data": components["schemas"]["Chapter"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Chapter"]
+        }
+      }
+    }
+  }
+  catalog_chapters_destroy: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  catalog_chapters_partial_update: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["PatchedChapter"]
+        "application/x-www-form-urlencoded": components["schemas"]["PatchedChapter"]
+        "multipart/form-data": components["schemas"]["PatchedChapter"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["Chapter"]
+        }
+      }
+    }
+  }
+  catalog_chapters_attachment_retrieve: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description No response body */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  schema_retrieve: {
+    parameters: {
+      query?: {
+        format?: "json" | "yaml"
+        lang?:
+          | "af"
+          | "ar"
+          | "ar-dz"
+          | "ast"
+          | "az"
+          | "be"
+          | "bg"
+          | "bn"
+          | "br"
+          | "bs"
+          | "ca"
+          | "ckb"
+          | "cs"
+          | "cy"
+          | "da"
+          | "de"
+          | "dsb"
+          | "el"
+          | "en"
+          | "en-au"
+          | "en-gb"
+          | "eo"
+          | "es"
+          | "es-ar"
+          | "es-co"
+          | "es-mx"
+          | "es-ni"
+          | "es-ve"
+          | "et"
+          | "eu"
+          | "fa"
+          | "fi"
+          | "fr"
+          | "fy"
+          | "ga"
+          | "gd"
+          | "gl"
+          | "he"
+          | "hi"
+          | "hr"
+          | "hsb"
+          | "ht"
+          | "hu"
+          | "hy"
+          | "ia"
+          | "id"
+          | "ig"
+          | "io"
+          | "is"
+          | "it"
+          | "ja"
+          | "ka"
+          | "kab"
+          | "kk"
+          | "km"
+          | "kn"
+          | "ko"
+          | "ky"
+          | "lb"
+          | "lt"
+          | "lv"
+          | "mk"
+          | "ml"
+          | "mn"
+          | "mr"
+          | "ms"
+          | "my"
+          | "nb"
+          | "ne"
+          | "nl"
+          | "nn"
+          | "os"
+          | "pa"
+          | "pl"
+          | "pt"
+          | "pt-br"
+          | "ro"
+          | "ru"
+          | "sk"
+          | "sl"
+          | "sq"
+          | "sr"
+          | "sr-latn"
+          | "sv"
+          | "sw"
+          | "ta"
+          | "te"
+          | "tg"
+          | "th"
+          | "tk"
+          | "tr"
+          | "tt"
+          | "udm"
+          | "ug"
+          | "uk"
+          | "ur"
+          | "uz"
+          | "vi"
+          | "zh-hans"
+          | "zh-hant"
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/vnd.oai.openapi": {
+            [key: string]: unknown
+          }
+          "application/yaml": {
+            [key: string]: unknown
+          }
+          "application/vnd.oai.openapi+json": {
+            [key: string]: unknown
+          }
+          "application/json": {
+            [key: string]: unknown
+          }
+        }
+      }
+    }
+  }
 }

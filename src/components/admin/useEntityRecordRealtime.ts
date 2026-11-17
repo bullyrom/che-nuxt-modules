@@ -12,11 +12,11 @@ import type { AdminRealtimeChange, AdminRealtimeClient } from "./realtime"
 interface UseEntityRecordRealtimeParameters {
   client?: AdminRealtimeClient
   closeView: () => void
-  /** Track the viewed-record channel and refetch it (default `true`). */
+  /** Monitor the viewed-record channel and refetch it (default `true`). */
   detail?: boolean
   getEntityName: () => string | undefined
   getViewedRecord: () => Record<string, unknown> | undefined
-  /** Track the list channel and count changes (default `true`). */
+  /** Monitor the list channel and count changes (default `true`). */
   list?: boolean
 }
 

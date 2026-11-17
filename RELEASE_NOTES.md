@@ -1,5 +1,6 @@
 # Release notes
 
+- chore: replaced the remaining app-specific entity names in docs, source comments, unit tests, e2e constants/helpers and the generated OpenAPI test fixture with generic books/chapters/categories examples
 - feat(admin): list grid defaults to 3 objects per row on desktop and 1 on phone; `gridColumns` controls the desktop count and `1` keeps a single column on every screen
 - feat(admin): standardized `hiddenFilters` config (global `fields.hiddenFilters`, per-entity `entities.<name>.hiddenFilters` and embedded `AdminListConfig.hiddenFilters`) hides filter parameters without touching sorts
 - fix(admin): embedded list/detail/create roots set the theme variables themselves, so borders and surfaces are no longer black/undefined outside `Crud`
@@ -99,7 +100,7 @@
 - feat: admin list realtime `changed` events now increment a "new changes" badge (`listChangesCount`) instead of reloading — clicking the badge reloads the list with the user's current filters; the open record still refetches automatically
 
 - fix: SSR data loading in the admin is restored — only realtime subscriptions and the event-driven refetch are client-only, detected with `typeof window` (the `import.meta.client` constant is not rewritten inside a pre-built package consumed from `node_modules`); the realtime subscription now starts in `onMounted` so no socket event can change the data before hydration
-- feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `record.recordproject`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
+- feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `catalog.item`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
 
 - fix: the library no longer relies on Nuxt auto-imports for `useRouter` — `useOnPageEnterAndLeave` / `useCallBeforeLeaveFromPages` import it explicitly from `vue-router` (added as a peer dependency and kept external in the build), so `useRouter is not defined` no longer happens when consumed as an npm package
 - fix: admin realtime is strictly client-only (`import.meta.client`) — subscriptions and change-driven refetch never run during SSR, so the detail no longer fetches an empty URL and the server/client markup stays in sync

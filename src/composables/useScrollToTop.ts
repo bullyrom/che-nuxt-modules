@@ -4,7 +4,7 @@ import { ref } from "vue"
 const SCROLL_TOP_THRESHOLD = 0
 
 /**
- * Tracks whether a scrollable element is scrolled down and provides a way to
+ * Reports whether a scrollable element is scrolled down and provides a way to
  * scroll it back to the top. Bind the returned `containerRef` to the element;
  * show a "scroll to top" button while `isScrolledDown` is `true`.
  */
@@ -20,7 +20,7 @@ export function useScrollToTop() {
     isScrolledDown.value = element.scrollTop > SCROLL_TOP_THRESHOLD
   }
 
-  /** Smoothly scrolls the tracked element back to the top. */
+  /** Smoothly scrolls the scrollable element back to the top. */
   function scrollToTop() {
     containerReference.value?.scrollTo({
       behavior: "smooth",

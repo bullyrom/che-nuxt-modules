@@ -48,7 +48,7 @@ function entityDetailChannel(entityName: string, id: number | string): string {
 
 /**
  * Maps a parsed OpenAPI entity to the identifier the backend uses in realtime
- * rooms (`model._meta.label_lower`, e.g. `record.recordproject`).
+ * rooms (e.g. a Django model label `catalog.item`).
  */
 type AdminRealtimeEntityName = (entity: ParsedEntity) => string
 
