@@ -7,16 +7,17 @@ const ADMIN_INDEX_PATH = "/admin/endpoints/"
 const ADMIN_LIST_PATH = "/admin/endpoints"
 const ADMIN_RECORD_PATH_PATTERN = /\/admin\/endpoints\/[^\/]+\/\d+$/v
 
-const TRACKS_ENTITY = "tracks"
+const CHAPTERS_ENTITY = "chapters"
 const MEASUREMENTS_ENTITY = "measurements"
-const PROJECT_FILES_ENTITY = "project-files"
-const TRACKS_BASE_PATH = "/api/v1/record/tracks/"
-const TRACK_DETAIL_HREF_PATTERN = /^\/admin\/endpoints\/tracks\/\d+$/v
-const TRACK_AUDIO_SRC_PATTERN = /\/api\/v1\/record\/tracks\/\d+\/file\/$/v
+const BOOKS_ENTITY = "books"
+const CHAPTERS_BASE_PATH = "/api/v1/catalog/chapters/"
+const CHAPTER_DETAIL_HREF_PATTERN = /^\/admin\/endpoints\/chapters\/\d+$/v
+const CHAPTER_AUDIO_SRC_PATTERN =
+  /\/api\/v1\/catalog\/chapters\/\d+\/attachment\/$/v
 const MEASUREMENTS_ROUTE = "**/room-climate/measurements**"
 const MOCK_MEASUREMENT_ID = 999_999
-const PROJECT_FILE_DOWNLOAD_HREF_PATTERN =
-  /\/api\/v1\/record\/project-files\/\d+\/download\/$/v
+const BOOK_DOWNLOAD_HREF_PATTERN =
+  /\/api\/v1\/catalog\/books\/\d+\/download\/$/v
 
 const SEARCH_PLACEHOLDER = "Search..."
 const VIEW_ACTION = "View"
@@ -36,10 +37,10 @@ const MULTISELECT_FIELD_KEY = "tags"
 const MULTISELECT_PLACEHOLDER = "Select tags"
 const MULTISELECT_OPTION_LABEL = "two"
 
-const PROJECT_SELECT_PLACEHOLDER = "Select a project"
-const PARENT_SELECT_PLACEHOLDER = "Select a parent track"
-const TRACK_TYPE_SELECT_PLACEHOLDER = "Select a track type"
-const TRACK_TYPE_OPTION_LABEL = "Vocal"
+const BOOK_SELECT_PLACEHOLDER = "Select a book"
+const PARENT_SELECT_PLACEHOLDER = "Select a parent chapter"
+const CHAPTER_KIND_SELECT_PLACEHOLDER = "Select a chapter kind"
+const CHAPTER_KIND_OPTION_LABEL = "Text"
 const NO_MATCH_SEARCH_TERM = "zz-no-match"
 
 const AUDIO_ACCEPT = "audio/*"
@@ -60,7 +61,16 @@ export {
   ADMIN_RECORD_PATH_PATTERN,
   AUDIO_ACCEPT,
   BACK_ACTION,
+  BOOK_DOWNLOAD_HREF_PATTERN,
+  BOOK_SELECT_PLACEHOLDER,
+  BOOKS_ENTITY,
   CANCEL_ACTION,
+  CHAPTER_AUDIO_SRC_PATTERN,
+  CHAPTER_DETAIL_HREF_PATTERN,
+  CHAPTER_KIND_OPTION_LABEL,
+  CHAPTER_KIND_SELECT_PLACEHOLDER,
+  CHAPTERS_BASE_PATH,
+  CHAPTERS_ENTITY,
   CREATE_ACTION,
   CUSTOM_GRID_COLUMNS,
   CUSTOM_HEADER_TEST_ID,
@@ -81,20 +91,11 @@ export {
   NO_MATCH_SEARCH_TERM,
   PARENT_SELECT_PLACEHOLDER,
   PLAY_AUDIO_BUTTON_PATTERN,
-  PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
-  PROJECT_FILES_ENTITY,
-  PROJECT_SELECT_PLACEHOLDER,
   SEARCH_PLACEHOLDER,
   TEST_AUDIO_CONTENT,
   TEST_AUDIO_NAME,
   TEST_AUDIO_TYPE,
   TEST_DATE_TIME_VALUE,
   TEST_DATE_VALUE,
-  TRACK_AUDIO_SRC_PATTERN,
-  TRACK_DETAIL_HREF_PATTERN,
-  TRACK_TYPE_OPTION_LABEL,
-  TRACK_TYPE_SELECT_PLACEHOLDER,
-  TRACKS_BASE_PATH,
-  TRACKS_ENTITY,
   VIEW_ACTION,
 }

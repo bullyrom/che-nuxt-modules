@@ -16,10 +16,10 @@ const VUE_IMPORT_PATTERN =
 const IMAGE_IMPORT = "import { ImageField }"
 const IMAGE_AND_MULTISELECT_IMPORT = "import { ImageField, MultiSelect }"
 const CONFIG_DECLARATION = "const adminPanelConfig = {"
-const TRACK_OVERRIDE_PATTERN = /Track: \{\s*file:/v
+const CHAPTER_OVERRIDE_PATTERN = /Chapter: \{\s*attachment:/v
 const COMPONENTS_EXPORT_MARKER = "export const components"
-const TRACK_SCHEMA_MARKER = '"Track":{"type":"object"'
-const ESCAPED_TRACK_SCHEMA_MARKER = String.raw`\"Track\":{\"type\":\"object\"`
+const CHAPTER_SCHEMA_MARKER = '"Chapter":{"type":"object"'
+const ESCAPED_CHAPTER_SCHEMA_MARKER = String.raw`\"Chapter\":{\"type\":\"object\"`
 const SCHEMA_PROPERTIES_MARKER = '"properties":{'
 const ESCAPED_SCHEMA_PROPERTIES_MARKER = String.raw`\"properties\":{`
 const NOT_FOUND_INDEX = -1
@@ -55,9 +55,9 @@ const TEST_TAGS_FIELD_DECLARATION = `const TagsField = {
   },
 }`
 
-const TRACK_SCHEMA_FIELDS =
+const CHAPTER_SCHEMA_FIELDS =
   '"release_date":{"type":"string","format":"date"},"release_at":{"type":"string","format":"date-time"},"tags":{"type":"array","items":{"type":"string"}},'
-const ESCAPED_TRACK_SCHEMA_FIELDS = TRACK_SCHEMA_FIELDS.replaceAll(
+const ESCAPED_CHAPTER_SCHEMA_FIELDS = CHAPTER_SCHEMA_FIELDS.replaceAll(
   '"',
   String.raw`\"`,
 )
@@ -69,41 +69,41 @@ interface AdminConfigOverrides {
   multiselectTags?: boolean
 }
 
-/** Inserts extra editable properties into the Track schema object. */
-function extendTrackSchema(body: string): string {
+/** Inserts extra editable properties into the Chapter schema object. */
+function extendChapterSchema(body: string): string {
   const componentsIndex = body.indexOf(COMPONENTS_EXPORT_MARKER)
   if (componentsIndex === NOT_FOUND_INDEX) return body
 
-  const escapedTrackIndex = body.indexOf(
-    ESCAPED_TRACK_SCHEMA_MARKER,
+  const escapedChapterIndex = body.indexOf(
+    ESCAPED_CHAPTER_SCHEMA_MARKER,
     componentsIndex,
   )
-  if (escapedTrackIndex !== NOT_FOUND_INDEX) {
+  if (escapedChapterIndex !== NOT_FOUND_INDEX) {
     const escapedPropertiesIndex = body.indexOf(
       ESCAPED_SCHEMA_PROPERTIES_MARKER,
-      escapedTrackIndex,
+      escapedChapterIndex,
     )
     if (escapedPropertiesIndex !== NOT_FOUND_INDEX) {
       const insertAt =
         escapedPropertiesIndex + ESCAPED_SCHEMA_PROPERTIES_MARKER.length
-      return `${body.slice(0, insertAt)}${ESCAPED_TRACK_SCHEMA_FIELDS}${body.slice(insertAt)}`
+      return `${body.slice(0, insertAt)}${ESCAPED_CHAPTER_SCHEMA_FIELDS}${body.slice(insertAt)}`
     }
   }
 
-  const trackIndex = body.indexOf(TRACK_SCHEMA_MARKER, componentsIndex)
-  if (trackIndex === NOT_FOUND_INDEX) return body
-  const propertiesIndex = body.indexOf(SCHEMA_PROPERTIES_MARKER, trackIndex)
+  const chapterIndex = body.indexOf(CHAPTER_SCHEMA_MARKER, componentsIndex)
+  if (chapterIndex === NOT_FOUND_INDEX) return body
+  const propertiesIndex = body.indexOf(SCHEMA_PROPERTIES_MARKER, chapterIndex)
   if (propertiesIndex === NOT_FOUND_INDEX) return body
   const insertAt = propertiesIndex + SCHEMA_PROPERTIES_MARKER.length
-  return `${body.slice(0, insertAt)}${TRACK_SCHEMA_FIELDS}${body.slice(insertAt)}`
+  return `${body.slice(0, insertAt)}${CHAPTER_SCHEMA_FIELDS}${body.slice(insertAt)}`
 }
 
-/** Extends the Track schema with date, date-time and array fields. */
-async function installTrackSchemaExtras(page: Page): Promise<void> {
+/** Extends the Chapter schema with date, date-time and array fields. */
+async function installChapterSchemaExtras(page: Page): Promise<void> {
   await page.route(SCHEMA_ROUTE, async (route) => {
     const response = await route.fetch()
     const body = await response.text()
-    await route.fulfill({ body: extendTrackSchema(body), response })
+    await route.fulfill({ body: extendChapterSchema(body), response })
   })
 }
 
@@ -141,8 +141,8 @@ async function installAdminConfigOverrides(
       body = body.replace(IMAGE_IMPORT, IMAGE_AND_MULTISELECT_IMPORT)
       declarations.push(TEST_TAGS_FIELD_DECLARATION)
       body = body.replace(
-        TRACK_OVERRIDE_PATTERN,
-        'Track: { tags: { component: TagsField, kind: "array" }, file:',
+        CHAPTER_OVERRIDE_PATTERN,
+        'Chapter: { tags: { component: TagsField, kind: "array" }, attachment:',
       )
     }
 
@@ -187,5 +187,5 @@ async function readVueImportUrl(
   return vueUrl
 }
 
-export { installAdminConfigOverrides, installTrackSchemaExtras }
+export { installAdminConfigOverrides, installChapterSchemaExtras }
 export type { AdminConfigOverrides }

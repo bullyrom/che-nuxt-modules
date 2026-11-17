@@ -1,7 +1,7 @@
 # Reusable components — selects, media & date fields
 
 Generic, admin-agnostic building blocks exported from the package root. Use
-them directly, or wrap them in project-specific components (URLs, keys, labels)
+them directly, or wrap them in app-specific components (URLs, keys, labels)
 that then plug into the admin [field API](admin-customization.md#level-1--whole-object-field-group-form--list--detail).
 
 ## Selects
@@ -98,14 +98,14 @@ Plain display components, reusable anywhere (detail cards, custom views):
 
 ```tsx
 <ImageValue src={record.image} alt="Cover" heading="cover" /> // heading + link + hover preview
-<AudioValue src={record.audio} heading="file" label="Track 1" /> // heading + play button + track name
+<AudioValue src={record.audio} heading="audio" label="Audio 1" /> // heading + play button + audio name
 <VideoValue src={record.video} heading="video" />               // heading + video player
 <FileValue src={record.file} heading="file" label="Report.pdf" /> // heading + download link
 ```
 
 `ImageValue` renders a clickable link and shows the image on hover
 (`group-hover`); `href` overrides the link target. `AudioValue` stays collapsed
-as a play button plus a track name (falling back to the file name); the
+as a play button plus an audio name (falling back to the file name); the
 `<audio>` element is created only after the button is pressed. `FileValue`
 renders a download link with the file name (falling back to the last URL
 segment).
@@ -126,7 +126,7 @@ mapped in the admin config.
 - `ImageField` / `AudioField` / `VideoField` — show the current media (via the
   value components above) **and** a file input to replace it. Default `accept`
   is `image/*`, `audio/*`, `video/*`. `AudioField` also accepts `label`
-  (defaults to the field key) for the collapsed track caption. All four accept
+  (defaults to the field key) for the collapsed media caption. All four accept
   an optional `heading` for custom layouts; inside the admin form the heading is
   already rendered by `FieldRenderer`, so leave it unset there.
 - `DateField` / `DateTimeField` — `date` / `datetime-local` inputs that
@@ -138,7 +138,7 @@ mapped in the admin config.
 ## Override-ready fields (package root)
 
 Every reusable field/value component used by admin overrides is exported from
-the package root — no deep imports or project wrappers are needed:
+the package root — no deep imports or app wrappers are needed:
 
 ```ts
 import {
@@ -211,20 +211,20 @@ const config = {
 - The whole-object field-group overrides (`formOverride` etc.) are documented in
   [admin-customization.md](admin-customization.md).
 
-## Project-specific wrappers
+## App-specific wrappers
 
-URLs, choice keys and labels belong to the consuming project, not the library.
-A project wrapper fixes them and reuses the library component:
+URLs, choice keys and labels belong to the consuming app, not the library.
+An app wrapper fixes them and reuses the library component:
 
 ```tsx
-// frontend: components/admin/TrackChildrenSelect.tsx
-export function TrackChildrenSelect(
+// app: components/admin/CategoryChildrenSelect.tsx
+export function CategoryChildrenSelect(
   props: FieldComponentProperties<number[]>,
 ) {
   return (
     <RemoteMultiSelect
       modelValue={props.modelValue}
-      url={`${backendApiUrl}/tracks/`}
+      url={`${backendApiUrl}/catalog/categories/`}
       labelKey="title"
       valueKey="id"
       searchable
@@ -240,7 +240,7 @@ Then pass it through the config:
 const config = {
   fields: {
     overrides: {
-      Track: { children: { component: TrackChildrenSelect, kind: "array" } },
+      Book: { children: { component: CategoryChildrenSelect, kind: "array" } },
     },
   },
 }

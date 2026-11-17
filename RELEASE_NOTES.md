@@ -21,7 +21,7 @@
 - docs(components): list the package-root imports for every reusable override field (selects, media field/value, dates)
 - fix(admin): treat the server-idle list state as loading so SSR and hydration render the same loader (no hydration mismatch on the measurements page)
 - fix(admin): create forms for request schemas without writable fields render no fields (just the Create action) and POST an empty body instead of the raw-schema fallback
-- fix(components): audio values stay collapsed behind a play button with a track label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
+- fix(components): audio values stay collapsed behind a play button with a media label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
 - fix: admin list fetches its first page on mount again (the keyed-store refactor dropped the initial load, leaving the panel empty until a filter or reload)
 - fix: list realtime channel follows the entity switch even though the admin reuses one instance key
 - fix: remote selects use the unwrapped options store values and forward the search term, so options render and search requests carry `search`
@@ -35,7 +35,7 @@
 - feat: date field components `DateField`/`DateTimeField` (ISO strings, timezone-safe) with `DEFAULT_FORMAT_COMPONENTS` mapping `date`/`date-time` automatically
 - feat: format-based field dispatch — `AdminPanelFieldConfig.formats` (OpenAPI `format` -> component) is resolved before the kind `defaultComponents`, threaded through `FieldRenderer`/`QueryParametersMenu`/`EntityCreateForm` and the render context
 - refactor: moved `createInstanceRegistry` to `src/stores/instanceRegistry.ts` so it is shared by the admin instance stores and the new select options store
-- docs: added `docs/components.md` (selects, media/date field components, field-API wiring, project wrappers) and referenced it from the README; documented `fields.formats`
+- docs: added `docs/components.md` (selects, media/date field components, field-API wiring, app wrappers) and referenced it from the README; documented `fields.formats`
 - chore: added the "future admin package" architecture rule to `AGENTS.md`
 - test: unit tests for `toSelectOptions` and the date-input helpers
 
@@ -85,7 +85,7 @@
 - feat: admin list realtime `changed` events now increment a "new changes" badge (`listChangesCount`) instead of reloading — clicking the badge reloads the list with the user's current filters; the open record still refetches automatically
 
 - fix: SSR data loading in the admin is restored — only realtime subscriptions and the event-driven refetch are client-only, detected with `typeof window` (the `import.meta.client` constant is not rewritten inside a pre-built package consumed from `node_modules`); the realtime subscription now starts in `onMounted` so no socket event can change the data before hydration
-- feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `record.recordproject`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
+- feat: realtime room identity is configurable — `AdminPanelConfig.realtimeEntityName` maps a parsed OpenAPI entity to the backend identifier (`model._meta.label_lower`, e.g. `catalog.item`), with the `resolveRealtimeEntityName` helper and `AdminRealtimeEntityName` type exported; defaults to `entity.entityName`
 
 - fix: the library no longer relies on Nuxt auto-imports for `useRouter` — `useOnPageEnterAndLeave` / `useCallBeforeLeaveFromPages` import it explicitly from `vue-router` (added as a peer dependency and kept external in the build), so `useRouter is not defined` no longer happens when consumed as an npm package
 - fix: admin realtime is strictly client-only (`import.meta.client`) — subscriptions and change-driven refetch never run during SSR, so the detail no longer fetches an empty URL and the server/client markup stays in sync
@@ -122,7 +122,7 @@
 - refactor: `useApiUpdate`/`useApiDelete` now share one keyed-mutation helper; both (and `useFormApi.sendForm`) accept a per-call `url`/`method` override
 - refactor: `DroppingBase` wraps `Dropdown`; `Tabs` uses the local `ContainerMarginRight` and VueUse breakpoints instead of the hidden `nuxt-viewport` dependency
 - refactor: admin panel reuses library pieces — `usePaginatedListApi` (list), `useApiDelete` (delete), `useFormApi` (create/edit form), `CheCheckbox` (boolean fields); remove dead `EntityOperationsList.vue` and `stores/adminPanel/pathHandlers.ts`
-- fix: `stores/pages.ts` no longer imports the project-only `@/types/base` / `ApiStaticPage` types
+- fix: `stores/pages.ts` no longer imports the app-only `@/types/base` / `ApiStaticPage` types
 - chore: drop the deprecated `hid` meta key in `useSeo`
 - feat: add the field components `InputWithUnits` (numeric input + unit suffix) and `PasswordInput` (labeled input with show/hide toggle)
 - feat: add the dependency-free `TypingIndicator` chat "typing…" component
@@ -141,7 +141,7 @@
 - fix: `divideNumber` no longer mangles already-formatted/exponential strings (regression) while keeping correct fraction handling
 - refactor: widen `useRender` render-callback type to `() => unknown` so any TSX return shape is accepted
 - feat: export the once submodule-only composables from the package root (`useSeo`, `useStaticPage`, `useCallBeforeLeaveFromPage(s)`)
-- feat: add shared `useShowLoader` and `useVoidAsyncData` composables (moved from the projects)
+- feat: add shared `useShowLoader` and `useVoidAsyncData` composables (moved from consumer apps)
 - feat: add `useCaptcha`, `useFirstUrlParameterOr404Error` and `useMenuStore` universal composables
 - feat: add `createDefault404Error`, `scrollToFirstElementWithClass`, `divideNumber` and `valideSlug` utils
 - feat: export the previously hidden UI components (`LazyLoadList`, `MainLoader`, `RollDown`, `Tabs`, `Tooltip`, `DroppingBase`, `DroppingBody`, `OverflowContainer`, `ContainerMarginRight`) and the `RequestStatus`/`Seo` types

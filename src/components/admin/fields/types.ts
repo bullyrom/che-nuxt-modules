@@ -325,10 +325,10 @@ interface AdminPanelConfig<
    */
   realtime?: AdminRealtimeClient
   /**
-   * Resolves the realtime room identifier for an entity. The backend emits the
-   * Django model label (`model._meta.label_lower`, e.g. `record.recordproject`)
-   * while the admin derives names from the URL (`record-projects`), so the host
-   * maps one to the other here. Defaults to `entity.entityName`.
+   * Resolves the realtime room identifier for an entity. A backend may emit a
+   * different room name (for example a Django model label) than the admin derives
+   * from the URL, so the host maps one to the other here. Defaults to
+   * `entity.entityName`.
    */
   realtimeEntityName?: AdminRealtimeEntityName
   /**

@@ -154,7 +154,7 @@ class TestAdminForm {
     await expect(trigger).toContainText(optionLabel)
   }
 
-  /** Selects a static option (for example a track type) by its label. */
+  /** Selects a static option (for example a chapter kind) by its label. */
   async selectStaticOption(
     placeholder: string,
     optionLabel: string,

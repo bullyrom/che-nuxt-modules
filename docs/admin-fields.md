@@ -10,11 +10,11 @@ library component. For the override mechanics see
 
 ### Critical — without them the form saves invalid data
 
-| Field kind                                        | What breaks by default                                              | Use                                                                                                                              |
-| ------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Files / uploads                                   | A raw `File` is not JSON; the request must be `multipart/form-data` | `FileField` (and `ImageField` / `AudioField` / `VideoField`) plus a `beforeCreate` / `beforeUpdate` hook that returns `FormData` |
-| Foreign keys (`project`, `parent`, `customer`, …) | A free-form id input sends the wrong or an invalid id               | `Select` or `RemoteSelect`                                                                                                       |
-| Many-to-many (`tags`, `executors`, …)             | Multiple ids must be sent as a list, not as one value               | `MultiSelect` or `RemoteMultiSelect`                                                                                             |
+| Field kind                                      | What breaks by default                                              | Use                                                                                                                              |
+| ----------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Files / uploads                                 | A raw `File` is not JSON; the request must be `multipart/form-data` | `FileField` (and `ImageField` / `AudioField` / `VideoField`) plus a `beforeCreate` / `beforeUpdate` hook that returns `FormData` |
+| Foreign keys (`category`, `parent`, `owner`, …) | A free-form id input sends the wrong or an invalid id               | `Select` or `RemoteSelect`                                                                                                       |
+| Many-to-many (`tags`, `executors`, …)           | Multiple ids must be sent as a list, not as one value               | `MultiSelect` or `RemoteMultiSelect`                                                                                             |
 
 **The baseline is selects/multi-selects + files.** Wire these before anything
 else: without them the create/edit form either cannot be submitted or sends a
@@ -101,10 +101,10 @@ const config: AdminPanelConfig = {
       "date-time": DateTimeField,
     },
     overrides: {
-      Track: {
+      Book: {
         description: { component: TextareaField, kind: "string" },
-        file: { component: FileField, kind: "string" },
-        // `track_type` has schema `enum` -> EnumField is automatic.
+        attachment: { component: FileField, kind: "string" },
+        // `genre` has schema `enum` -> EnumField is automatic.
       },
     },
   },
@@ -128,21 +128,21 @@ import {
   type FieldComponentProperties,
 } from "@bullyrom/che-nuxt-modules"
 
-function ProjectSelect(props: FieldComponentProperties<number | undefined>) {
+function CategorySelect(props: FieldComponentProperties<number | undefined>) {
   return (
     <RemoteSelect
       labelKey="name"
       modelValue={props.modelValue}
       onUpdate:modelValue={props["onUpdate:modelValue"]}
       searchable
-      url={`${backendApiUrl}/record/projects/`}
+      url={`${backendApiUrl}/catalog/categories/`}
       valueKey="id"
     />
   )
 }
 
-// config.fields.overrides.Track.project =
-//   { component: ProjectSelect, kind: "integer" }
+// config.fields.overrides.Book.category =
+//   { component: CategorySelect, kind: "integer" }
 ```
 
 Use the same pattern for `MultiSelect` / `RemoteMultiSelect` with

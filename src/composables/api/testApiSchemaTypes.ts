@@ -266,78 +266,78 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/record/record-projects/": {
+    "/api/v1/catalog/books/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["record_record_projects_list"];
+        get: operations["catalog_books_list"];
         put?: never;
-        post: operations["record_record_projects_create"];
+        post: operations["catalog_books_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    [path: `/api/v1/record/record-projects/${number}/`]: {
+    [path: `/api/v1/catalog/books/${number}/`]: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["record_record_projects_retrieve"];
-        put: operations["record_record_projects_update"];
+        get: operations["catalog_books_retrieve"];
+        put: operations["catalog_books_update"];
         post?: never;
-        delete: operations["record_record_projects_destroy"];
+        delete: operations["catalog_books_destroy"];
         options?: never;
         head?: never;
-        patch: operations["record_record_projects_partial_update"];
+        patch: operations["catalog_books_partial_update"];
         trace?: never;
     };
-    "/api/v1/record/tracks/": {
+    "/api/v1/catalog/chapters/": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["record_tracks_list"];
+        get: operations["catalog_chapters_list"];
         put?: never;
-        post: operations["record_tracks_create"];
+        post: operations["catalog_chapters_create"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    [path: `/api/v1/record/tracks/${number}/`]: {
+    [path: `/api/v1/catalog/chapters/${number}/`]: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["record_tracks_retrieve"];
-        put: operations["record_tracks_update"];
+        get: operations["catalog_chapters_retrieve"];
+        put: operations["catalog_chapters_update"];
         post?: never;
-        delete: operations["record_tracks_destroy"];
+        delete: operations["catalog_chapters_destroy"];
         options?: never;
         head?: never;
-        patch: operations["record_tracks_partial_update"];
+        patch: operations["catalog_chapters_partial_update"];
         trace?: never;
     };
-    [path: `/api/v1/record/tracks/${number}/file/`]: {
+    [path: `/api/v1/catalog/chapters/${number}/file/`]: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["record_tracks_file_retrieve"];
+        get: operations["catalog_chapters_attachment_retrieve"];
         put?: never;
         post?: never;
         delete?: never;
@@ -476,18 +476,18 @@ export type components = {
             resource_id?: number;
             parent_id?: number | null;
         };
-        PatchedRecordProject: {
+        PatchedBook: {
             readonly id?: number;
             name?: string;
             readonly user_id?: number;
         };
-        PatchedTrack: {
+        PatchedChapter: {
             readonly id?: number;
-            project?: number;
+            book?: number;
             /** Format: uri */
-            file?: string;
+            attachment?: string;
             readonly user_id?: number;
-            is_melody?: boolean;
+            is_published?: boolean;
         };
         PatchedWordsLearning: {
             readonly id?: number;
@@ -499,7 +499,7 @@ export type components = {
             readonly id: number;
             name: string;
         };
-        RecordProject: {
+        Book: {
             readonly id: number;
             name: string;
             readonly user_id: number;
@@ -508,13 +508,13 @@ export type components = {
             readonly id: number;
             name: string;
         };
-        Track: {
+        Chapter: {
             readonly id: number;
-            project: number;
+            book: number;
             /** Format: uri */
-            file: string;
+            attachment: string;
             readonly user_id: number;
-            is_melody: boolean;
+            is_published: boolean;
         };
         User: {
             readonly id: number;
@@ -1411,7 +1411,7 @@ export interface operations {
             };
         };
     };
-    record_record_projects_list: {
+    catalog_books_list: {
         parameters: {
             query?: {
                 /** @description Which field to use when ordering the results. */
@@ -1428,12 +1428,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordProject"][];
+                    "application/json": components["schemas"]["Book"][];
                 };
             };
         };
     };
-    record_record_projects_create: {
+    catalog_books_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -1442,9 +1442,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["RecordProject"];
-                "multipart/form-data": components["schemas"]["RecordProject"];
+                "application/json": components["schemas"]["Book"];
+                "application/x-www-form-urlencoded": components["schemas"]["Book"];
+                "multipart/form-data": components["schemas"]["Book"];
             };
         };
         responses: {
@@ -1453,12 +1453,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordProject"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
     };
-    record_record_projects_retrieve: {
+    catalog_books_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -1474,12 +1474,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordProject"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
     };
-    record_record_projects_update: {
+    catalog_books_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -1490,9 +1490,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["RecordProject"];
-                "multipart/form-data": components["schemas"]["RecordProject"];
+                "application/json": components["schemas"]["Book"];
+                "application/x-www-form-urlencoded": components["schemas"]["Book"];
+                "multipart/form-data": components["schemas"]["Book"];
             };
         };
         responses: {
@@ -1501,12 +1501,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordProject"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
     };
-    record_record_projects_destroy: {
+    catalog_books_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -1526,7 +1526,7 @@ export interface operations {
             };
         };
     };
-    record_record_projects_partial_update: {
+    catalog_books_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -1537,9 +1537,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedRecordProject"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedRecordProject"];
-                "multipart/form-data": components["schemas"]["PatchedRecordProject"];
+                "application/json": components["schemas"]["PatchedBook"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedBook"];
+                "multipart/form-data": components["schemas"]["PatchedBook"];
             };
         };
         responses: {
@@ -1548,17 +1548,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecordProject"];
+                    "application/json": components["schemas"]["Book"];
                 };
             };
         };
     };
-    record_tracks_list: {
+    catalog_chapters_list: {
         parameters: {
             query?: {
                 /** @description Which field to use when ordering the results. */
                 ordering?: string;
-                project?: number;
+                book?: number;
             };
             header?: never;
             path?: never;
@@ -1571,12 +1571,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Track"][];
+                    "application/json": components["schemas"]["Chapter"][];
                 };
             };
         };
     };
-    record_tracks_create: {
+    catalog_chapters_create: {
         parameters: {
             query?: never;
             header?: never;
@@ -1585,9 +1585,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Track"];
-                "application/x-www-form-urlencoded": components["schemas"]["Track"];
-                "multipart/form-data": components["schemas"]["Track"];
+                "application/json": components["schemas"]["Chapter"];
+                "application/x-www-form-urlencoded": components["schemas"]["Chapter"];
+                "multipart/form-data": components["schemas"]["Chapter"];
             };
         };
         responses: {
@@ -1596,12 +1596,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Track"];
+                    "application/json": components["schemas"]["Chapter"];
                 };
             };
         };
     };
-    record_tracks_retrieve: {
+    catalog_chapters_retrieve: {
         parameters: {
             query?: never;
             header?: never;
@@ -1617,12 +1617,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Track"];
+                    "application/json": components["schemas"]["Chapter"];
                 };
             };
         };
     };
-    record_tracks_update: {
+    catalog_chapters_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -1633,9 +1633,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["Track"];
-                "application/x-www-form-urlencoded": components["schemas"]["Track"];
-                "multipart/form-data": components["schemas"]["Track"];
+                "application/json": components["schemas"]["Chapter"];
+                "application/x-www-form-urlencoded": components["schemas"]["Chapter"];
+                "multipart/form-data": components["schemas"]["Chapter"];
             };
         };
         responses: {
@@ -1644,12 +1644,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Track"];
+                    "application/json": components["schemas"]["Chapter"];
                 };
             };
         };
     };
-    record_tracks_destroy: {
+    catalog_chapters_destroy: {
         parameters: {
             query?: never;
             header?: never;
@@ -1669,7 +1669,7 @@ export interface operations {
             };
         };
     };
-    record_tracks_partial_update: {
+    catalog_chapters_partial_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -1680,9 +1680,9 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["PatchedTrack"];
-                "application/x-www-form-urlencoded": components["schemas"]["PatchedTrack"];
-                "multipart/form-data": components["schemas"]["PatchedTrack"];
+                "application/json": components["schemas"]["PatchedChapter"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedChapter"];
+                "multipart/form-data": components["schemas"]["PatchedChapter"];
             };
         };
         responses: {
@@ -1691,12 +1691,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Track"];
+                    "application/json": components["schemas"]["Chapter"];
                 };
             };
         };
     };
-    record_tracks_file_retrieve: {
+    catalog_chapters_attachment_retrieve: {
         parameters: {
             query?: never;
             header?: never;

@@ -11,7 +11,7 @@ interface Captcha {
 /**
  * Loads a captcha through a detail POST request and builds its data-URL image.
  * The `capthcaImageSource` name is kept as-is for backwards compatibility
- * with the existing project consumers.
+ * with the existing consumer apps.
  */
 export function useCaptcha(parameters: { url: string }) {
   const {

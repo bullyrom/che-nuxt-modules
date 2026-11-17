@@ -1,9 +1,9 @@
 import {
+  BOOK_DOWNLOAD_HREF_PATTERN,
+  BOOKS_ENTITY,
+  CHAPTER_DETAIL_HREF_PATTERN,
+  CHAPTERS_ENTITY,
   FRONTEND_URL,
-  PROJECT_FILE_DOWNLOAD_HREF_PATTERN,
-  PROJECT_FILES_ENTITY,
-  TRACK_DETAIL_HREF_PATTERN,
-  TRACKS_ENTITY,
 } from "../constants"
 import { expect, test } from "../fixtures"
 import { TestAdminPage } from "../testing_areas/TestAdminPage"
@@ -14,15 +14,15 @@ test.describe("admin stores and embedding", () => {
   }) => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(TRACKS_ENTITY)
+    await admin.openList(CHAPTERS_ENTITY)
     const detailHref = await admin.firstViewHref()
-    expect(detailHref).toMatch(TRACK_DETAIL_HREF_PATTERN)
+    expect(detailHref).toMatch(CHAPTER_DETAIL_HREF_PATTERN)
 
     await admin.openFirstRecord()
-    await admin.expectDetail(TRACKS_ENTITY)
+    await admin.expectDetail(CHAPTERS_ENTITY)
 
     await admin.openPath(detailHref)
-    await admin.expectDetail(TRACKS_ENTITY)
+    await admin.expectDetail(CHAPTERS_ENTITY)
   })
 
   test("switching entities reuses the keyed list without stale records", async ({
@@ -30,15 +30,15 @@ test.describe("admin stores and embedding", () => {
   }) => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(TRACKS_ENTITY)
+    await admin.openList(CHAPTERS_ENTITY)
     await admin.expectListAudioCollapsed()
 
-    await admin.selectEntity(PROJECT_FILES_ENTITY)
-    await admin.expectListUrl(PROJECT_FILES_ENTITY)
-    await admin.expectListDownload(PROJECT_FILE_DOWNLOAD_HREF_PATTERN)
+    await admin.selectEntity(BOOKS_ENTITY)
+    await admin.expectListUrl(BOOKS_ENTITY)
+    await admin.expectListDownload(BOOK_DOWNLOAD_HREF_PATTERN)
 
-    await admin.selectEntity(TRACKS_ENTITY)
-    await admin.expectListUrl(TRACKS_ENTITY)
+    await admin.selectEntity(CHAPTERS_ENTITY)
+    await admin.expectListUrl(CHAPTERS_ENTITY)
     await admin.expectListAudioCollapsed()
   })
 })

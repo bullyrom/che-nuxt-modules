@@ -6,7 +6,7 @@ import FieldLabel from "./FieldLabel.vue"
 interface Properties {
   /** Optional field heading rendered above the player. */
   heading?: string
-  /** Visible track name; falls back to the file name from `src`. */
+  /** Visible audio name; falls back to the file name from `src`. */
   label?: string
   src?: string
 }
@@ -20,7 +20,7 @@ const URL_BASE = "http://localhost"
 const isPlayerVisible = ref(false)
 const audioElement = ref<HTMLAudioElement>()
 
-/** Uses the last URL segment as the track name when no label is supplied. */
+/** Uses the last URL segment as the audio name when no label is supplied. */
 function fileNameFromSource(source: string | undefined): string | undefined {
   if (source === undefined || source === "") return undefined
   try {
