@@ -127,6 +127,24 @@ function extractListQueryParameters(
 }
 
 /**
+ * Drops filter parameters listed in `hiddenFilters`. Sorting is not touched:
+ * hiding a field from the filter panel must not remove an explicit sort.
+ */
+function filterListQueryParameters(
+  parameters: ListQueryParameters,
+  hiddenFilters: readonly string[] | undefined,
+): ListQueryParameters {
+  if (hiddenFilters === undefined || hiddenFilters.length === 0) {
+    return parameters
+  }
+  const hidden = new Set(hiddenFilters)
+  return {
+    filters: parameters.filters.filter((field) => !hidden.has(field.key)),
+    sorts: parameters.sorts,
+  }
+}
+
+/**
  * Checks whether a query parameter (filter or sort) with the given name is
  * declared by the endpoint.
  */
@@ -167,6 +185,7 @@ export type { ListQueryParameters }
 export {
   buildQueryValues,
   extractListQueryParameters,
+  filterListQueryParameters,
   hasQueryParameter,
   SORT_PARAMETER_PATTERN,
 }

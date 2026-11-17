@@ -8,8 +8,11 @@ import { usePaginatedListApi } from "../../composables/api"
 import { createInstanceRegistry } from "../instanceRegistry"
 
 import { createAdminPanelEntityDeletion } from "./entityDeletion"
-import { resolveConfig, resolveEntity } from "./instance"
-import { extractListQueryParameters } from "./queryParameters"
+import { resolveConfig, resolveEntity, resolveEntityConfig } from "./instance"
+import {
+  extractListQueryParameters,
+  filterListQueryParameters,
+} from "./queryParameters"
 
 import { useAdminPanelStore } from "./index"
 
@@ -43,7 +46,16 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     const { schema } = adminPanelStore
     const entity = currentEntity()
     if (schema === undefined) return { filters: [], sorts: [] }
-    return extractListQueryParameters(entity?.listOperation, schema)
+    const config = currentConfig()
+    const entityConfig = resolveEntityConfig(config, entity)
+    const hiddenFilters = [
+      ...(config?.fields?.hiddenFilters ?? []),
+      ...(entityConfig?.hiddenFilters ?? []),
+    ]
+    return filterListQueryParameters(
+      extractListQueryParameters(entity?.listOperation, schema),
+      hiddenFilters,
+    )
   })
 
   const query = useListQueryParameters({ listQueryParameters })

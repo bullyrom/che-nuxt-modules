@@ -32,10 +32,15 @@ function listConfigToPanelConfig(
         : {
             [entityName]: {
               gridColumns: config.gridColumns,
+              hiddenFilters: config.hiddenFilters,
               listItemOverride: config.itemOverride,
             },
           },
-    fields: { defaultComponents: config.defaultComponents },
+    fields: {
+      defaultComponents: config.defaultComponents,
+      hiddenFilters:
+        entityName === undefined ? config.hiddenFilters : undefined,
+    },
     gridColumns: config.gridColumns,
     views: {
       list: config.list,

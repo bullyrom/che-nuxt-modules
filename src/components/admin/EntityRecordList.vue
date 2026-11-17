@@ -34,6 +34,7 @@ const emit = defineEmits<{
 const slots = defineSlots<AdminListSlots<Item>>()
 
 const {
+  adminTheme,
   canShowDetail,
   clearEntity,
   containerRef,
@@ -69,6 +70,7 @@ const {
   scrollToTop,
   searchQuery,
   showInternalMenu,
+  themeStyle,
   updateIsScrolledDown,
   usesSchemaSearch,
 } = useEntityRecordList<Base, Item, Overridden>(
@@ -86,7 +88,9 @@ const {
 
 <template>
   <div
-    class="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)]"
+    class="relative flex h-full flex-1 flex-col overflow-hidden rounded-2xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-bg)] shadow-sm"
+    :data-ch-admin-theme="adminTheme"
+    :style="themeStyle"
   >
     <component
       :is="customHeader"

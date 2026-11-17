@@ -51,7 +51,7 @@ function handleGroupChange(changed: Record<string, unknown>) {
 
 <template>
   <div
-    class="rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
+    class="rounded-2xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm transition-shadow hover:shadow-md"
   >
     <div class="mb-2 flex items-center justify-between">
       <span class="text-xs font-medium text-[var(--ch-admin-text-muted)]"

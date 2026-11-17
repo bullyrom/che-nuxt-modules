@@ -140,16 +140,16 @@ describe("getRecordId", () => {
 
 describe("resolveRealtimeEntityName", () => {
   const entity: ParsedEntity = {
-    basePath: "/record-projects/",
+    basePath: "/catalog-items/",
     details: [],
-    entityName: "record-projects",
-    fullBasePath: "/api/v1/record-projects/",
+    entityName: "catalog-items",
+    fullBasePath: "/api/v1/catalog-items/",
     methods: [],
     namespace: "record",
   }
 
   it("defaults to the URL-derived entity name", () => {
-    expect(resolveRealtimeEntityName(entity)).toBe("record-projects")
+    expect(resolveRealtimeEntityName(entity)).toBe("catalog-items")
   })
 
   it("uses the host resolver for the backend model label", () => {

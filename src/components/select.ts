@@ -14,7 +14,7 @@ const SELECT_PANEL_CLASS =
 
 /**
  * Maps raw API records to `{ label, value }` options using the given record
- * keys. Reused by the remote selects and by project-specific wrappers.
+ * keys. Reused by the remote selects and by app-specific wrappers.
  */
 function toSelectOptions<RecordType extends Record<string, unknown>>(
   records: RecordType[] | undefined,

@@ -9,54 +9,18 @@ import { useAdminPanelListStore } from "../../stores/adminPanel/list"
 import { isAdminInternalMenuEnabled, listConfigToPanelConfig } from "./config"
 import { getAdminListFieldSlotKeys } from "./entityList"
 import { buildListGridClass } from "./grid"
+import { useAdminTheme } from "./theme"
 
-import type { AdminListCompatibleItems } from "./entityList"
+import type {
+  AdminRecordListActions,
+  AdminRecordListProperties,
+} from "./entityRecordListTypes"
 import type {
   AdminHeaderComponentProperties,
   AdminListComponentProperties,
-  AdminListConfig,
-  AdminPanelConfig,
 } from "./fields/types"
-import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 const LIST_FETCH_VISIBLE_ITEM_NUMBER = 4
-
-interface AdminRecordListProperties<
-  Base extends Record<string, unknown>,
-  Item extends Record<string, unknown>,
-  Overridden extends string,
-> {
-  baseUrl?: string
-  config?: AdminPanelConfig
-  /** Detail URL builder; when set the View action becomes a link. */
-  detailHref?: (record: Item) => string | undefined
-  entity?: ParsedEntity
-  /** Finds the entity in the shared schema by admin entity name. */
-  entityName?: string
-  instanceKey?: string
-  isMobile?: boolean
-  /**
-   * A host-provided records array rendered instead of the fetched list. The
-   * item type is checked against the base entity type; fields rendered by their
-   * own slots are excluded from the check via `Overridden`.
-   */
-  items?: AdminListCompatibleItems<Base, Item, Overridden>
-  /** Embedded-list config fragment (used when `config` is not passed). */
-  listConfig?: AdminListConfig
-  /** Narrows the entity lookup when a name exists in several namespaces. */
-  namespace?: string
-  /** Show an in-place detail action even without a URL builder. */
-  showDetail?: boolean
-}
-
-/** Host callbacks the list forwards to its parent component. */
-interface AdminRecordListActions<Item> {
-  onCreate: () => void
-  onDelete: (record: Item) => void
-  onEdit: (record: Item) => void
-  onFetchNextPage: () => void
-  onView: (record: Item) => void
-}
 
 /**
  * State and actions for the generic admin list. Keeps the component itself
@@ -142,6 +106,9 @@ function useEntityRecordList<
   )
   const entityConfig = computed(() =>
     resolveEntityConfig(instanceConfig.value, currentEntity.value),
+  )
+  const { theme: adminTheme, themeStyle } = useAdminTheme(
+    () => instanceConfig.value?.theme,
   )
 
   const detailHref = computed<
@@ -255,6 +222,7 @@ function useEntityRecordList<
   }
 
   return {
+    adminTheme,
     canShowDetail,
     clearEntity: () => adminPanelStore.clearEntity(),
     containerRef,
@@ -291,10 +259,14 @@ function useEntityRecordList<
     scrollToTop,
     searchQuery,
     showInternalMenu,
+    themeStyle,
     updateIsScrolledDown,
     usesSchemaSearch,
   }
 }
 
 export { LIST_FETCH_VISIBLE_ITEM_NUMBER, useEntityRecordList }
-export type { AdminRecordListActions, AdminRecordListProperties }
+export type {
+  AdminRecordListActions,
+  AdminRecordListProperties,
+} from "./entityRecordListTypes"

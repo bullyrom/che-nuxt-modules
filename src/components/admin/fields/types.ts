@@ -172,6 +172,8 @@ interface AdminListConfig<
   /** Builds a detail URL per record; absent hides the detail action. */
   detailHref?: (record: Record<string, unknown>) => string | undefined
   gridColumns?: number
+  /** Filter parameter keys hidden from the list filter panel. */
+  hiddenFilters?: string[]
   itemOverride?: FieldGroupOverride<ObjectType>
   list?: Component<AdminListComponentProperties>
   listFooter?: Component<AdminListComponentProperties>
@@ -279,6 +281,8 @@ interface AdminPanelEntityConfig<
   formOverride?: FieldGroupOverride<ObjectType>
   /** Objects per row for this entity; overrides the global value. */
   gridColumns?: number
+  /** Filter parameter keys hidden from this entity's list filters. */
+  hiddenFilters?: string[]
   /** Whole-object override for each rendered list item. */
   listItemOverride?: FieldGroupOverride<ObjectType>
 }
@@ -291,6 +295,8 @@ interface AdminPanelFieldConfig {
    * `defaultComponents` (kind).
    */
   formats?: Partial<Record<string, FieldComponent>>
+  /** Filter parameter keys hidden from every entity list. */
+  hiddenFilters?: string[]
   overrides?: Record<string, Record<string, FieldOverrideNode>>
 }
 
@@ -331,10 +337,10 @@ interface AdminPanelConfig<
    */
   realtime?: AdminRealtimeClient
   /**
-   * Resolves the realtime room identifier for an entity. The backend emits the
-   * Django model label (`model._meta.label_lower`, e.g. `record.recordproject`)
-   * while the admin derives names from the URL (`record-projects`), so the host
-   * maps one to the other here. Defaults to `entity.entityName`.
+   * Resolves the realtime room identifier for an entity. A backend may emit a
+   * different room name (for example a Django model label) than the admin derives
+   * from the URL, so the host maps one to the other here. Defaults to
+   * `entity.entityName`.
    */
   realtimeEntityName?: AdminRealtimeEntityName
   /**

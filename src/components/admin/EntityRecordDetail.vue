@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
-import { computed, onMounted } from "vue"
+import { computed, onMounted, toRefs } from "vue"
 
 import { useAdminPanelDetailStore } from "../../stores/adminPanel/detail"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
@@ -14,6 +13,7 @@ import { isRecordValue } from "./rawValue"
 import RawValue from "./RawValue.vue"
 import RecordEntry from "./RecordEntry.vue"
 import { getRecordId } from "./recordId"
+import { useAdminTheme } from "./theme"
 
 import type { AdminDetailConfig, AdminPanelConfig } from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
@@ -41,7 +41,7 @@ const store = useAdminPanelDetailStore({
 })
 
 const { detailRecord, detailStatus, hasDetailEndpoint, viewingRecord } =
-  storeToRefs(store)
+  toRefs(store)
 const { closeView, loadRecordDetail, patchRecord, startView } = store
 
 const currentEntity = computed(
@@ -60,6 +60,9 @@ const instanceConfig = computed(
 )
 const entityConfig = computed(() =>
   resolveEntityConfig(instanceConfig.value, currentEntity.value),
+)
+const { theme: adminTheme, themeStyle } = useAdminTheme(
+  () => instanceConfig.value?.theme,
 )
 const detailOverride = computed(() => entityConfig.value?.detailOverride)
 const customDetail = computed(() => instanceConfig.value?.views?.detail)
@@ -108,75 +111,77 @@ onMounted(() => {
 </script>
 
 <template>
-  <component
-    :is="customDetail"
-    v-if="customDetail"
-    :close="handleClose"
-    :has-detail-endpoint="hasDetailEndpoint"
-    :record="displayRecord"
-    :reload="loadRecordDetail"
-    :status="detailStatus"
-  />
+  <div class="w-full" :data-ch-admin-theme="adminTheme" :style="themeStyle">
+    <component
+      :is="customDetail"
+      v-if="customDetail"
+      :close="handleClose"
+      :has-detail-endpoint="hasDetailEndpoint"
+      :record="displayRecord"
+      :reload="loadRecordDetail"
+      :status="detailStatus"
+    />
 
-  <div v-else class="w-full space-y-4">
-    <div :class="ADMIN_AREA_HEADER_CLASSES">
-      <button :class="ADMIN_BACK_BUTTON_CLASSES" @click="handleClose">
-        &larr; Back to list
-      </button>
-      <div class="text-right">
-        <h2 class="text-sm font-semibold text-[var(--ch-admin-text)]">
-          {{ currentEntity?.entityName ?? "record" }}
-          <span v-if="recordId !== undefined">#{{ recordId }}</span>
-        </h2>
-        <p class="text-xs text-[var(--ch-admin-text-muted)]">
-          {{ currentEntity?.fullBasePath }}
-        </p>
+    <div v-else class="w-full space-y-4">
+      <div :class="ADMIN_AREA_HEADER_CLASSES">
+        <button :class="ADMIN_BACK_BUTTON_CLASSES" @click="handleClose">
+          &larr; Back to list
+        </button>
+        <div class="text-right">
+          <h2 class="text-sm font-semibold text-[var(--ch-admin-text)]">
+            {{ currentEntity?.entityName ?? "record" }}
+            <span v-if="recordId !== undefined">#{{ recordId }}</span>
+          </h2>
+          <p class="text-xs text-[var(--ch-admin-text-muted)]">
+            {{ currentEntity?.fullBasePath }}
+          </p>
+        </div>
       </div>
-    </div>
 
-    <div
-      v-if="
-        detailStatus === 'pending' ||
-        (hasDetailEndpoint && detailStatus === 'idle')
-      "
-      class="flex h-64 items-center justify-center"
-    >
-      <MainLoader :wh="40" />
-    </div>
+      <div
+        v-if="
+          detailStatus === 'pending' ||
+          (hasDetailEndpoint && detailStatus === 'idle')
+        "
+        class="flex h-64 items-center justify-center"
+      >
+        <MainLoader :wh="40" />
+      </div>
 
-    <div
-      v-else-if="detailStatus === 'error'"
-      class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-danger-text)]"
-    >
-      Failed to load record
-    </div>
+      <div
+        v-else-if="detailStatus === 'error'"
+        class="flex h-64 items-center justify-center text-sm text-[var(--ch-admin-danger-text)]"
+      >
+        Failed to load record
+      </div>
 
-    <div
-      v-else
-      class="space-y-2 rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4"
-    >
-      <template v-if="isRecordValue(displayRecord)">
-        <RecordEntry
-          v-for="[key, value] in entries"
-          :key="key"
-          :field-key="key"
-          :value="value"
-        />
+      <div
+        v-else
+        class="space-y-2 rounded-2xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] p-4 shadow-sm"
+      >
+        <template v-if="isRecordValue(displayRecord)">
+          <RecordEntry
+            v-for="[key, value] in entries"
+            :key="key"
+            :field-key="key"
+            :value="value"
+          />
 
-        <FieldGroupRenderer
-          v-if="detailOverride"
-          :override="detailOverride"
-          :value="groupValue"
-          :on-change="handleGroupChange"
-        />
+          <FieldGroupRenderer
+            v-if="detailOverride"
+            :override="detailOverride"
+            :value="groupValue"
+            :on-change="handleGroupChange"
+          />
 
-        <RawValue
-          v-if="entries.length === 0 && !detailOverride"
-          :value="displayRecord"
-        />
-      </template>
+          <RawValue
+            v-if="entries.length === 0 && !detailOverride"
+            :value="displayRecord"
+          />
+        </template>
 
-      <RawValue v-else :value="displayRecord" />
+        <RawValue v-else :value="displayRecord" />
+      </div>
     </div>
   </div>
 </template>

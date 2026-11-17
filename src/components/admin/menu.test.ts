@@ -19,8 +19,8 @@ function makeEntity(entityName: string): ParsedEntity {
   }
 }
 
-const projects = makeEntity("projects")
-const tasks = makeEntity("tasks")
+const books = makeEntity("books")
+const chapters = makeEntity("chapters")
 const logs = makeEntity("logs")
 
 describe("hidden entity pages", () => {
@@ -28,30 +28,30 @@ describe("hidden entity pages", () => {
     expect(
       resolveHiddenEntityKeys({
         hiddenEntities: ["logs"],
-        hiddenPages: ["tasks", "/api/v1/record/logs/"],
+        hiddenPages: ["chapters", "/api/v1/record/logs/"],
       }),
-    ).toEqual(["logs", "tasks", "/api/v1/record/logs/"])
+    ).toEqual(["logs", "chapters", "/api/v1/record/logs/"])
   })
 
   it("hides a page-only entity from the menu as well", () => {
     const groups = visibleMenuGroups(
-      [{ entities: [projects, tasks], namespace: "record" }],
-      resolveHiddenEntityKeys({ hiddenPages: ["tasks"] }),
+      [{ entities: [books, chapters], namespace: "record" }],
+      resolveHiddenEntityKeys({ hiddenPages: ["chapters"] }),
     )
 
-    expect(groups.flatMap((group) => group.entities)).toEqual([projects])
+    expect(groups.flatMap((group) => group.entities)).toEqual([books])
   })
 
   it("detects hidden pages by name or full path", () => {
-    expect(isAdminEntityPageHidden(tasks, { hiddenPages: ["tasks"] })).toBe(
-      true,
-    )
     expect(
-      isAdminEntityPageHidden(tasks, {
-        hiddenPages: ["/api/v1/record/tasks/"],
+      isAdminEntityPageHidden(chapters, { hiddenPages: ["chapters"] }),
+    ).toBe(true)
+    expect(
+      isAdminEntityPageHidden(chapters, {
+        hiddenPages: ["/api/v1/record/chapters/"],
       }),
     ).toBe(true)
-    expect(isAdminEntityPageHidden(projects, { hiddenPages: ["tasks"] })).toBe(
+    expect(isAdminEntityPageHidden(books, { hiddenPages: ["chapters"] })).toBe(
       false,
     )
     expect(isAdminEntityPageHidden(logs, { hiddenEntities: ["logs"] })).toBe(

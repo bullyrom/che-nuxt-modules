@@ -1,5 +1,11 @@
 # Release notes
 
+- feat(admin): list grid defaults to 3 objects per row on desktop and 1 on phone; `gridColumns` controls the desktop count and `1` keeps a single column on every screen
+- feat(admin): standardized `hiddenFilters` config (global `fields.hiddenFilters`, per-entity `entities.<name>.hiddenFilters` and embedded `AdminListConfig.hiddenFilters`) hides filter parameters without touching sorts
+- fix(admin): embedded list/detail/create roots set the theme variables themselves, so borders and surfaces are no longer black/undefined outside `Crud`
+- fix(admin): the create modal always renders a themed opaque overlay (with fallback), never a transparent dialog
+- style(admin): softer rounded cards/lists/modals, subtle borders and shadows for both light and dark themes
+- docs: documented the grid defaults, filter visibility and embedded theme support; replaced app-specific examples with generic entity examples
 - feat(admin): typed `useAdminEntity` facade over the keyed list/detail/form stores — pass an entity name + instance key and get typed records, pagination (`count`, `page`, next/previous URL, footer/next-page loader), detail, form, mutations and a merged loader; separate keys stay independent
 - feat(admin): `EntityRecordList` can fetch by `entityName` or take a custom `items` array; generic `Base`/`Item`/`Overridden` types validate the custom item against the base entity (missing/incompatible fields are compile errors) while per-field slots receive the typed custom item and exclude their fields from validation
 - feat(admin): export `AdminListCompatible`/`AdminListIncompatibleKeys` and `getAdminListFieldSlotKeys` for host-built lists
@@ -29,7 +35,7 @@
 - docs(components): list the package-root imports for every reusable override field (selects, media field/value, dates)
 - fix(admin): treat the server-idle list state as loading so SSR and hydration render the same loader (no hydration mismatch on the measurements page)
 - fix(admin): create forms for request schemas without writable fields render no fields (just the Create action) and POST an empty body instead of the raw-schema fallback
-- fix(components): audio values stay collapsed behind a play button with a track label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
+- fix(components): audio values stay collapsed behind a play button with a media label until clicked, so `<audio>` is not rendered for every record; `AudioField` passes its label to the current media
 - fix: admin list fetches its first page on mount again (the keyed-store refactor dropped the initial load, leaving the panel empty until a filter or reload)
 - fix: list realtime channel follows the entity switch even though the admin reuses one instance key
 - fix: remote selects use the unwrapped options store values and forward the search term, so options render and search requests carry `search`
@@ -43,7 +49,7 @@
 - feat: date field components `DateField`/`DateTimeField` (ISO strings, timezone-safe) with `DEFAULT_FORMAT_COMPONENTS` mapping `date`/`date-time` automatically
 - feat: format-based field dispatch — `AdminPanelFieldConfig.formats` (OpenAPI `format` -> component) is resolved before the kind `defaultComponents`, threaded through `FieldRenderer`/`QueryParametersMenu`/`EntityCreateForm` and the render context
 - refactor: moved `createInstanceRegistry` to `src/stores/instanceRegistry.ts` so it is shared by the admin instance stores and the new select options store
-- docs: added `docs/components.md` (selects, media/date field components, field-API wiring, project wrappers) and referenced it from the README; documented `fields.formats`
+- docs: added `docs/components.md` (selects, media/date field components, field-API wiring, app wrappers) and referenced it from the README; documented `fields.formats`
 - chore: added the "future admin package" architecture rule to `AGENTS.md`
 - test: unit tests for `toSelectOptions` and the date-input helpers
 
@@ -130,7 +136,7 @@
 - refactor: `useApiUpdate`/`useApiDelete` now share one keyed-mutation helper; both (and `useFormApi.sendForm`) accept a per-call `url`/`method` override
 - refactor: `DroppingBase` wraps `Dropdown`; `Tabs` uses the local `ContainerMarginRight` and VueUse breakpoints instead of the hidden `nuxt-viewport` dependency
 - refactor: admin panel reuses library pieces — `usePaginatedListApi` (list), `useApiDelete` (delete), `useFormApi` (create/edit form), `CheCheckbox` (boolean fields); remove dead `EntityOperationsList.vue` and `stores/adminPanel/pathHandlers.ts`
-- fix: `stores/pages.ts` no longer imports the project-only `@/types/base` / `ApiStaticPage` types
+- fix: `stores/pages.ts` no longer imports the app-only `@/types/base` / `ApiStaticPage` types
 - chore: drop the deprecated `hid` meta key in `useSeo`
 - feat: add the field components `InputWithUnits` (numeric input + unit suffix) and `PasswordInput` (labeled input with show/hide toggle)
 - feat: add the dependency-free `TypingIndicator` chat "typing…" component
@@ -149,7 +155,7 @@
 - fix: `divideNumber` no longer mangles already-formatted/exponential strings (regression) while keeping correct fraction handling
 - refactor: widen `useRender` render-callback type to `() => unknown` so any TSX return shape is accepted
 - feat: export the once submodule-only composables from the package root (`useSeo`, `useStaticPage`, `useCallBeforeLeaveFromPage(s)`)
-- feat: add shared `useShowLoader` and `useVoidAsyncData` composables (moved from the projects)
+- feat: add shared `useShowLoader` and `useVoidAsyncData` composables (moved from consumer apps)
 - feat: add `useCaptcha`, `useFirstUrlParameterOr404Error` and `useMenuStore` universal composables
 - feat: add `createDefault404Error`, `scrollToFirstElementWithClass`, `divideNumber` and `valideSlug` utils
 - feat: export the previously hidden UI components (`LazyLoadList`, `MainLoader`, `RollDown`, `Tabs`, `Tooltip`, `DroppingBase`, `DroppingBody`, `OverflowContainer`, `ContainerMarginRight`) and the `RequestStatus`/`Seo` types

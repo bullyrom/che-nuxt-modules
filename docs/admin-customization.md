@@ -43,11 +43,13 @@ Two ideas make the customization composable:
 4. [Level 1 — whole-object field group (form / list / detail)](#level-1--whole-object-field-group-form--list--detail)
 5. [Level 2 — whole list / detail override (+ before/after)](#level-2--whole-list--detail-override--beforeafter)
 6. [Level 3 — grid columns](#level-3--grid-columns)
-7. [Level 4 — header](#level-4--header)
-8. [Level 5 — sidebar](#level-5--sidebar)
-9. [Embedding pieces outside the admin](#embedding-pieces-outside-the-admin)
-10. [Building custom pages from the admin store](#building-custom-pages-from-the-admin-store)
-11. [Store structure](#store-structure)
+7. [Filter visibility](#filter-visibility)
+8. [Theme](#theme)
+9. [Level 4 — header](#level-4--header)
+10. [Level 5 — sidebar](#level-5--sidebar)
+11. [Embedding pieces outside the admin](#embedding-pieces-outside-the-admin)
+12. [Building custom pages from the admin store](#building-custom-pages-from-the-admin-store)
+13. [Store structure](#store-structure)
 
 ## Config overview
 
@@ -59,6 +61,8 @@ const config: AdminPanelConfig = {
   fields: {
     defaultComponents: {},
     formats: {},
+    // Filter parameter keys hidden from every entity list.
+    hiddenFilters: ["tenant"],
     overrides: {},
   },
   hooks: {
@@ -67,7 +71,7 @@ const config: AdminPanelConfig = {
   },
   menu: {
     hiddenEntities: ["internal-logs"],
-    hiddenPages: ["project-files"],
+    hiddenPages: ["chapters"],
     extraLinks: [
       { label: "Dashboard", href: "/admin" },
       { label: "Docs", href: "/admin/docs", parent: "Dashboard" },
@@ -88,6 +92,8 @@ const config: AdminPanelConfig = {
   entities: {
     records: {
       gridColumns: 2,
+      // Filter keys hidden for this entity only.
+      hiddenFilters: ["category", "owner"],
       formOverride: {
         component: RecordsFormGroup,
         hiddenFields: ["meta", "tags"],
@@ -252,7 +258,57 @@ const config = {
 }
 ```
 
-Supported values are `1..6`; unset keeps the default responsive layout.
+Supported values are `1..6`. Unset keeps the default: **3 objects per row
+on desktop and 1 on phone**. On phone the list is always one object per row;
+`gridColumns: 1` explicitly makes it one object per row on every screen.
+
+## Filter visibility
+
+Hide individual filter parameters without touching the schema or the field
+overrides. The parameter is standardized and merged from two levels:
+
+```ts
+const config = {
+  fields: {
+    // Applies to every entity.
+    hiddenFilters: ["tenant"],
+  },
+  entities: {
+    records: {
+      // Applies to this entity only.
+      hiddenFilters: ["category", "owner"],
+    },
+  },
+}
+
+// Embedded list fragment:
+const listConfig = { hiddenFilters: ["category"] }
+```
+
+Sorting parameters are not affected — hiding a field from the filter panel does
+not remove an explicit sort. The built-in list header is unchanged.
+
+## Theme
+
+Every admin root sets the theme CSS variables. `Crud` sets them on its own
+container; embedded pieces (`EntityRecordList`, `EntityRecordDetail`,
+`EntityCreateForm`) now set the same variables on their root too, so they keep
+their borders, surfaces and modals visible **outside** the admin and support
+both themes:
+
+```ts
+const config = {
+  // "dark" (default) | "light" or a ref/getter supplied by the host.
+  theme: "light",
+}
+```
+
+The host still owns the surrounding page: pass its color mode through
+`config.theme` (or `theme` on `Crud`). The library does not depend on a color-mode
+package.
+
+The create modal uses the themed overlay with an opaque fallback, so it is never
+transparent even when the host does not define the admin variables itself.
 
 ## Level 4 — header
 
@@ -557,8 +613,8 @@ useRender(() => <SiteNavigation />)
 
 Embedded pieces accept only the fragment they need instead of the whole config:
 
-- `AdminListConfig` — `gridColumns`, `detailHref`, `itemOverride`,
-  `list`/`listHeader`/`listFooter`, `defaultComponents`.
+- `AdminListConfig` — `gridColumns`, `hiddenFilters`, `detailHref`,
+  `itemOverride`, `list`/`listHeader`/`listFooter`, `defaultComponents`.
 - `AdminDetailConfig` — `detail`, `override`.
 - `AdminFormConfig` — `overrides`, `defaultComponents`, `formats`, `override`.
 
@@ -600,28 +656,28 @@ name + an instance key:
 ```ts
 import { useAdminEntity } from "@bullyrom/che-nuxt-modules"
 
-type Project =
-  paths["/api/v1/record/projects/"]["get"]["responses"][200]["content"]["application/json"]["results"][number]
+type Book =
+  paths["/api/v1/catalog/books/"]["get"]["responses"][200]["content"]["application/json"]["results"][number]
 
 interface Entities {
-  projects: Project
-  "project-files": ProjectFile
+  books: Book
+  chapters: Chapter
 }
 
-const projects = useAdminEntity<Entities, "projects">({
-  entityName: "projects",
-  instanceKey: "custom-projects",
+const books = useAdminEntity<Entities, "books">({
+  entityName: "books",
+  instanceKey: "custom-books",
 })
 
 // Different key -> an independent copy of the same entity.
-const projectsSidebar = useAdminEntity<Entities, "projects">({
-  entityName: "projects",
-  instanceKey: "custom-projects-sidebar",
+const booksSidebar = useAdminEntity<Entities, "books">({
+  entityName: "books",
+  instanceKey: "custom-books-sidebar",
 })
 
-const { list, detail, form, mutations, showLoader } = projects
+const { list, detail, form, mutations, showLoader } = books
 
-list.records // Ref<Project[] | undefined>
+list.records // Ref<Book[] | undefined>
 list.count // Ref<number | undefined>
 list.page // Ref<number | undefined>
 list.nextPageUrl // Ref<null | string | undefined>
@@ -632,17 +688,17 @@ list.isPaginated // ComputedRef<boolean>
 list.fetchNextPage() // appends the next Django page
 list.reload()
 
-detail.record // ComputedRef<Project | undefined>
-detail.startView(project) // typed record
+detail.record // ComputedRef<Book | undefined>
+detail.startView(book) // typed record
 detail.closeView()
 
-form.form // Ref<Partial<Project>>
+form.form // Ref<Partial<Book>>
 form.startCreate()
-form.startEdit(project)
+form.startEdit(book)
 form.submitForm()
 
-mutations.startDelete(project)
-mutations.update({ id: String(project.id), data: { name: "New" } })
+mutations.startDelete(book)
+mutations.update({ id: String(book.id), data: { name: "New" } })
 ```
 
 - `showLoader` merges the list, detail and form statuses (ignoring `idle`), so
@@ -659,25 +715,25 @@ your own records array. The item type is checked against the base entity type;
 extra custom fields are allowed and fully typed inside slots.
 
 ```tsx
-import type { ProjectCard } from "~/types/projectCard"
+import type { BookCard } from "~/types/bookCard"
 
-interface Project {
+interface Book {
   id: number
   name: string
   status: string
 }
 
-// ProjectCard = Project & { meta: { tags: string[] } }
-const cards: ProjectCard[] = await loadCards()
+// BookCard = Book & { meta: { tags: string[] } }
+const cards: BookCard[] = await loadCards()
 
-// Base = Project, Item = ProjectCard; "meta" is rendered by its own slot.
-<EntityRecordList<Project, ProjectCard, "meta">
+// Base = Book, Item = BookCard; "meta" is rendered by its own slot.
+<EntityRecordList<Book, BookCard, "meta">
   items={cards}
-  instanceKey="project-cards"
-  detailHref={(card) => `/projects/${card.id}`}
+  instanceKey="book-cards"
+  detailHref={(card) => `/books/${card.id}`}
   v-slots={{
     meta: ({ item }) => <TagList tags={item.meta.tags} />,
-    default: ({ item }) => <ProjectCardView project={item} />,
+    default: ({ item }) => <BookCardView book={item} />,
   }}
 />
 ```
@@ -695,19 +751,19 @@ const cards: ProjectCard[] = await loadCards()
 
 ```tsx
 // Error: name is number in the item but string in the base entity
-<EntityRecordList<Project, { id: number; name: number; status: string }>
+<EntityRecordList<Book, { id: number; name: number; status: string }>
   items={cards}
-  instanceKey="project-cards"
+  instanceKey="book-cards"
 />
 
 // OK: name is rendered by its slot, so it is excluded from the check
 <EntityRecordList<
-  Project,
+  Book,
   { id: number; name: number; status: string },
   "name"
 >
   items={cards}
-  instanceKey="project-cards"
+  instanceKey="book-cards"
   v-slots={{ name: ({ item }) => <NameInput value={item.name} /> }}
 />
 ```
@@ -731,18 +787,18 @@ const config = {
   menu: {
     // Existing option: hide from the menu only.
     hiddenEntities: ["internal-logs"],
-    // Used only inside the projects page -> no standalone page and no menu row.
-    hiddenPages: ["project-files"],
+    // Used only inside the books page -> no standalone page and no menu row.
+    hiddenPages: ["chapters"],
   },
 }
 ```
 
 ```tsx
-// Parent project page: reuse the child list with its own instance key.
+// Parent book page: reuse the child list with its own instance key.
 <EntityRecordList
-  entityName="project-files"
-  instanceKey="project-files"
-  detailHref={(file) => `/files/${file.id}`}
+  entityName="chapters"
+  instanceKey="book-chapters"
+  detailHref={(chapter) => `/chapters/${chapter.id}`}
 />
 ```
 
