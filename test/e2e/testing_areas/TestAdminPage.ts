@@ -291,8 +291,7 @@ class TestAdminPage {
         .click()
     }
     await expect(button).toBeVisible()
-    await button.scrollIntoViewIfNeeded()
-    await button.click({ force: true })
+    await button.dispatchEvent("click")
     await this.expectListUrl(entityName)
     if (options.customHeader !== true) await this.expectListReady(entityName)
   }
