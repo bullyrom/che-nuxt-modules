@@ -1,9 +1,13 @@
 import { computed, toRefs } from "vue"
 
 import { useScrollToTop } from "../../composables/useScrollToTop"
+import { resolveAdminEntity } from "../../stores/adminPanel/entityKey"
 import { findAdminEntity } from "../../stores/adminPanel/findEntity"
 import { useAdminPanelStore } from "../../stores/adminPanel/index"
-import { resolveEntityConfig } from "../../stores/adminPanel/instance"
+import {
+  resolveEntityBaseUrl,
+  resolveEntityConfig,
+} from "../../stores/adminPanel/instance"
 import { useAdminPanelListStore } from "../../stores/adminPanel/list"
 
 import { isAdminInternalMenuEnabled, listConfigToPanelConfig } from "./config"
@@ -44,17 +48,26 @@ function useEntityRecordList<
   const currentEntity = computed(() => {
     if (properties.entity !== undefined) return properties.entity
     if (properties.entityName !== undefined) {
-      return findAdminEntity(
+      if (properties.namespace !== undefined) {
+        return findAdminEntity(
+          adminPanelStore.parsedEntities,
+          properties.entityName,
+          properties.namespace,
+        )
+      }
+      return resolveAdminEntity(
         adminPanelStore.parsedEntities,
         properties.entityName,
-        properties.namespace,
       )
     }
     return adminPanelStore.activeEntity
   })
 
-  const resolvedBaseUrl = computed(
-    () => properties.baseUrl ?? adminPanelStore.baseUrl ?? "",
+  const resolvedBaseUrl = computed(() =>
+    resolveEntityBaseUrl(
+      currentEntity.value,
+      properties.baseUrl ?? adminPanelStore.baseUrl ?? "",
+    ),
   )
 
   const store = useAdminPanelListStore({
@@ -62,6 +75,7 @@ function useEntityRecordList<
     config: properties.config,
     entity: () => currentEntity.value,
     instanceKey: properties.instanceKey ?? "admin-1",
+    scope: currentEntity.value?.service,
   })
 
   const {

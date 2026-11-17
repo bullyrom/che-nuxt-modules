@@ -1,3 +1,8 @@
+import {
+  entityDisplayLabel,
+  entityReference,
+} from "../../stores/adminPanel/entityKey"
+
 import { buildMenuTree } from "./menu"
 
 import type {
@@ -6,6 +11,7 @@ import type {
   AdminSidebarMenuItem,
 } from "./fields/types"
 import type { AdminMenuSourceItem } from "./menu"
+import type { AdminEntityLabelMode } from "../../stores/adminPanel/entityKey"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 interface MenuSection {
@@ -15,21 +21,31 @@ interface MenuSection {
 }
 
 interface BuildMenuSectionsParameters {
+  /** Every connected entity, including hidden ones, for label conflicts. */
+  allEntities?: readonly ParsedEntity[]
+  /** Entity label mode; `auto` prefixes only conflicting short names. */
+  entityLabel?: AdminEntityLabelMode
   groups: AdminSidebarGroup[]
   isActive: (entity: ParsedEntity) => boolean
   links: AdminPanelMenuLink[]
   showGroups: boolean
 }
 
+/** Builds one menu row; ids use the service key so specs cannot collide. */
 function entityItem(
   entity: ParsedEntity,
+  entities: readonly ParsedEntity[],
   isActive: (entity: ParsedEntity) => boolean,
+  labelMode: AdminEntityLabelMode,
+  useServiceKeys: boolean,
 ): AdminMenuSourceItem {
+  const serviceKey =
+    entityReference(entity) || entity.fullBasePath || entity.entityName
   return {
     entity,
-    id: entity.fullBasePath || entity.entityName,
+    id: useServiceKeys ? serviceKey : entity.fullBasePath || serviceKey,
     isActive: isActive(entity),
-    label: entity.entityName,
+    label: entityDisplayLabel(entity, entities, labelMode),
   }
 }
 
@@ -50,15 +66,26 @@ function buildMenuSections(
   parameters: BuildMenuSectionsParameters,
 ): MenuSection[] {
   const linkItems = parameters.links.map((link) => linkItem(link))
+  const entities =
+    parameters.allEntities ??
+    parameters.groups.flatMap((group) => group.entities)
+  const labelMode = parameters.entityLabel ?? "auto"
+  const useServiceKeys = parameters.groups.some(
+    (group) => group.service !== undefined,
+  )
 
   if (!parameters.showGroups) {
     return [
       {
         id: "all",
         items: buildMenuTree([
-          ...parameters.groups.flatMap((group) =>
-            group.entities.map((entity) =>
-              entityItem(entity, parameters.isActive),
+          ...entities.map((entity) =>
+            entityItem(
+              entity,
+              entities,
+              parameters.isActive,
+              labelMode,
+              useServiceKeys,
             ),
           ),
           ...linkItems,
@@ -69,13 +96,19 @@ function buildMenuSections(
 
   const groupSections = parameters.groups
     .map((group) => ({
-      id: group.namespace || "no-namespace",
+      id: group.service ?? (group.namespace || "no-namespace"),
       items: buildMenuTree(
         group.entities.map((entity) =>
-          entityItem(entity, parameters.isActive),
+          entityItem(
+            entity,
+            entities,
+            parameters.isActive,
+            labelMode,
+            useServiceKeys,
+          ),
         ),
       ),
-      title: group.namespace || "No namespace",
+      title: group.title ?? (group.namespace || "No namespace"),
     }))
     .filter((section) => section.items.length > 0)
 

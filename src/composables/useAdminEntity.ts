@@ -3,7 +3,10 @@ import { computed, toRefs } from "vue"
 
 import { getEntityOperationTypes } from "../stores/adminPanel/apiTypes"
 import { useAdminPanelDetailStore } from "../stores/adminPanel/detail"
-import { findAdminEntity } from "../stores/adminPanel/findEntity"
+import {
+  AdminEntityResolutionError,
+  resolveAdminEntity,
+} from "../stores/adminPanel/entityKey"
 import { useAdminPanelFormStore } from "../stores/adminPanel/form"
 import { useAdminPanelStore } from "../stores/adminPanel/index"
 import { useAdminPanelListStore } from "../stores/adminPanel/list"
@@ -11,95 +14,16 @@ import { isPaginatedListSchema } from "../stores/adminPanel/pagination"
 
 import { useShowLoader } from "./useShowLoader"
 
+import type {
+  AdminEntityAccess,
+  AdminEntityRecord,
+  AdminEntityResolvedKey,
+  AdminEntityShortName,
+  UseAdminEntityByKeyParameters,
+  UseAdminEntityByNameParameters,
+  UseAdminEntityParameters,
+} from "./useAdminEntityTypes"
 import type { AdminPanelConfig } from "../components/admin/fields/types"
-import type { AdminInstanceParameters } from "../stores/adminPanel/instance"
-import type { ListQueryParameters } from "../stores/adminPanel/queryParameters"
-import type { ParsedEntity } from "../stores/adminPanel/types"
-import type { FormErrors, RequestStatus } from "../types"
-import type { ComputedRef, Ref } from "vue"
-
-type AdminEntityRecord = Record<string, unknown>
-
-interface UseAdminEntityParameters<
-  EntityTypes extends Record<string, AdminEntityRecord>,
-  Name extends keyof EntityTypes & string,
-> {
-  /** Base API origin used by every request of this instance. */
-  baseUrl?: string
-  /** Optional per-instance config; falls back to the shared admin config. */
-  config?: AdminPanelConfig<EntityTypes>
-  /** Admin (parsed OpenAPI) entity name. */
-  entityName: Name
-  /** Instance dictionary key; separate keys give independent stores. */
-  instanceKey: string
-  /** Narrow the entity lookup when the name exists in several namespaces. */
-  namespace?: string
-}
-
-interface AdminEntityListAccess<Entity extends AdminEntityRecord> {
-  count: Ref<number | undefined>
-  fetchNextPage: () => Promise<void>
-  isPaginated: ComputedRef<boolean>
-  listQueryParameters: ComputedRef<ListQueryParameters>
-  nextPageUrl: Ref<null | string | undefined>
-  page: Ref<number | undefined>
-  previousPageUrl: Ref<null | string | undefined>
-  queryValues: Ref<Record<string, unknown>>
-  records: Ref<Entity[] | undefined>
-  reload: () => Promise<void>
-  searchQuery: Ref<string>
-  showFooter: ComputedRef<boolean>
-  showNextPageLoader: ComputedRef<boolean>
-  status: Ref<RequestStatus>
-}
-
-interface AdminEntityDetailAccess<Entity extends AdminEntityRecord> {
-  closeView: () => void
-  hasDetailEndpoint: ComputedRef<boolean>
-  loadRecordDetail: () => Promise<void>
-  patchRecord: (changed: Partial<Entity>) => void
-  record: ComputedRef<Entity | undefined>
-  startView: (record: Entity) => void
-  status: Ref<RequestStatus>
-  viewingRecord: Ref<Entity | undefined>
-}
-
-interface AdminEntityFormAccess<Entity extends AdminEntityRecord> {
-  closeForm: () => void
-  editingRecord: Ref<Entity | undefined>
-  form: Ref<Partial<Entity>>
-  formErrors: Ref<FormErrors | undefined>
-  formIsOpen: Ref<boolean>
-  isEditMode: ComputedRef<boolean>
-  sendFormRequestErrors: Ref<string | undefined>
-  startCreate: () => void
-  startEdit: (record: Entity) => void
-  status: Ref<RequestStatus>
-  submitForm: () => Promise<boolean>
-}
-
-interface AdminEntityMutationAccess<Entity extends AdminEntityRecord> {
-  deletingRecord: Ref<Entity | undefined>
-  doDelete: () => Promise<void>
-  resetUpdate: (id: string) => void
-  startDelete: (record: Entity) => void
-  update: (parameters: {
-    data: Partial<Entity>
-    id: string
-  }) => Promise<Entity | undefined>
-  updateErrors: (id: string) => FormErrors | undefined
-  updateRequestErrors: (id: string) => string | undefined
-  updateStatus: (id: string) => RequestStatus
-}
-
-interface AdminEntityAccess<Entity extends AdminEntityRecord> {
-  detail: AdminEntityDetailAccess<Entity>
-  entity: ComputedRef<ParsedEntity | undefined>
-  form: AdminEntityFormAccess<Entity>
-  list: AdminEntityListAccess<Entity>
-  mutations: AdminEntityMutationAccess<Entity>
-  showLoader: ComputedRef<boolean>
-}
 
 /**
  * Typed facade over the keyed admin instance stores. Pass the parsed entity
@@ -114,23 +38,54 @@ interface AdminEntityAccess<Entity extends AdminEntityRecord> {
  */
 function useAdminEntity<
   EntityTypes extends Record<string, AdminEntityRecord>,
-  Name extends keyof EntityTypes & string,
+  Key extends keyof EntityTypes & string,
 >(
-  parameters: UseAdminEntityParameters<EntityTypes, Name>,
-): AdminEntityAccess<EntityTypes[Name]> {
-  type Entity = EntityTypes[Name]
+  parameters: UseAdminEntityByKeyParameters<EntityTypes, Key>,
+): AdminEntityAccess<EntityTypes[Key]>
+function useAdminEntity<
+  EntityTypes extends Record<string, AdminEntityRecord>,
+  Name extends
+    | AdminEntityShortName<EntityTypes>
+    | (keyof EntityTypes & string),
+>(
+  parameters: UseAdminEntityByNameParameters<EntityTypes, Name>,
+): AdminEntityAccess<EntityTypes[AdminEntityResolvedKey<EntityTypes, Name>]>
+function useAdminEntity<
+  EntityTypes extends Record<string, AdminEntityRecord>,
+  Key extends keyof EntityTypes & string = keyof EntityTypes & string,
+>(
+  parameters: UseAdminEntityParameters<EntityTypes>,
+): AdminEntityAccess<EntityTypes[Key]> {
+  type Entity = EntityTypes[Key]
 
   const adminPanelStore = useAdminPanelStore()
   const { baseUrl: sharedBaseUrl, parsedEntities } =
     storeToRefs(adminPanelStore)
 
-  const entity = computed(() =>
-    findAdminEntity(
-      parsedEntities.value,
-      parameters.entityName,
-      parameters.namespace,
-    ),
-  )
+  const reference = computed(() => {
+    if (parameters.entityKey !== undefined) return parameters.entityKey
+    const name = parameters.entityName
+    if (name === undefined) return undefined
+    return parameters.service === undefined
+      ? name
+      : `${parameters.service}:${name}`
+  })
+
+  const entity = computed(() => {
+    const { value } = reference
+    if (value === undefined) return undefined
+    try {
+      return resolveAdminEntity(parsedEntities.value, value)
+    } catch (error_) {
+      if (
+        error_ instanceof AdminEntityResolutionError &&
+        error_.code === "ambiguous"
+      ) {
+        throw error_
+      }
+      return undefined
+    }
+  })
 
   const baseUrl = computed(
     () => parameters.baseUrl ?? sharedBaseUrl.value ?? "",
@@ -141,6 +96,7 @@ function useAdminEntity<
     config: parameters.config as AdminPanelConfig | undefined,
     entity: () => entity.value,
     instanceKey: parameters.instanceKey,
+    scope: entity.value?.service ?? parameters.service,
   }
 
   const listStore = useAdminPanelListStore(instanceParameters)
@@ -155,7 +111,9 @@ function useAdminEntity<
     const entityValue = entity.value
     if (entityValue === undefined) return false
     const { listResponse } = getEntityOperationTypes(entityValue)
-    return isPaginatedListSchema(adminPanelStore.resolveSchema(listResponse))
+    return isPaginatedListSchema(
+      adminPanelStore.resolveSchema(listResponse, entityValue),
+    )
   })
 
   const showLoader = useShowLoader(
@@ -239,7 +197,14 @@ export type {
   AdminEntityAccess,
   AdminEntityDetailAccess,
   AdminEntityFormAccess,
+  AdminEntityKeyByName,
   AdminEntityListAccess,
   AdminEntityMutationAccess,
+  AdminEntityRecord,
+  AdminEntityResolvedKey,
+  AdminEntityShortName,
+  UseAdminEntityBaseParameters,
+  UseAdminEntityByKeyParameters,
+  UseAdminEntityByNameParameters,
   UseAdminEntityParameters,
-}
+} from "./useAdminEntityTypes"

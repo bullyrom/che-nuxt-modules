@@ -1,3 +1,5 @@
+import { getAdminEntityKey } from "./specs"
+
 import type { ParsedEntity } from "./types"
 import type { AdminPanelConfig } from "../../components/admin/fields/types"
 
@@ -17,6 +19,8 @@ interface AdminInstanceParameters {
   config?: AdminPanelConfig
   entity?: () => ParsedEntity | undefined
   instanceKey: string
+  /** Isolation scope for the spec (its service id). */
+  scope?: string
 }
 
 /** Resolves the instance entity, falling back to the admin's active entity. */
@@ -35,14 +39,31 @@ function resolveConfig(
   return parameters.config ?? globalConfig
 }
 
-/** Per-entity customization for the resolved entity, if any. */
+/**
+ * Per-entity customization for the resolved entity. The full `service:entity`
+ * key wins; the bare name remains supported for single-spec configurations.
+ */
 function resolveEntityConfig(
   config: AdminPanelConfig | undefined,
   entity: ParsedEntity | undefined,
 ) {
   if (config === undefined || entity === undefined) return undefined
-  return config.entities?.[entity.entityName]
+  const { entities } = config
+  return entities?.[getAdminEntityKey(entity)] ?? entities?.[entity.entityName]
 }
 
-export { resolveConfig, resolveEntity, resolveEntityConfig }
+/** Uses the entity's owning spec origin, falling back to the instance base. */
+function resolveEntityBaseUrl(
+  entity: ParsedEntity | undefined,
+  fallback: string,
+): string {
+  return entity?.baseUrl ?? fallback
+}
+
+export {
+  resolveConfig,
+  resolveEntity,
+  resolveEntityBaseUrl,
+  resolveEntityConfig,
+}
 export type { AdminInstanceParameters }

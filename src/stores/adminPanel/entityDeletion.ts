@@ -4,6 +4,8 @@ import { isRecordValue } from "../../components/admin/rawValue"
 import { getRecordId } from "../../components/admin/recordId"
 import { useApiDelete, useApiUpdate } from "../../composables/api"
 
+import { resolveEntityBaseUrl } from "./instance"
+
 import type { ParsedEntity } from "./types"
 import type { AdminPanelConfig } from "../../components/admin/fields/types"
 
@@ -51,7 +53,7 @@ function createAdminPanelEntityDeletion(
 
     const response = await destroy({
       id: String(recordId),
-      url: `${parameters.baseUrl}${entity.fullBasePath}`,
+      url: `${resolveEntityBaseUrl(entity, parameters.baseUrl)}${entity.fullBasePath}`,
     })
     if (response !== undefined) {
       await hooks?.afterDelete?.(record)

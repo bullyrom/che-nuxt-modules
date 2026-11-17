@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 export {
   detailConfigToPanelConfig,
   formConfigToPanelConfig,
@@ -201,11 +202,19 @@ export type {
   AdminEntityAccess,
   AdminEntityDetailAccess,
   AdminEntityFormAccess,
+  AdminEntityKeyByName,
   AdminEntityListAccess,
   AdminEntityMutationAccess,
+  AdminEntityRecord,
+  AdminEntityResolvedKey,
+  AdminEntityShortName,
+  UseAdminEntityBaseParameters,
+  UseAdminEntityByKeyParameters,
+  UseAdminEntityByNameParameters,
   UseAdminEntityParameters,
 } from "@/composables/useAdminEntity"
 export { useAdminPanel } from "@/composables/useAdminPanel"
+export { useAdminPanelSpecs } from "@/composables/useAdminPanelSpecs"
 export { useCalendar } from "@/composables/useCalendar"
 export { useCaptcha } from "@/composables/useCaptcha"
 export { useCurrentTimeZone } from "@/composables/useCurrentTimeZone"
@@ -223,6 +232,26 @@ export {
   useAdminPanelDetailStore,
 } from "@/stores/adminPanel/detail"
 export type { AdminPanelDetailStore } from "@/stores/adminPanel/detail"
+export {
+  adminEntityLabel,
+  AdminEntityResolutionError,
+  buildEntityKey,
+  createEntityKey,
+  entityDisplayLabel,
+  entityKey,
+  entityMatchesReference,
+  entityReference,
+  getAdminEntityLabel,
+  hasEntityNameConflict,
+  resolveAdminEntity,
+  resolveAdminEntityReference,
+  resolveEntityReference,
+  tryResolveAdminEntity,
+} from "@/stores/adminPanel/entityKey"
+export type {
+  AdminEntityLabelMode,
+  AdminEntityResolutionCode,
+} from "@/stores/adminPanel/entityKey"
 export { findAdminEntity } from "@/stores/adminPanel/findEntity"
 export {
   getAdminPanelFormStore,
@@ -243,7 +272,19 @@ export {
   hasQueryParameter,
 } from "@/stores/adminPanel/queryParameters"
 export type { ListQueryParameters } from "@/stores/adminPanel/queryParameters"
+export {
+  adminEntityKey,
+  DEFAULT_ADMIN_SPEC_ID,
+  getAdminEntityKey,
+  isOpenApiDocument,
+  mergeAdminSpecs,
+  normalizeAdminSpecs,
+} from "@/stores/adminPanel/specs"
 export type {
+  AdminOpenApiSpec,
+  AdminRegisteredSpec,
+  AdminSpecGroup,
+  AdminSpecMergeResult,
   EntityDetail,
   EntityMapData,
   EntityMethod,

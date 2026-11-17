@@ -1,3 +1,5 @@
+import { entityMatchesReference } from "../../stores/adminPanel/entityKey"
+
 import type {
   AdminPanelMenuConfig,
   AdminSidebarGroup,
@@ -36,8 +38,9 @@ function isAdminEntityPageHidden(
   menu: AdminPanelMenuConfig | undefined,
 ): boolean {
   if (entity === undefined) return false
-  const hidden = new Set(resolveHiddenEntityKeys(menu))
-  return hidden.has(entity.entityName) || hidden.has(entity.fullBasePath)
+  return resolveHiddenEntityKeys(menu).some((reference) =>
+    entityMatchesReference(entity, reference),
+  )
 }
 
 /** Drops hidden entities (by name or full path) from the endpoint menu groups. */
@@ -45,14 +48,18 @@ function visibleMenuGroups(
   groups: AdminSidebarGroup[],
   hiddenEntities: readonly string[] | undefined,
 ): AdminSidebarGroup[] {
-  const hidden = new Set(hiddenEntities)
+  const hidden = hiddenEntities ?? []
   return groups
     .map((group) => ({
       entities: group.entities.filter(
         (entity) =>
-          !hidden.has(entity.entityName) && !hidden.has(entity.fullBasePath),
+          !hidden.some((reference) =>
+            entityMatchesReference(entity, reference),
+          ),
       ),
       namespace: group.namespace,
+      service: group.service,
+      title: group.title,
     }))
     .filter((group) => group.entities.length > 0)
 }

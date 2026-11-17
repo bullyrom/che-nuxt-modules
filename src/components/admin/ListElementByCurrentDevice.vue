@@ -19,7 +19,10 @@ const adminPanelStore = useAdminPanelStore()
 <template>
   <EntityWorkspace
     v-if="adminPanelStore.activeEntity"
-    :key="adminPanelStore.activeEntity.fullBasePath"
+    :key="
+      adminPanelStore.activeEntity.key ??
+      adminPanelStore.activeEntity.fullBasePath
+    "
     :base-url="properties.baseUrl"
     :config="properties.config"
     :instance-key="properties.instanceKey"
