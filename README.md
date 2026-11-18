@@ -13,6 +13,8 @@ records array with per-field slots.
 
 See [docs/admin-customization.md](docs/admin-customization.md). To connect more
 than one OpenAPI document, see [docs/admin-multi-openapi.md](docs/admin-multi-openapi.md).
+List pagination (DRF, zero-based page and offset/limit) is auto-detected — see
+[docs/pagination.md](docs/pagination.md).
 
 ## Базовая настройка админки
 

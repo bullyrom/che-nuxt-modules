@@ -169,6 +169,8 @@ function useAdminEntity<
       listQueryParameters: listReferences.listQueryParameters,
       nextPageUrl: listReferences.nextPageUrl,
       page: listReferences.page,
+      pageSize: listReferences.pageSize,
+      paginationFormat: listReferences.paginationFormat,
       previousPageUrl: listReferences.previousPageUrl,
       queryValues: listReferences.queryValues,
       records: listReferences.entityRecords as Ref<Entity[] | undefined>,
@@ -177,6 +179,7 @@ function useAdminEntity<
       showFooter: listReferences.showFooter,
       showNextPageLoader: listReferences.showNextPageLoader,
       status: listReferences.fetchDataStatus,
+      totalPages: listReferences.totalPages,
     },
     mutations: {
       deletingRecord: listReferences.deletingRecord as Ref<Entity | undefined>,

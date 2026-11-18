@@ -1,3 +1,4 @@
+import type { PaginationFormat } from "./api/paginationTypes"
 import type { AdminPanelConfig } from "../components/admin/fields/types"
 import type { ListQueryParameters } from "../stores/adminPanel/queryParameters"
 import type { ParsedEntity } from "../stores/adminPanel/types"
@@ -89,6 +90,8 @@ interface AdminEntityListAccess<Entity extends AdminEntityRecord> {
   listQueryParameters: ComputedRef<ListQueryParameters>
   nextPageUrl: Ref<null | string | undefined>
   page: Ref<number | undefined>
+  pageSize: Ref<number | undefined>
+  paginationFormat: Ref<PaginationFormat | undefined>
   previousPageUrl: Ref<null | string | undefined>
   queryValues: Ref<Record<string, unknown>>
   records: Ref<Entity[] | undefined>
@@ -97,6 +100,7 @@ interface AdminEntityListAccess<Entity extends AdminEntityRecord> {
   showFooter: ComputedRef<boolean>
   showNextPageLoader: ComputedRef<boolean>
   status: Ref<RequestStatus>
+  totalPages: Ref<number | undefined>
 }
 
 interface AdminEntityDetailAccess<Entity extends AdminEntityRecord> {

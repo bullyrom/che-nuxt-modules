@@ -1,5 +1,11 @@
 # Release notes
 
+- feat(api): `usePaginatedListApi` auto-detects DRF (`count`/`next`/`previous`/`results`), zero-based page (`data`/`total_pages`/`current_page`/`page_size`) and offset/limit envelopes and normalizes them to items, count, next/previous, page, size and total pages
+- feat(admin): Rust-style `data/total_pages/current_page/page_size` lists now render as records instead of the raw response, and load the next page through generated page links
+- feat(api): exported `normalizePaginationResponse` plus optional `pagination` overrides for unusual key/query names; schema pagination detection now recognizes page and offset envelopes
+- test: unit coverage for both DRF and zero-based page formats, offset links, auto-detection and the paginated composable append flow
+- docs: added `docs/pagination.md` with the supported envelopes, normalized fields and optional overrides
+
 - feat(admin): support several OpenAPI specs through a spec registry (`id`, `label`, `url`/`baseUrl`, inline schema) with schema loading and merged entities
 - feat(admin): internal entity keys are `service:entity`; public resolvers accept a full key always and a short name only when it is unique, otherwise they list the variants
 - feat(admin): per-spec API origins and isolated list/detail/form store instances; single-spec pages keep the existing `apiSchema`/`baseUrl` contract and bare-name config keys

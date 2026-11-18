@@ -165,6 +165,7 @@ export { default as Tooltip } from "@/components/Tooltip.vue"
 export { default as TypingIndicator } from "@/components/TypingIndicator.vue"
 export { default as VideoValue } from "@/components/VideoValue.vue"
 export {
+  normalizePaginationResponse,
   useApiDelete,
   useApiUpdate,
   useDetailApi,
@@ -174,7 +175,12 @@ export {
 } from "@/composables/api"
 export type {
   FormOrOpenApiForm,
+  NormalizedPagination,
   OpenApiResponse,
+  PaginationAdapterOptions,
+  PaginationContext,
+  PaginationFormat,
+  PaginationFormatOption,
   QueryOrOpenApiQuery,
   ResponseOrOpenApiPaginatedResponseResults,
   ResponseOrOpenApiResponse,
