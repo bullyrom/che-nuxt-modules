@@ -1,13 +1,7 @@
-import { isArray, isString } from "lodash-es"
+import { isArray, isPlainObject, isString } from "lodash-es"
 import { computed, ref } from "vue"
 
-import { normalizePaginationResponse } from "./pagination"
 import { useListApi } from "./useListApi"
-
-import type {
-  PaginationAdapterOptions,
-  PaginationFormat,
-} from "./paginationTypes"
 
 const FIRST_PAGE = 1
 
@@ -17,9 +11,15 @@ type UseChePaginatedListApiBaseParameters<
   Query extends object | unknown = unknown,
   ValideQuery extends object = Query extends object ? Query : object,
 > = Omit<UseFirstPaginatedCheListApiParameters, "url"> & {
-  pagination?: PaginationAdapterOptions
   query?: ValideQuery
   url: FetchUrl
+}
+
+interface PaginatedResponse<ResponseData> {
+  count: number
+  next: null | string
+  previous: null | string
+  results: ResponseData
 }
 
 /**
@@ -66,29 +66,21 @@ function resolveSameOriginPageUrl(
 export function usePaginatedListApi<
   ResponseData = unknown,
   Query = unknown,
->(parameters: {
-  pagination?: PaginationAdapterOptions
-  query?: Query
-  url: string
-}) {
+>(parameters: { query?: Query; url: string }) {
   const {
     data: paginatedData,
     fetchData: fetchDataBase,
     fetchDataErrors,
     fetchDataStatus,
     reset: resetBase,
-  } = useListApi<unknown, Query>(parameters)
+  } = useListApi<PaginatedResponse<ResponseData>, Query>(parameters)
 
   const data = ref<ResponseData>()
   const count = ref<number>()
   const nextPageUrl = ref<null | string>()
   const previousPageUrl = ref<null | string>()
   const page = ref<number>()
-  const pageSize = ref<number>()
-  const totalPages = ref<number>()
-  const paginationFormat = ref<PaginationFormat>()
   const requestUrl = ref<string>()
-  const requestedPage = ref<number>()
   // Query used for the current first page. DRF usually repeats it in `next`,
   // but a custom/relative pagination link may omit it; keep it so pagination
   // does not silently drop search or filters.
@@ -110,7 +102,7 @@ export function usePaginatedListApi<
   ) {
     requestUrl.value = fetchParameters?.url ?? parameters.url
     pageQuery.value = fetchParameters?.query
-    requestedPage.value = resolvePageNumber(requestUrl.value, FIRST_PAGE)
+    page.value = resolvePageNumber(requestUrl.value, FIRST_PAGE)
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -122,11 +114,13 @@ export function usePaginatedListApi<
     if (nextPageUrl.value && fetchDataStatus.value !== "pending") {
       requestUrl.value = nextPageUrl.value
       const fallbackPage = (page.value ?? FIRST_PAGE) + 1
-      requestedPage.value = resolvePageNumber(requestUrl.value, fallbackPage)
       await fetchDataBase({
         query: pageQuery.value,
         url: nextPageUrl.value,
       })
+      // The page number is derived from the request that has just completed.
+      // eslint-disable-next-line require-atomic-updates
+      page.value = resolvePageNumber(requestUrl.value, fallbackPage)
       setDataFromResponse(true)
     }
   }
@@ -138,48 +132,36 @@ export function usePaginatedListApi<
     )
       return
 
-    const normalized = normalizePaginationResponse<unknown>(
-      paginatedData.value,
-      {
-        options: parameters.pagination,
-        requestedPage: requestedPage.value,
-        requestUrl: requestUrl.value,
-      },
-    )
-    // A non-list response stays in `rawData`; the admin renders it raw.
-    if (normalized === undefined) return
+    // The library supports the Django DRF envelope only. Any other shape
+    // stays in `rawData` so the caller can render or handle it explicitly.
+    if (!isPlainObject(paginatedData.value)) return
+
+    const {
+      count: responseCount,
+      next,
+      previous,
+      results,
+    } = paginatedData.value as PaginatedResponse<ResponseData>
+
+    if (!isArray(results) || typeof responseCount !== "number") return
 
     if (add) {
-      if (isArray(data.value)) data.value.push(...normalized.items)
+      if (isArray(data.value)) data.value.push(...results)
       else console.error(`Response from ${parameters.url} url is not Array`)
     } else {
-      data.value = normalized.items as ResponseData
+      data.value = results
     }
-    count.value = normalized.count
-    page.value = normalized.page
-    pageSize.value = normalized.pageSize
-    totalPages.value = normalized.totalPages
-    paginationFormat.value = normalized.format
-    // Keep null for "no such page" to stay compatible with the DRF API.
-    /* eslint-disable unicorn/no-null */
-    nextPageUrl.value = resolveSameOriginPageUrl(
-      normalized.next ?? null,
-      requestUrl.value,
-    )
+    count.value = responseCount
+    nextPageUrl.value = resolveSameOriginPageUrl(next, requestUrl.value)
     previousPageUrl.value = resolveSameOriginPageUrl(
-      normalized.previous ?? null,
+      previous,
       requestUrl.value,
     )
-    /* eslint-enable unicorn/no-null */
   }
 
   function reset() {
     pageQuery.value = undefined
     page.value = undefined
-    pageSize.value = undefined
-    totalPages.value = undefined
-    paginationFormat.value = undefined
-    requestedPage.value = undefined
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -196,19 +178,12 @@ export function usePaginatedListApi<
     fetchNextPage,
     nextPageUrl,
     page,
-    pageSize,
-    paginationFormat,
     previousPageUrl,
     rawData: paginatedData,
     reset,
     showFooter,
     showNextPageLoader,
-    totalPages,
   }
 }
 
-export type {
-  PaginationAdapterOptions,
-  PaginationFormat,
-} from "./paginationTypes"
 export type { UseChePaginatedListApiBaseParameters }

@@ -200,8 +200,6 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     listQueryParameters: query.listQueryParameters,
     nextPageUrl: list.nextPageUrl,
     page: list.page,
-    pageSize: list.pageSize,
-    paginationFormat: list.paginationFormat,
     patchRecord,
     previousPageUrl: list.previousPageUrl,
     queryValues: query.queryValues,
@@ -209,7 +207,6 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     searchQuery: query.searchQuery,
     showFooter: list.showFooter,
     showNextPageLoader: list.showNextPageLoader,
-    totalPages: list.totalPages,
     usesSchemaSearch: query.usesSchemaSearch,
   }
 }
