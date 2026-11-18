@@ -1,6 +1,8 @@
 # Release notes
 
 - test(e2e): domain names, API paths and schema/config markers are read from environment variables with generic books/chapters defaults; added a git-ignored local `.env.development` and a committable `.env.development.template`, and documented every key in `docs/testing.md`
+- fix(api): pagination is Django DRF-only (`count`, `next`, `previous`, `results`); removed multi-format adapters and non-DRF auto-detection
+
 - feat(admin): support several OpenAPI specs through a spec registry (`id`, `label`, `url`/`baseUrl`, inline schema) with schema loading and merged entities
 - feat(admin): internal entity keys are `service:entity`; public resolvers accept a full key always and a short name only when it is unique, otherwise they list the variants
 - feat(admin): per-spec API origins and isolated list/detail/form store instances; single-spec pages keep the existing `apiSchema`/`baseUrl` contract and bare-name config keys

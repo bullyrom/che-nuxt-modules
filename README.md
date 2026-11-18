@@ -13,6 +13,8 @@ records array with per-field slots.
 
 See [docs/admin-customization.md](docs/admin-customization.md). To connect more
 than one OpenAPI document, see [docs/admin-multi-openapi.md](docs/admin-multi-openapi.md).
+List responses use the Django DRF pagination envelope
+(`count`, `next`, `previous`, `results`); other shapes are shown as raw data.
 
 ## Базовая настройка админки
 

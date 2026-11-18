@@ -1,4 +1,4 @@
-import { isArray, isString } from "lodash-es"
+import { isArray, isPlainObject, isString } from "lodash-es"
 import { computed, ref } from "vue"
 
 import { useListApi } from "./useListApi"
@@ -132,27 +132,21 @@ export function usePaginatedListApi<
     )
       return
 
-    const response: unknown = paginatedData.value
-
-    // Non-paginated endpoint: the response body is the results array itself.
-    if (isArray(response)) {
-      if (add && isArray(data.value)) data.value.push(...response)
-      else data.value = response as ResponseData
-      count.value = response.length
-      nextPageUrl.value = undefined
-      previousPageUrl.value = undefined
-      return
-    }
+    // The library supports the Django DRF envelope only. Any other shape
+    // stays in `rawData` so the caller can render or handle it explicitly.
+    if (!isPlainObject(paginatedData.value)) return
 
     const {
       count: responseCount,
       next,
       previous,
       results,
-    } = response as PaginatedResponse<ResponseData>
+    } = paginatedData.value as PaginatedResponse<ResponseData>
+
+    if (!isArray(results) || typeof responseCount !== "number") return
 
     if (add) {
-      if (isArray(data.value) && isArray(results)) data.value.push(...results)
+      if (isArray(data.value)) data.value.push(...results)
       else console.error(`Response from ${parameters.url} url is not Array`)
     } else {
       data.value = results
