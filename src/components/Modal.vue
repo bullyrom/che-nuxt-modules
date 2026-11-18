@@ -27,7 +27,7 @@
             leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <DialogPanel
-              class="relative w-full transform overflow-hidden rounded-lg bg-[var(--ch-admin-surface,#fff)] text-[var(--ch-admin-text,inherit)] shadow-xl transition-all"
+              class="relative w-full transform overflow-hidden rounded-2xl border border-[var(--ch-admin-border,rgba(0,0,0,0.1))] bg-[var(--ch-admin-surface,#fff)] text-[var(--ch-admin-text,inherit)] shadow-2xl transition-all"
               :style="`max-width: ${maxWidth}`"
             >
               <slot />

@@ -6,9 +6,15 @@ Vue composables and TSX components library.
 
 The OpenAPI-driven admin panel is fully customizable (whole-object field groups,
 whole list/detail/header/sidebar overrides, grid, menu tweaks) and can be
-embedded outside the admin as separate list/detail/form pieces.
+embedded outside the admin as separate list/detail/form pieces. For fully
+custom pages, `useAdminEntity` exposes the typed list/detail/form stores by
+entity name + instance key, and `EntityRecordList` accepts a typed custom
+records array with per-field slots.
 
-See [docs/admin-customization.md](docs/admin-customization.md).
+See [docs/admin-customization.md](docs/admin-customization.md). To connect more
+than one OpenAPI document, see [docs/admin-multi-openapi.md](docs/admin-multi-openapi.md).
+List responses use the Django DRF pagination envelope
+(`count`, `next`, `previous`, `results`); other shapes are shown as raw data.
 
 ## Базовая настройка админки
 

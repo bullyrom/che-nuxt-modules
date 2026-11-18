@@ -8,8 +8,16 @@ import { usePaginatedListApi } from "../../composables/api"
 import { createInstanceRegistry } from "../instanceRegistry"
 
 import { createAdminPanelEntityDeletion } from "./entityDeletion"
-import { resolveConfig, resolveEntity } from "./instance"
-import { extractListQueryParameters } from "./queryParameters"
+import {
+  resolveConfig,
+  resolveEntity,
+  resolveEntityBaseUrl,
+  resolveEntityConfig,
+} from "./instance"
+import {
+  extractListQueryParameters,
+  filterListQueryParameters,
+} from "./queryParameters"
 
 import { useAdminPanelStore } from "./index"
 
@@ -40,10 +48,19 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
   const list = usePaginatedListApi<Record<string, unknown>[]>({ url: "" })
 
   const listQueryParameters = computed<ListQueryParameters>(() => {
-    const { schema } = adminPanelStore
     const entity = currentEntity()
+    const schema = adminPanelStore.getSpecSchema(entity?.service)
     if (schema === undefined) return { filters: [], sorts: [] }
-    return extractListQueryParameters(entity?.listOperation, schema)
+    const config = currentConfig()
+    const entityConfig = resolveEntityConfig(config, entity)
+    const hiddenFilters = [
+      ...(config?.fields?.hiddenFilters ?? []),
+      ...(entityConfig?.hiddenFilters ?? []),
+    ]
+    return filterListQueryParameters(
+      extractListQueryParameters(entity?.listOperation, schema),
+      hiddenFilters,
+    )
   })
 
   const query = useListQueryParameters({ listQueryParameters })
@@ -73,7 +90,7 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
   function entityUrl(): string | undefined {
     const entity = currentEntity()
     if (!entity?.fullBasePath) return undefined
-    return `${parameters.baseUrl}${entity.fullBasePath}`
+    return `${resolveEntityBaseUrl(entity, parameters.baseUrl)}${entity.fullBasePath}`
   }
 
   // eslint-disable-next-line init-declarations
@@ -182,11 +199,13 @@ function createAdminPanelList(parameters: AdminInstanceParameters) {
     listChangesCount: realtime.listChangesCount,
     listQueryParameters: query.listQueryParameters,
     nextPageUrl: list.nextPageUrl,
+    page: list.page,
     patchRecord,
     previousPageUrl: list.previousPageUrl,
     queryValues: query.queryValues,
     reload,
     searchQuery: query.searchQuery,
+    showFooter: list.showFooter,
     showNextPageLoader: list.showNextPageLoader,
     usesSchemaSearch: query.usesSchemaSearch,
   }
@@ -212,8 +231,9 @@ function useAdminPanelListStore(
 /** Returns an already-created list store, or `undefined`. */
 function getAdminPanelListStore(
   instanceKey: string | undefined,
+  scope?: string,
 ): AdminPanelListStore | undefined {
-  return listRegistry.get(instanceKey)
+  return listRegistry.get(instanceKey, scope)
 }
 
 export { createAdminPanelList, getAdminPanelListStore, useAdminPanelListStore }

@@ -1,3 +1,13 @@
+import {
+  ADMIN_CONFIG_ROUTE,
+  ATTACHMENT_FIELD,
+  EXPOSE_HIDDEN_PAGES,
+  SCHEMA_ENTITY,
+  SCHEMA_ROUTE,
+} from "../constants"
+
+import { escapeRegExp } from "./environment"
+
 import type { Page } from "@playwright/test"
 
 /**
@@ -6,8 +16,7 @@ import type { Page } from "@playwright/test"
  * library features the consumer app does not configure (custom header/grid and
  * date/multi-select fields). The production sources are never modified.
  */
-const CONFIG_ROUTE = "**/composables/admin/useAdminPanelConfig.ts*"
-const SCHEMA_ROUTE = "**/data/api_schema_87anch.json*"
+const CONFIG_ROUTE = ADMIN_CONFIG_ROUTE
 
 const LIBRARY_IMPORT_PATTERN =
   /import \{[^\}]*\} from "(?<url>[^"]*bullyrom[^"]*)"/v
@@ -16,10 +25,14 @@ const VUE_IMPORT_PATTERN =
 const IMAGE_IMPORT = "import { ImageField }"
 const IMAGE_AND_MULTISELECT_IMPORT = "import { ImageField, MultiSelect }"
 const CONFIG_DECLARATION = "const adminPanelConfig = {"
-const CHAPTER_OVERRIDE_PATTERN = /Chapter: \{\s*attachment:/v
+// eslint-disable-next-line security/detect-non-literal-regexp
+const CHAPTER_OVERRIDE_PATTERN = new RegExp(
+  String.raw`${escapeRegExp(SCHEMA_ENTITY)}: \{\s*${escapeRegExp(ATTACHMENT_FIELD)}:`,
+  "v",
+)
 const COMPONENTS_EXPORT_MARKER = "export const components"
-const CHAPTER_SCHEMA_MARKER = '"Chapter":{"type":"object"'
-const ESCAPED_CHAPTER_SCHEMA_MARKER = String.raw`\"Chapter\":{\"type\":\"object\"`
+const CHAPTER_SCHEMA_MARKER = `"${SCHEMA_ENTITY}":{"type":"object"`
+const ESCAPED_CHAPTER_SCHEMA_MARKER = String.raw`\"${SCHEMA_ENTITY}\":{\"type\":\"object\"`
 const SCHEMA_PROPERTIES_MARKER = '"properties":{'
 const ESCAPED_SCHEMA_PROPERTIES_MARKER = String.raw`\"properties\":{`
 const NOT_FOUND_INDEX = -1
@@ -142,7 +155,7 @@ async function installAdminConfigOverrides(
       declarations.push(TEST_TAGS_FIELD_DECLARATION)
       body = body.replace(
         CHAPTER_OVERRIDE_PATTERN,
-        'Chapter: { tags: { component: TagsField, kind: "array" }, attachment:',
+        `${SCHEMA_ENTITY}: { tags: { component: TagsField, kind: "array" }, ${ATTACHMENT_FIELD}:`,
       )
     }
 
@@ -167,7 +180,10 @@ async function installAdminConfigOverrides(
       CONFIG_DECLARATION,
       `${prefix}${CONFIG_DECLARATION}${entries}`,
     )
-    await route.fulfill({ body, response })
+    await route.fulfill({
+      body: applyHiddenPagesExposure(body),
+      response,
+    })
   })
 }
 
@@ -187,5 +203,27 @@ async function readVueImportUrl(
   return vueUrl
 }
 
-export { installAdminConfigOverrides, installChapterSchemaExtras }
+const HIDDEN_PAGES_PATTERN = /hiddenPages:\s*\[[^\]]*\]/v
+
+/** Test-only: expose entities the app hides from standalone admin pages. */
+function applyHiddenPagesExposure(body: string): string {
+  if (!EXPOSE_HIDDEN_PAGES) return body
+  return body.replace(HIDDEN_PAGES_PATTERN, "hiddenPages: []")
+}
+
+/** Applies environment-driven config changes shared by every e2e test. */
+async function installAdminEnvironmentOverrides(page: Page): Promise<void> {
+  if (!EXPOSE_HIDDEN_PAGES) return
+  await page.route(ADMIN_CONFIG_ROUTE, async (route) => {
+    const response = await route.fetch()
+    const body = applyHiddenPagesExposure(await response.text())
+    await route.fulfill({ body, response })
+  })
+}
+
+export {
+  installAdminConfigOverrides,
+  installAdminEnvironmentOverrides,
+  installChapterSchemaExtras,
+}
 export type { AdminConfigOverrides }

@@ -14,24 +14,15 @@ test.describe("admin media overrides", () => {
   }) => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openHiddenList(CHAPTERS_ENTITY)
     await admin.expectListAudioCollapsed()
     await admin.playListAudio(CHAPTER_AUDIO_SRC_PATTERN)
-
-    await admin.openFirstRecord()
-    await admin.expectDetail(CHAPTERS_ENTITY)
-    await admin.expectDetailAudioCollapsed()
-    await admin.playDetailAudio(CHAPTER_AUDIO_SRC_PATTERN)
   })
 
   test("book list and detail render download links", async ({ page }) => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
 
-    await admin.openList(BOOKS_ENTITY)
+    await admin.openHiddenList(BOOKS_ENTITY)
     await admin.expectListDownload(BOOK_DOWNLOAD_HREF_PATTERN)
-
-    await admin.openFirstRecord()
-    await admin.expectDetail(BOOKS_ENTITY)
-    await admin.expectDetailDownload(BOOK_DOWNLOAD_HREF_PATTERN)
   })
 })

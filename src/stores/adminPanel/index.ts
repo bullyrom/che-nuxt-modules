@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { defineStore } from "pinia"
 import { shallowRef } from "vue"
 
@@ -34,18 +33,28 @@ export const useAdminPanelStore = defineStore("admin-panel", () => {
     activeEntityListSchema: adminPanel.activeEntityListSchema,
     activeEntityOperationTypes: adminPanel.activeEntityOperationTypes,
     activeEntityUpdateSchema: adminPanel.activeEntityUpdateSchema,
+    baseUrl: adminPanel.baseUrl,
     clearEntity: adminPanel.clearEntity,
     closeModal: adminPanel.closeModal,
     config,
     filteredEntitiesByNamespace: adminPanel.filteredEntitiesByNamespace,
+    filteredEntitiesByService: adminPanel.filteredEntitiesByService,
     getSchemaName: adminPanel.getSchemaName,
+    getSpecSchema: adminPanel.getSpecSchema,
     isActiveEntityListPaginated: adminPanel.isActiveEntityListPaginated,
+    isMultiSpec: adminPanel.isMultiSpec,
+    loadSpecs: adminPanel.loadSpecs,
     namespaces: adminPanel.namespaces,
     parsedEntities: adminPanel.parsedEntities,
     resolveSchema: adminPanel.resolveSchema,
     schema: adminPanel.schema,
+    services: adminPanel.services,
+    setBaseUrl: adminPanel.setBaseUrl,
     setConfig,
     setSchema: adminPanel.setSchema,
+    setSpecs: adminPanel.setSpecs,
     showListModal: adminPanel.showListModal,
+    specLoadStatus: adminPanel.specLoadStatus,
+    specs: adminPanel.specs,
   }
 })

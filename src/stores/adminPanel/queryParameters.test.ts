@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   buildQueryValues,
   extractListQueryParameters,
+  filterListQueryParameters,
   hasQueryParameter,
 } from "./queryParameters"
 
@@ -82,6 +83,29 @@ describe("extractListQueryParameters", () => {
     const search = parameters.filters.find((field) => field.key === "search")
 
     expect(search?.description).toBe("Free text search")
+  })
+})
+
+describe("filterListQueryParameters", () => {
+  it("hides only the listed filters and keeps sorting", () => {
+    const parameters = extractListQueryParameters(listOperation, document)
+    const filtered = filterListQueryParameters(parameters, [
+      "status",
+      "is_active",
+    ])
+
+    expect(filtered.filters.map((field) => field.key)).toEqual([
+      "search",
+      "page_size",
+    ])
+    expect(filtered.sorts).toBe(parameters.sorts)
+  })
+
+  it("returns the same parameters when nothing is hidden", () => {
+    const parameters = extractListQueryParameters(listOperation, document)
+
+    expect(filterListQueryParameters(parameters, undefined)).toBe(parameters)
+    expect(filterListQueryParameters(parameters, [])).toBe(parameters)
   })
 })
 

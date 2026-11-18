@@ -1,7 +1,9 @@
-import { isArray, isString } from "lodash-es"
+import { isArray, isPlainObject, isString } from "lodash-es"
 import { computed, ref } from "vue"
 
 import { useListApi } from "./useListApi"
+
+const FIRST_PAGE = 1
 
 type UseFirstPaginatedCheListApiParameters = Parameters<typeof useListApi>[0]
 type UseChePaginatedListApiBaseParameters<
@@ -18,6 +20,24 @@ interface PaginatedResponse<ResponseData> {
   next: null | string
   previous: null | string
   results: ResponseData
+}
+
+/**
+ * Reads the page number from a pagination URL. Falls back to `fallback` when
+ * the URL is missing or does not carry a valid `page` query parameter.
+ */
+function resolvePageNumber(
+  pageUrl: null | string | undefined,
+  fallback: number,
+): number {
+  if (!pageUrl) return fallback
+  try {
+    const url = new URL(pageUrl, "http://localhost")
+    const value = Number(url.searchParams.get("page"))
+    return Number.isInteger(value) && value >= FIRST_PAGE ? value : fallback
+  } catch {
+    return fallback
+  }
 }
 
 /**
@@ -59,6 +79,7 @@ export function usePaginatedListApi<
   const count = ref<number>()
   const nextPageUrl = ref<null | string>()
   const previousPageUrl = ref<null | string>()
+  const page = ref<number>()
   const requestUrl = ref<string>()
   // Query used for the current first page. DRF usually repeats it in `next`,
   // but a custom/relative pagination link may omit it; keep it so pagination
@@ -81,6 +102,7 @@ export function usePaginatedListApi<
   ) {
     requestUrl.value = fetchParameters?.url ?? parameters.url
     pageQuery.value = fetchParameters?.query
+    page.value = resolvePageNumber(requestUrl.value, FIRST_PAGE)
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -91,10 +113,14 @@ export function usePaginatedListApi<
   async function fetchNextPage() {
     if (nextPageUrl.value && fetchDataStatus.value !== "pending") {
       requestUrl.value = nextPageUrl.value
+      const fallbackPage = (page.value ?? FIRST_PAGE) + 1
       await fetchDataBase({
         query: pageQuery.value,
         url: nextPageUrl.value,
       })
+      // The page number is derived from the request that has just completed.
+      // eslint-disable-next-line require-atomic-updates
+      page.value = resolvePageNumber(requestUrl.value, fallbackPage)
       setDataFromResponse(true)
     }
   }
@@ -106,27 +132,21 @@ export function usePaginatedListApi<
     )
       return
 
-    const response: unknown = paginatedData.value
-
-    // Non-paginated endpoint: the response body is the results array itself.
-    if (isArray(response)) {
-      if (add && isArray(data.value)) data.value.push(...response)
-      else data.value = response as ResponseData
-      count.value = response.length
-      nextPageUrl.value = undefined
-      previousPageUrl.value = undefined
-      return
-    }
+    // The library supports the Django DRF envelope only. Any other shape
+    // stays in `rawData` so the caller can render or handle it explicitly.
+    if (!isPlainObject(paginatedData.value)) return
 
     const {
       count: responseCount,
       next,
       previous,
       results,
-    } = response as PaginatedResponse<ResponseData>
+    } = paginatedData.value as PaginatedResponse<ResponseData>
+
+    if (!isArray(results) || typeof responseCount !== "number") return
 
     if (add) {
-      if (isArray(data.value) && isArray(results)) data.value.push(...results)
+      if (isArray(data.value)) data.value.push(...results)
       else console.error(`Response from ${parameters.url} url is not Array`)
     } else {
       data.value = results
@@ -141,6 +161,7 @@ export function usePaginatedListApi<
 
   function reset() {
     pageQuery.value = undefined
+    page.value = undefined
     count.value = undefined
     nextPageUrl.value = undefined
     previousPageUrl.value = undefined
@@ -156,6 +177,7 @@ export function usePaginatedListApi<
     fetchDataStatus,
     fetchNextPage,
     nextPageUrl,
+    page,
     previousPageUrl,
     rawData: paginatedData,
     reset,

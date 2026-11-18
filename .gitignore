@@ -117,3 +117,6 @@ core
 test-results/
 playwright-report/
 blob-report/
+
+# Local e2e environment
+.env.development

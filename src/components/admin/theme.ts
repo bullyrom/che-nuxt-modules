@@ -1,6 +1,6 @@
-import { unref } from "vue"
+import { computed, toValue, unref } from "vue"
 
-import type { MaybeRef } from "vue"
+import type { MaybeRef, MaybeRefOrGetter } from "vue"
 
 /**
  * Default visual theme for the OpenAPI admin panel.
@@ -86,10 +86,26 @@ function buildAdminThemeStyle(theme: AdminPanelTheme): Record<string, string> {
   return THEME_VARIABLES[theme]
 }
 
+/**
+ * Reactive theme + CSS variables for an admin root. Embedded pieces use it to
+ * set the same variables the full admin sets on its container, so they keep
+ * working (and stay light/dark themed) outside the `Crud` subtree.
+ */
+function useAdminTheme(
+  source: MaybeRefOrGetter<AdminPanelThemeSource | undefined>,
+) {
+  const theme = computed(() => resolveAdminTheme(toValue(source)))
+  const themeStyle = computed<Record<string, string>>(() =>
+    buildAdminThemeStyle(theme.value),
+  )
+  return { theme, themeStyle }
+}
+
 export {
   type AdminPanelTheme,
   type AdminPanelThemeSource,
   buildAdminThemeStyle,
   DEFAULT_ADMIN_PANEL_THEME,
   resolveAdminTheme,
+  useAdminTheme,
 }

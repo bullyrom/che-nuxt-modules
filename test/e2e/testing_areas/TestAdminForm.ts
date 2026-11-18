@@ -88,7 +88,7 @@ class TestAdminForm {
     })
     const heading = this.page.getByRole("heading", {
       exact: true,
-      name: `Create ${entityName}`,
+      name: `Create ${entityName.split(":").at(-1) ?? entityName}`,
     })
     await expect(button).toBeVisible({ timeout: EXPECT_TIMEOUT_MS })
     await expect

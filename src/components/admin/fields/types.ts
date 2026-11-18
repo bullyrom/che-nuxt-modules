@@ -1,3 +1,4 @@
+import type { AdminEntityLabelMode } from "../../stores/adminPanel/entityKey"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 import type { RequestStatus } from "../../types"
 /* eslint-disable max-lines */
@@ -120,10 +121,27 @@ interface AdminPanelMenuLink {
 
 /** Per-entity customization of the default sidebar menu. */
 interface AdminPanelMenuConfig {
+  /**
+   * Entity label mode: `auto` (default) shows the short name unless another
+   * connected spec declares the same name, `prefix` always shows
+   * `service:entity`, `name` never prefixes.
+   */
+  entityLabel?: AdminEntityLabelMode
+  /** Alias of `entityLabel` for boolean/automatic prefix configuration. */
+  entityLabelPrefix?: "auto" | boolean
   /** Extra page links appended below the entity list. */
   extraLinks?: AdminPanelMenuLink[]
-  /** Names or full paths of entities that must not be listed. */
+  /**
+   * Hidden entities by full `service:entity` key (preferred), short name or
+   * full path.
+   */
   hiddenEntities?: string[]
+  /**
+   * Entities whose standalone page must not be exposed. They are hidden from
+   * the menu together with `hiddenEntities`, but their list can still be
+   * embedded inside another entity page.
+   */
+  hiddenPages?: string[]
   /** Component used for each menu row in the endpoints menu. */
   itemComponent?: AdminSidebarItemComponent
   /** Group entities by API namespace (default `true` in the admin). */
@@ -166,6 +184,8 @@ interface AdminListConfig<
   /** Builds a detail URL per record; absent hides the detail action. */
   detailHref?: (record: Record<string, unknown>) => string | undefined
   gridColumns?: number
+  /** Filter parameter keys hidden from the list filter panel. */
+  hiddenFilters?: string[]
   itemOverride?: FieldGroupOverride<ObjectType>
   list?: Component<AdminListComponentProperties>
   listFooter?: Component<AdminListComponentProperties>
@@ -199,6 +219,10 @@ interface AdminFormConfig<
 interface AdminSidebarGroup {
   entities: ParsedEntity[]
   namespace: string
+  /** Owning service/spec id when the group is a spec group. */
+  service?: string
+  /** Human-readable group title (the spec label for service groups). */
+  title?: string
 }
 
 /** Props handed to a whole-list override (level 2, full). */
@@ -273,6 +297,8 @@ interface AdminPanelEntityConfig<
   formOverride?: FieldGroupOverride<ObjectType>
   /** Objects per row for this entity; overrides the global value. */
   gridColumns?: number
+  /** Filter parameter keys hidden from this entity's list filters. */
+  hiddenFilters?: string[]
   /** Whole-object override for each rendered list item. */
   listItemOverride?: FieldGroupOverride<ObjectType>
 }
@@ -285,6 +311,8 @@ interface AdminPanelFieldConfig {
    * `defaultComponents` (kind).
    */
   formats?: Partial<Record<string, FieldComponent>>
+  /** Filter parameter keys hidden from every entity list. */
+  hiddenFilters?: string[]
   overrides?: Record<string, Record<string, FieldOverrideNode>>
 }
 

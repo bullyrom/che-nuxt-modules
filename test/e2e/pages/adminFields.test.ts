@@ -1,6 +1,7 @@
 import {
   AUDIO_ACCEPT,
   BOOK_SELECT_PLACEHOLDER,
+  CHAPTER_FORM_LABELS,
   CHAPTER_KIND_OPTION_LABEL,
   CHAPTER_KIND_SELECT_PLACEHOLDER,
   CHAPTERS_ENTITY,
@@ -11,6 +12,7 @@ import {
   MULTISELECT_OPTION_LABEL,
   NO_MATCH_SEARCH_TERM,
   PARENT_SELECT_PLACEHOLDER,
+  READ_ONLY_CHAPTER_FIELDS,
   TEST_AUDIO_CONTENT,
   TEST_AUDIO_NAME,
   TEST_AUDIO_TYPE,
@@ -25,19 +27,6 @@ import {
   installChapterSchemaExtras,
 } from "../utils/adminConfig"
 
-const CHAPTER_FORM_LABELS = [
-  "book",
-  "parent",
-  "name",
-  "kind",
-  "is_published",
-  "pages",
-  "order",
-  "rating",
-  "attachment",
-]
-const READ_ONLY_CHAPTER_FIELDS = ["id", "created_at", "user_id", "children"]
-
 test.describe("admin field components", () => {
   test("chapter form uses remote selects, a static select and an audio input", async ({
     page,
@@ -45,7 +34,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openHiddenList(CHAPTERS_ENTITY)
     await form.openCreate(CHAPTERS_ENTITY)
 
     await form.expectLabels(CHAPTER_FORM_LABELS)
@@ -76,7 +65,7 @@ test.describe("admin field components", () => {
     const admin = new TestAdminPage({ baseUrl: FRONTEND_URL, page })
     const form = new TestAdminForm(page)
 
-    await admin.openList(CHAPTERS_ENTITY)
+    await admin.openHiddenList(CHAPTERS_ENTITY)
     await form.openCreate(CHAPTERS_ENTITY)
 
     await form.fillDateField(DATE_FIELD_KEY, TEST_DATE_VALUE)

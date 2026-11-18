@@ -12,6 +12,7 @@ import {
   CUSTOM_HEADER_TEXT_PREFIX,
   EXPECT_TIMEOUT_MS,
   INDEX_PLACEHOLDER,
+  INTERNAL_MENU_ENABLED,
   LIST_CONTENT_TIMEOUT_MS,
   MENU_ACTION,
   PLAY_AUDIO_BUTTON_PATTERN,
@@ -30,6 +31,10 @@ interface TestAdminPageOptions {
 /** Detail root rendered by the front's routed record page. */
 const DETAIL_ROOT = ".admin-record-detail"
 const GRID_CELL_LEVELS_UP = 2
+/** Display label of an entity reference (`service:entity` -> `entity`). */
+function entityLabel(reference: string): string {
+  return reference.split(":").at(-1) ?? reference
+}
 
 /** Page object for the OpenAPI admin list, record view and routed pages. */
 class TestAdminPage {
@@ -44,6 +49,10 @@ class TestAdminPage {
 
   /** Returns from a list to the endpoints index. */
   async backToIndex(): Promise<void> {
+    if (!INTERNAL_MENU_ENABLED) {
+      await this.openEndpointsIndex()
+      return
+    }
     await this.page
       .getByRole("button", { exact: true, name: BACK_ACTION })
       .click()
@@ -65,7 +74,7 @@ class TestAdminPage {
   /** Asserts that the configured custom header replaced the default one. */
   async expectCustomHeader(entityName: string): Promise<void> {
     await expect(this.page.getByTestId(CUSTOM_HEADER_TEST_ID)).toHaveText(
-      `${CUSTOM_HEADER_TEXT_PREFIX}${entityName}`,
+      `${CUSTOM_HEADER_TEXT_PREFIX}${entityLabel(entityName)}`,
     )
     await expect(
       this.page.getByRole("button", { exact: true, name: CREATE_ACTION }),
@@ -77,9 +86,11 @@ class TestAdminPage {
     entityName: string,
     basePath: string,
   ): Promise<void> {
-    await expect(
-      this.page.getByRole("button", { exact: true, name: BACK_ACTION }),
-    ).toBeVisible()
+    if (INTERNAL_MENU_ENABLED) {
+      await expect(
+        this.page.getByRole("button", { exact: true, name: BACK_ACTION }),
+      ).toBeVisible()
+    }
     await expect(
       this.page.getByRole("button", { exact: true, name: CREATE_ACTION }),
     ).toBeVisible()
@@ -95,7 +106,7 @@ class TestAdminPage {
     await expect(
       this.page
         .getByRole("heading", { level: 2 })
-        .filter({ hasText: entityName }),
+        .filter({ hasText: entityLabel(entityName) }),
     ).toBeVisible()
   }
 
@@ -148,7 +159,7 @@ class TestAdminPage {
       this.page.getByRole("heading", {
         exact: true,
         level: 2,
-        name: entityName,
+        name: entityLabel(entityName),
       }),
     ).toBeVisible({ timeout: EXPECT_TIMEOUT_MS })
   }
@@ -186,7 +197,7 @@ class TestAdminPage {
   gridColumnCount(): Promise<number> {
     const link = this.page.getByRole("link", { name: VIEW_ACTION }).first()
     const card = link.locator(
-      'xpath=ancestor::div[contains(@class,"rounded-xl")][1]',
+      'xpath=ancestor::div[contains(@class,"rounded-2xl")][1]',
     )
     let cell = card
     for (let level = 0; level < GRID_CELL_LEVELS_UP; level += 1) {
@@ -215,6 +226,12 @@ class TestAdminPage {
     await waitForAdminHydration(this.page)
     await this.page.getByRole("link", { name: VIEW_ACTION }).first().click()
     await expect(this.page).toHaveURL(ADMIN_RECORD_PATH_PATTERN)
+  }
+
+  /** Opens an entity that the app hides from standalone pages via the menu. */
+  async openHiddenList(entityName: string): Promise<void> {
+    await this.openEndpointsIndex()
+    await this.selectEntity(entityName)
   }
 
   /** Opens an entity list directly through its URL. */
@@ -266,7 +283,7 @@ class TestAdminPage {
     await waitForAdminHydration(this.page)
     const button = this.page.getByRole("button", {
       exact: true,
-      name: entityName,
+      name: entityLabel(entityName),
     })
     if (!(await button.isVisible())) {
       await this.page
@@ -274,10 +291,9 @@ class TestAdminPage {
         .click()
     }
     await expect(button).toBeVisible()
-    await button.click()
+    await button.dispatchEvent("click")
     await this.expectListUrl(entityName)
     if (options.customHeader !== true) await this.expectListReady(entityName)
   }
 }
-
 export { TestAdminPage }

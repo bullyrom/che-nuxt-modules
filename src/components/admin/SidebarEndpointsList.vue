@@ -53,7 +53,7 @@ function selectEntity(entity: ParsedEntity) {
     properties.onSelectEntity(entity)
     return
   }
-  getAdminPanelDetailStore(properties.instanceKey)?.closeView()
+  getAdminPanelDetailStore(properties.instanceKey, entity.service)?.closeView()
   adminPanelStore.activeEntity = entity
   emit("select", entity)
 }

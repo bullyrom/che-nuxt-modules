@@ -46,6 +46,6 @@ describe("LazyLoadList SSR", () => {
   it("renders a stable div root with the admin EntityRecordCard slot", async () => {
     const html = await renderList(true)
     expect(html.startsWith("<div")).toBe(true)
-    expect(html).toContain("rounded-xl border")
+    expect(html).toContain("rounded-2xl border")
   })
 })

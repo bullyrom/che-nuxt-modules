@@ -42,8 +42,8 @@ labelKey, valueKey)` maps raw API records to options.
 ### `RemoteSelect` / `RemoteMultiSelect`
 
 Connected selects: they load options from an endpoint through a keyed Pinia
-store built on `usePaginatedListApi` (handles **both** a flat array and the
-Django `{ count, next, previous, results }` envelope) and paginate with
+store built on `usePaginatedListApi` (which accepts the Django
+`{ count, next, previous, results }` envelope) and paginate with
 `LazyLoadList`.
 
 ```tsx

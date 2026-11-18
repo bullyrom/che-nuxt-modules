@@ -40,7 +40,7 @@ const showGroups = computed(
 
 <template>
   <div
-    class="flex h-full flex-col overflow-hidden rounded-xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)]"
+    class="flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] shadow-sm"
     :class="properties.isMobile ? 'w-full' : 'w-64 shrink-0'"
   >
     <div class="border-b border-[var(--ch-admin-border)] px-3 py-3">

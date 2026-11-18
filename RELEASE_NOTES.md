@@ -1,5 +1,31 @@
 # Release notes
 
+- test(e2e): domain names, API paths and schema/config markers are read from environment variables with generic books/chapters defaults; added a git-ignored local `.env.development` and a committable `.env.development.template`, and documented every key in `docs/testing.md`
+- fix(api): pagination is Django DRF-only (`count`, `next`, `previous`, `results`); removed multi-format adapters and non-DRF auto-detection
+
+- feat(admin): support several OpenAPI specs through a spec registry (`id`, `label`, `url`/`baseUrl`, inline schema) with schema loading and merged entities
+- feat(admin): internal entity keys are `service:entity`; public resolvers accept a full key always and a short name only when it is unique, otherwise they list the variants
+- feat(admin): per-spec API origins and isolated list/detail/form store instances; single-spec pages keep the existing `apiSchema`/`baseUrl` contract and bare-name config keys
+- feat(admin): menu groups by service with `service:entity` labels only on conflicts (or via `menu.entityLabel`/`menu.entityLabelPrefix`); `hiddenEntities` accepts full keys
+- feat(admin): `useAdminEntity` overloads for full keys and short names, plus exported spec/entity-key types and helpers
+- test: unit coverage for spec merging, entity reference resolution, labels, config lookup, store isolation and the multi-spec menu
+- docs: added `docs/admin-multi-openapi.md` with generic examples for the registry, keys, config, menu and backward compatibility
+
+- chore: replaced the remaining app-specific entity names in docs, source comments, unit tests, e2e constants/helpers and the generated OpenAPI test fixture with generic books/chapters/categories examples
+- feat(admin): list grid defaults to 3 objects per row on desktop and 1 on phone; `gridColumns` controls the desktop count and `1` keeps a single column on every screen
+- feat(admin): standardized `hiddenFilters` config (global `fields.hiddenFilters`, per-entity `entities.<name>.hiddenFilters` and embedded `AdminListConfig.hiddenFilters`) hides filter parameters without touching sorts
+- fix(admin): embedded list/detail/create roots set the theme variables themselves, so borders and surfaces are no longer black/undefined outside `Crud`
+- fix(admin): the create modal always renders a themed opaque overlay (with fallback), never a transparent dialog
+- style(admin): softer rounded cards/lists/modals, subtle borders and shadows for both light and dark themes
+- docs: documented the grid defaults, filter visibility and embedded theme support; replaced app-specific examples with generic entity examples
+- feat(admin): typed `useAdminEntity` facade over the keyed list/detail/form stores — pass an entity name + instance key and get typed records, pagination (`count`, `page`, next/previous URL, footer/next-page loader), detail, form, mutations and a merged loader; separate keys stay independent
+- feat(admin): `EntityRecordList` can fetch by `entityName` or take a custom `items` array; generic `Base`/`Item`/`Overridden` types validate the custom item against the base entity (missing/incompatible fields are compile errors) while per-field slots receive the typed custom item and exclude their fields from validation
+- feat(admin): export `AdminListCompatible`/`AdminListIncompatibleKeys` and `getAdminListFieldSlotKeys` for host-built lists
+- feat(admin): `menu.hiddenPages` hides entities that exist only inside a parent page (merged with the existing `hiddenEntities`); `resolveHiddenEntityKeys`/`isAdminEntityPageHidden` let the host guard standalone routes while embedding the child list
+- feat(api): `usePaginatedListApi` exposes the current `page`
+- docs(admin): added a custom-pages chapter showing `useAdminEntity`, typed custom lists/slots, compatibility generics and page-only entities
+- test(admin): unit tests for item-type compatibility, field-slot key discovery, entity lookup, pagination detection and independent `useAdminEntity` instances
+
 - fix(admin): hide the `All endpoints` back action when the built-in endpoints menu is disabled (`menu.showInAdmin: false`), so it no longer links to an empty page
 - feat(admin): export `useAdminMenuSections` (and `useSidebarMenu`) so the host app can read the same endpoint/link menu data the sidebar uses and render its own navigation; documented with an example
 - style(admin): slightly round the menu hover/active row corners

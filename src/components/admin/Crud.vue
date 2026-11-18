@@ -10,7 +10,7 @@ import { useAdminPanelStore } from "../../stores/adminPanel/index"
 import { isAdminInternalMenuEnabled } from "./config"
 import ListElementByCurrentDevice from "./ListElementByCurrentDevice.vue"
 import MasterDetail from "./MasterDetail.vue"
-import { visibleMenuGroups } from "./menu"
+import { resolveHiddenEntityKeys, visibleMenuGroups } from "./menu"
 import SidebarEndpointsMenu from "./SidebarEndpointsMenu.vue"
 import { buildAdminThemeStyle, resolveAdminTheme } from "./theme"
 
@@ -20,29 +20,48 @@ import type {
 } from "./fields/types"
 import type { AdminPanelThemeSource } from "./theme"
 import type {
+  AdminOpenApiSpec,
   MyOpenAPIDocument,
   ParsedEntity,
 } from "../../stores/adminPanel/types"
 
 interface Properties {
-  apiSchema: MyOpenAPIDocument
-  baseUrl: string
+  /** Legacy single-spec schema; use `specs` for multiple services. */
+  apiSchema?: MyOpenAPIDocument
+  /** Fallback API origin; each registered spec may override it. */
+  baseUrl?: string
   config?: AdminPanelConfig
   instanceKey?: string
   isMobile?: boolean
+  /** Registered OpenAPI specs; replaces the single `apiSchema` prop. */
+  specs?: AdminOpenApiSpec[]
   theme?: AdminPanelThemeSource
 }
 
 const properties = defineProps<Properties>()
 
 const isReady = ref(false)
-onMounted(() => {
-  isReady.value = true
-})
 
 const adminPanelStore = useAdminPanelStore()
-adminPanelStore.setSchema(properties.apiSchema)
+if (properties.specs !== undefined && properties.specs.length > 0) {
+  adminPanelStore.setSpecs(properties.specs)
+} else if (properties.apiSchema !== undefined) {
+  adminPanelStore.setSchema(properties.apiSchema, {
+    baseUrl: properties.baseUrl,
+  })
+}
+adminPanelStore.setBaseUrl(properties.baseUrl)
 adminPanelStore.setConfig(properties.config)
+
+onMounted(async () => {
+  if (properties.specs !== undefined) {
+    const needsLoad = properties.specs.some(
+      (spec) => spec.schema === undefined && Boolean(spec.url),
+    )
+    if (needsLoad) await adminPanelStore.loadSpecs(properties.specs)
+  }
+  isReady.value = true
+})
 
 const { activeEntity, filteredEntitiesByNamespace } =
   storeToRefs(adminPanelStore)
@@ -81,12 +100,12 @@ const showInternalMenu = computed(() =>
 const visibleGroups = computed(() =>
   visibleMenuGroups(
     filteredEntitiesByNamespace.value,
-    instanceConfig.value?.menu?.hiddenEntities,
+    resolveHiddenEntityKeys(instanceConfig.value?.menu),
   ),
 )
 
 function selectEntity(entity: ParsedEntity) {
-  getAdminPanelDetailStore(instanceKey.value)?.closeView()
+  getAdminPanelDetailStore(instanceKey.value, entity.service)?.closeView()
   adminPanelStore.activeEntity = entity
 }
 
@@ -101,11 +120,13 @@ const sidebarProperties = computed<AdminSidebarComponentProperties>(() => ({
 function renderWorkspace(isMobile: boolean) {
   return (
     <ListElementByCurrentDevice
-      baseUrl={properties.baseUrl}
+      baseUrl={properties.baseUrl ?? ""}
       config={properties.config}
       instanceKey={instanceKey.value}
       isMobile={isMobile}
-      key={activeEntity.value?.fullBasePath ?? "none"}
+      key={
+        activeEntity.value?.key ?? activeEntity.value?.fullBasePath ?? "none"
+      }
     />
   )
 }

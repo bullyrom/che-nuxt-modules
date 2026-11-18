@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { storeToRefs } from "pinia"
-import { computed, provide, watch } from "vue"
+import { computed, provide, toRefs, watch } from "vue"
 
 import {
   getRequestSchema,
@@ -20,6 +19,7 @@ import {
   serializeRecord,
 } from "./fields/registry"
 import FormErrors from "./FormErrors.vue"
+import { useAdminTheme } from "./theme"
 
 import type { AdminFormConfig, AdminPanelConfig } from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
@@ -41,8 +41,9 @@ const adminPanelStore = useAdminPanelStore()
 const store = useAdminPanelFormStore({
   baseUrl: properties.baseUrl,
   config: properties.config,
-  entity: () => properties.entity,
+  entity: () => properties.entity ?? adminPanelStore.activeEntity,
   instanceKey: properties.instanceKey ?? "admin-1",
+  scope: (properties.entity ?? adminPanelStore.activeEntity)?.service,
 })
 
 const {
@@ -53,7 +54,7 @@ const {
   isEditMode,
   sendFormRequestErrors,
   sendFormStatus,
-} = storeToRefs(store)
+} = toRefs(store)
 
 const { closeForm, submitForm } = store
 
@@ -72,6 +73,10 @@ const instanceConfig = computed(
     adminPanelStore.config,
 )
 
+const { theme: adminTheme, themeStyle } = useAdminTheme(
+  () => instanceConfig.value?.theme,
+)
+
 const createRequestSchema = computed(() =>
   getRequestSchema(currentEntity.value?.createOperation),
 )
@@ -79,7 +84,8 @@ const createRequestSchema = computed(() =>
 const schemaFields = computed(() =>
   buildFieldDescriptors(
     adminPanelStore.resolveSchema(createRequestSchema.value),
-    adminPanelStore.schema?.components?.schemas,
+    adminPanelStore.getSpecSchema(currentEntity.value?.service)?.components
+      ?.schemas,
   ),
 )
 
@@ -140,11 +146,13 @@ async function handleSubmit(submitEvent: SubmitEvent) {
 <template>
   <div
     v-if="formIsOpen"
-    class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[var(--ch-admin-overlay)] p-4 pt-[10vh]"
+    class="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-[var(--ch-admin-overlay,rgba(0,0,0,0.6))] p-4 pt-[10vh] backdrop-blur-sm"
+    :data-ch-admin-theme="adminTheme"
+    :style="themeStyle"
     @click.self="closeForm()"
   >
     <div
-      class="w-full max-w-lg rounded-xl bg-[var(--ch-admin-surface)] text-[var(--ch-admin-text)] shadow-xl"
+      class="w-full max-w-lg rounded-2xl border border-[var(--ch-admin-border)] bg-[var(--ch-admin-surface)] text-[var(--ch-admin-text)] shadow-2xl"
     >
       <div
         class="flex items-center justify-between border-b border-[var(--ch-admin-border)] px-6 py-4"

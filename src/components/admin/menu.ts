@@ -1,4 +1,10 @@
-import type { AdminSidebarGroup, AdminSidebarMenuItem } from "./fields/types"
+import { entityMatchesReference } from "../../stores/adminPanel/entityKey"
+
+import type {
+  AdminPanelMenuConfig,
+  AdminSidebarGroup,
+  AdminSidebarMenuItem,
+} from "./fields/types"
 import type { ParsedEntity } from "../../stores/adminPanel/types"
 
 /** Flat menu item before nesting, ordering and level calculation. */
@@ -13,19 +19,47 @@ interface AdminMenuSourceItem {
   parentId?: string
 }
 
+/**
+ * Every entity key hidden from the navigation. `hiddenPages` extends the
+ * existing `hiddenEntities` list: a page-only entity is dropped from the menu
+ * too, but its list can still be embedded inside a parent entity page.
+ */
+function resolveHiddenEntityKeys(
+  menu: AdminPanelMenuConfig | undefined,
+): string[] {
+  const hidden = menu?.hiddenEntities ?? []
+  const hiddenPages = menu?.hiddenPages ?? []
+  return [...new Set([...hidden, ...hiddenPages])]
+}
+
+/** Reports whether an entity's standalone page is hidden. */
+function isAdminEntityPageHidden(
+  entity: ParsedEntity | undefined,
+  menu: AdminPanelMenuConfig | undefined,
+): boolean {
+  if (entity === undefined) return false
+  return resolveHiddenEntityKeys(menu).some((reference) =>
+    entityMatchesReference(entity, reference),
+  )
+}
+
 /** Drops hidden entities (by name or full path) from the endpoint menu groups. */
 function visibleMenuGroups(
   groups: AdminSidebarGroup[],
   hiddenEntities: readonly string[] | undefined,
 ): AdminSidebarGroup[] {
-  const hidden = new Set(hiddenEntities)
+  const hidden = hiddenEntities ?? []
   return groups
     .map((group) => ({
       entities: group.entities.filter(
         (entity) =>
-          !hidden.has(entity.entityName) && !hidden.has(entity.fullBasePath),
+          !hidden.some((reference) =>
+            entityMatchesReference(entity, reference),
+          ),
       ),
       namespace: group.namespace,
+      service: group.service,
+      title: group.title,
     }))
     .filter((group) => group.entities.length > 0)
 }
@@ -132,5 +166,10 @@ function buildMenuTree(items: AdminMenuSourceItem[]): AdminSidebarMenuItem[] {
   return applyIndexes(roots).map((item) => buildNode(item, 0))
 }
 
-export { buildMenuTree, visibleMenuGroups }
+export {
+  buildMenuTree,
+  isAdminEntityPageHidden,
+  resolveHiddenEntityKeys,
+  visibleMenuGroups,
+}
 export type { AdminMenuSourceItem }
