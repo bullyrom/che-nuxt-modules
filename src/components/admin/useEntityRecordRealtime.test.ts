@@ -63,6 +63,23 @@ describe("useEntityRecordRealtime", () => {
     expect(closeView).toHaveBeenCalledTimes(1)
   })
 
+  it("counts a created event on the list channel", () => {
+    vi.stubGlobal("window", {})
+    const { client, emit } = createClient()
+
+    const realtime = useEntityRecordRealtime({
+      client,
+      closeView: vi.fn(),
+      getEntityName: () => ENTITY,
+      getViewedRecord: () => undefined,
+    })
+    realtime.setListChannel(ENTITY)
+
+    emit({ action: "created", entity: ENTITY, id: RECORD_ID })
+
+    expect(realtime.listChangesCount.value).toBe(1)
+  })
+
   it("ignores changes for another entity", () => {
     vi.stubGlobal("window", {})
     const { client, emit } = createClient()

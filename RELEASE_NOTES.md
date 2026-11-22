@@ -1,5 +1,7 @@
 # Release notes
 
+- test(e2e): added realtime coverage that fails unless the host opens the injected socket client and a `created` event for the active entity raises the admin list changes badge; a missing/empty realtime client previously went unnoticed because the unit tests use a mocked client
+
 - test(e2e): domain names, API paths and schema/config markers are read from environment variables with generic books/chapters defaults; added a git-ignored local `.env.development` and a committable `.env.development.template`, and documented every key in `docs/testing.md`
 - fix(api): pagination is Django DRF-only (`count`, `next`, `previous`, `results`); removed multi-format adapters and non-DRF auto-detection
 

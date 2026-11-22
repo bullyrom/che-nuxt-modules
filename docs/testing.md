@@ -64,13 +64,13 @@ browser or a `webServer`.
 
 ## Coverage
 
-| Area                                                               | File                                   |
-| ------------------------------------------------------------------ | -------------------------------------- |
-| Default sidebar/header, config header override and grid columns    | `test/e2e/pages/adminAreas.test.ts`    |
-| `detailHref` links, direct record routes, keyed list entity switch | `test/e2e/pages/adminStore.test.ts`    |
-| Media/file list and detail overrides (audio, download links)       | `test/e2e/pages/adminMedia.test.ts`    |
-| Remote/static selects, search, audio input, date and multi-select  | `test/e2e/pages/adminFields.test.ts`   |
-| List/detail realtime subscriptions, changes badge, entity switches | `test/e2e/pages/adminRealtime.test.ts` |
+| Area                                                                  | File                                   |
+| --------------------------------------------------------------------- | -------------------------------------- |
+| Default sidebar/header, config header override and grid columns       | `test/e2e/pages/adminAreas.test.ts`    |
+| `detailHref` links, direct record routes, keyed list entity switch    | `test/e2e/pages/adminStore.test.ts`    |
+| Media/file list and detail overrides (audio, download links)          | `test/e2e/pages/adminMedia.test.ts`    |
+| Remote/static selects, search, audio input, date and multi-select     | `test/e2e/pages/adminFields.test.ts`   |
+| Realtime client wiring and the list changes badge on a created record | `test/e2e/pages/adminRealtime.test.ts` |
 
 ## Helpers
 
